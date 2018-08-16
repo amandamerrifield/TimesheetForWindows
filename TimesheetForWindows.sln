@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimesheetForWindows", "TimesheetForWindows\TimesheetForWindows.csproj", "{A4894330-7DA2-4432-A4CB-04BAAC435B58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsOpsDatabaseLibrary", "..\SsOpsDatabaseLibrary\SsOpsDatabaseLibrary.csproj", "{31D81958-5386-4203-9DE4-C3FA046EB4CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsOpsDatabaseLibrary", "SsOpsDatabaseLibrary\SsOpsDatabaseLibrary.csproj", "{31D81958-5386-4203-9DE4-C3FA046EB4CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
