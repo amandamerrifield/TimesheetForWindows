@@ -22,11 +22,20 @@ namespace SsOpsDatabaseLibrary
 		public const string SHORTDATE_FORMAT = "yyyy-MM-dd";
 
 		private static string UniqueTimeStamp = String.Empty;
+
 		private bool _disposed = false;
 		private SqlConnection _dbConn;
 
-		//Constructor
-		public OpsDataWriter(string connectnString) {
+		//Default Constructor
+		public OpsDataWriter()
+		{
+			_dbConn = new SqlConnection();
+			_dbConn.ConnectionString = @"Data Source=BigBox\SQLExpress;Initial Catalog=SsOperations;Integrated Security=true;";
+			_dbConn.Open();
+		}
+		//Constructor Overload
+		public OpsDataWriter(string connectnString)
+		{
 			//Must have a database connection string
 			_dbConn = new SqlConnection();
 			_dbConn.ConnectionString = connectnString;
@@ -42,25 +51,33 @@ namespace SsOpsDatabaseLibrary
 			Int32 retVal = 0;
 			SqlParameter parm;
 
-			using(SqlCommand cmd = new SqlCommand("sp_InsertTimeCard", _dbConn))
+			try
 			{
-				cmd.CommandType = CommandType.StoredProcedure;
+				using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCard", _dbConn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
 
-				parm = new SqlParameter("@Year", SqlDbType.Int);
-				cmd.Parameters.Add(parm);
-				parm.Value = Convert.ToInt16(tcard.Year);
+					parm = new SqlParameter("@Year", SqlDbType.Int);
+					cmd.Parameters.Add(parm);
+					parm.Value = Convert.ToInt16(tcard.Year);
 
-				parm = new SqlParameter("@WeekNbr", SqlDbType.Int);
-				cmd.Parameters.Add(parm);
-				parm.Value = Convert.ToInt16(tcard.Year);
+					parm = new SqlParameter("@WeekNbr", SqlDbType.Int);
+					cmd.Parameters.Add(parm);
+					parm.Value = Convert.ToInt16(tcard.Year);
 
-				parm = new SqlParameter("@EmployeeId", SqlDbType.Int);
-				cmd.Parameters.Add(parm);
-				parm.Value = Convert.ToInt16(tcard.Year);
+					parm = new SqlParameter("@EmployeeId", SqlDbType.Int);
+					cmd.Parameters.Add(parm);
+					parm.Value = Convert.ToInt16(tcard.Year);
 
-				retVal = (Int32) cmd.ExecuteScalar();
+					retVal = (Int32)cmd.ExecuteScalar();
+				}
 			}
-
+			catch (Exception ex)
+			{
+				string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
 			return retVal;
 		}
 
@@ -69,15 +86,19 @@ namespace SsOpsDatabaseLibrary
 		// =================================================
 		#region Error Handling Support
 
-		public void LogHardErrorMessage(string title, string msg)
+		public void LogHardErrorMessage(string methodName, string source, string msg)
 		{
 			//Hard errors are ones that cant be appended to the database errors table
-			string post = "=== " + DateTime.Now.ToString(TIMESTAMP_FORMAT) + " ===" + "\n" + title + "\n" + msg + "\n";
+			StringBuilder sbldr = new StringBuilder("=== " + DateTime.Now.ToString(TIMESTAMP_FORMAT) + " === " + "\n");
+			sbldr.Append("--- " + methodName + " encountered an error: \n");
+			sbldr.Append("--- Source: " + source + "\n");
+			sbldr.Append("--- " + msg);
+
 			string fileSpec = Directory.GetCurrentDirectory() + @"\ErrorLog.txt";
 			// Swallow any errors and work thru
 			try
 			{
-				LogMessage(post, fileSpec);
+				LogMessage(sbldr.ToString(), fileSpec);
 			}
 			finally {}
 		}

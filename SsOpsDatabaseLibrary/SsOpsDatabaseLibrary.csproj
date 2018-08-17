@@ -48,6 +48,7 @@
     <Compile Include="Entity\Timecard.cs" />
     <Compile Include="OpsDataReader.cs" />
     <Compile Include="OpsDataWriter.cs" />
+    <Compile Include="OpsError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
