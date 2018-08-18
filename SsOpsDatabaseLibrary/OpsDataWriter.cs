@@ -43,7 +43,7 @@ namespace SsOpsDatabaseLibrary
 			_dbConn.Open();
 		}
 
-		// =================================================
+		// ===============================================================
 		#region Public Functions that return a newly generated primary key
 
 		public Int32 CreateTimeCard(Timecard tcard)
@@ -83,8 +83,8 @@ namespace SsOpsDatabaseLibrary
 
 		#endregion
 
-		// =================================================
-		#region Functions that return an updated DataTable
+		// =======================================================
+		#region Public Functions that return an updated DataTable
 
 		public void CreateTimeCardDetail(ref Timecard tcard)
 		{

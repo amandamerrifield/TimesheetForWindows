@@ -14,9 +14,9 @@ namespace TimesheetForWindows
     
     public partial class MainForm : Form
     {
-		private string _dataFilePath;
+		//private string _dataFilePath;
                 
-        private Form _employeeForm;
+        private Form _timecardForm;
         private Form _currentActiveForm;
 
         // MainForm Constructor
@@ -61,14 +61,14 @@ namespace TimesheetForWindows
             // Make the current active form invisible, then show our employee form
             if (_currentActiveForm != null) _currentActiveForm.Visible = false;
 
-			if (_employeeForm == null)
+			if (_timecardForm == null)
 			{
 				//Give the datafile path to the employee form object's constructor
 				//_employeeForm = new EmployeeForm(_dataFilePath);
 			}
 
             // The new current active form is our employee form
-            _currentActiveForm = _employeeForm;
+            _currentActiveForm = _timecardForm;
 
             // And now it is positioned relative to ourself and made visible
             Point targetPoint = this.Location;
