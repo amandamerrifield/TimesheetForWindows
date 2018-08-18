@@ -10,14 +10,15 @@ namespace SsOpsDatabaseLibrary.Entity
     {
         public Employee() { }
 
+		public string EmployeeId { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string TaxIdNbr { get; set; }
-		public string IsSalaryYn { get; set; }
+		public string SalaryYn { get; set; }
 		public string MainPhone { get; set; }
 		public string Gender { get; set; }
 		public string HireDate { get; set; }
-		public string TermDate { get; set; }
+		public string TerminationDate { get; set; }
 
 	}
 }

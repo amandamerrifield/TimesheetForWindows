@@ -84,6 +84,96 @@ namespace SsOpsDatabaseLibrary
 		#endregion
 
 		// =================================================
+		#region Functions that return an updated DataTable
+
+		public void CreateTimeCardDetail(ref Timecard tcard)
+		{
+			SqlParameter parm;
+
+			try
+			{
+				//Must have EmployeeID, TimecardId, and each row must have a TaskId
+				bool isMissingKey = false;
+				isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
+				foreach (DataRow row in tcard.DetailTable.Rows)
+				{
+					if (String.IsNullOrEmpty((string)row[(int)Timecard.DetailFields.Task_ID]))
+					{
+						isMissingKey = true;
+						break;
+					}
+				}
+				if (isMissingKey) {
+					throw new Exception("Unable to create timecard detail.  A key value is missing.");
+				}
+
+				// Okay to insert these new rows. Do it in a transaction (all or none)
+				using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCardDetail", _dbConn))
+				{
+					SqlTransaction xaction = _dbConn.BeginTransaction();
+
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					foreach (DataRow row in tcard.DetailTable.Rows)
+					{
+						parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Detail_ID]);
+
+						parm = new SqlParameter("@TaskId", SqlDbType.Int);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Task_ID]);
+
+						parm = new SqlParameter("@TimecardId", SqlDbType.Int);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Timecard_ID]);
+
+						parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Monday_Hrs]);
+
+						parm = new SqlParameter("@TuesdayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Tuesday_Hrs]);
+
+						parm = new SqlParameter("@WednesdayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Wednesday_Hrs]);
+
+						parm = new SqlParameter("@ThursdayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Thursday_Hrs]);
+
+						parm = new SqlParameter("@FridayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Friday_Hrs]);
+
+						parm = new SqlParameter("@SaturdayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Saturday_Hrs]);
+
+						parm = new SqlParameter("@SundayHrs", SqlDbType.SmallMoney);
+						cmd.Parameters.Add(parm);
+						parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Sunday_Hrs]);
+
+						// Update caller's row with newly created ID
+						row[(int) Timecard.DetailFields.Detail_ID] = (Int32)cmd.ExecuteScalar();
+					}
+					// Commit the transaction to the database
+					xaction.Commit();
+				}
+			}
+			catch (Exception ex)
+			{
+				string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+		}
+
+		#endregion
+
+		// =================================================
 		#region Error Handling Support
 
 		public void LogHardErrorMessage(string methodName, string source, string msg)
