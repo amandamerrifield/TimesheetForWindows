@@ -18,6 +18,7 @@ namespace TimesheetForWindows
                 
         private Form _timecardForm;
         private Form _currentActiveForm;
+		private int _employeeId = 0;
 
         // MainForm Constructor
         public MainForm() : base()
@@ -30,8 +31,12 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
-			// The Load Event gets the MainForm ready to display. Not much to do here.
-            //_dataFilePath = Directory.GetCurrentDirectory() + XmlFilePath;
+			//The current employeeId is the urrent user's employee ID
+			_employeeId = 100;
+
+			// Instantiate the forms that the MainForm controls.
+			_timecardForm = new TimecardForm(_employeeId);
+			_timecardForm.Visible = false;
 
             // The current active form is the one the user is working
             _currentActiveForm = null;
@@ -58,14 +63,8 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
-            // Make the current active form invisible, then show our employee form
+            // Make the current active form invisible, then show our timecard form
             if (_currentActiveForm != null) _currentActiveForm.Visible = false;
-
-			if (_timecardForm == null)
-			{
-				//Give the datafile path to the employee form object's constructor
-				//_employeeForm = new EmployeeForm(_dataFilePath);
-			}
 
             // The new current active form is our employee form
             _currentActiveForm = _timecardForm;
