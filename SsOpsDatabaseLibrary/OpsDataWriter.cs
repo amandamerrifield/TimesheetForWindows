@@ -22,24 +22,23 @@ namespace SsOpsDatabaseLibrary
 		public const string SHORTDATE_FORMAT = "yyyy-MM-dd";
 
 		private static string UniqueTimeStamp = String.Empty;
-
 		private bool _disposed = false;
 		private SqlConnection _dbConn;
 
 		//Default Constructor
 		public OpsDataWriter()
 		{
+			//Open a connection to the DB for the life of this instance
 			_dbConn = new SqlConnection();
-			_dbConn.ConnectionString = @"Data Source=BigBox\SQLExpress;Initial Catalog=SsOperations;Integrated Security=true;";
+			_dbConn.ConnectionString = @"Data Source=BigBox;Initial Catalog=SsOperations;Integrated Security=true;";
 			_dbConn.Open();
 		}
 		//Constructor Overload
 		public OpsDataWriter(string connectnString)
 		{
-			//Must have a database connection string
+			//Open a connection to the DB for the life of this instance
 			_dbConn = new SqlConnection();
 			_dbConn.ConnectionString = connectnString;
-			//Open a connection to the DB for the life of this instance
 			_dbConn.Open();
 		}
 

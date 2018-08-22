@@ -25,6 +25,7 @@ namespace SsOpsDatabaseLibrary
 		private bool _disposed = false;
 		private SqlConnection _dbConn;
 
+		//Default Constructor
 		public OpsDataReader()
 		{
 			try
@@ -41,6 +42,7 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
+		//Constructor Overload
 		public OpsDataReader(string connectnString)
 		{
 			try
@@ -56,7 +58,6 @@ namespace SsOpsDatabaseLibrary
 				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
 				throw;
 			}
-
 		}
 
 		// =================================================
@@ -105,6 +106,10 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
+		//public Timecard[] GetTimecardsForEmployee(int employeeId)
+		//{
+		//	SqlParameter parm;
+		//}
 
 		// =================================================
 		#region Error Handling Support

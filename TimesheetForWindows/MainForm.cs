@@ -42,10 +42,8 @@ namespace TimesheetForWindows
 				_employee = dbReader.GetEmployeeByName(usr[0], usr[1]);
 			}
 
-
-
 				// Instantiate the forms that the MainForm controls.
-				//_timecardForm = new TimecardForm(_employeeId);
+				_timecardForm = new TimecardForm(_employee);
 				_timecardForm.Visible = false;
 
             // The current active form is the one the user is working

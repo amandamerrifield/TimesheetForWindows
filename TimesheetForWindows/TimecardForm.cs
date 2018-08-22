@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SsOpsDatabaseLibrary;
+using SsOpsDatabaseLibrary.Entity;
 
 namespace TimesheetForWindows
 {
@@ -20,11 +22,11 @@ namespace TimesheetForWindows
 			SavingChanges
 		}
 		private FormState _currentFormState;
-		private int _employeeId = 0;
+		private Employee _employee;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
-		public TimecardForm(int employeeId)
+		public TimecardForm(Employee emp)
 		{
 			InitializeComponent();
 			// We will manually control the form location on screen
@@ -35,7 +37,7 @@ namespace TimesheetForWindows
 			this.KeyPreview = true;
 
 			// Get a copy of the employee key
-			_employeeId = employeeId;
+			_employee = emp;
 		}
 
 		// ====================================================
@@ -53,7 +55,9 @@ namespace TimesheetForWindows
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
 			// Get the employee's data onto the form
-
+			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
+			//To Do call opsdatareader to get timecards for this employee
+			//To Do set default to this week 
 		}
 		#endregion
 
