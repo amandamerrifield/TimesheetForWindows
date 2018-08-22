@@ -14,7 +14,7 @@ namespace SsOpsDatabaseLibrary
     public sealed class OpsDataReader : IDisposable
 	{
 		// This class is designed for usage pattern as follows:
-		//   using (OpsDataWriter dbWriter = new OpsDataWriter(connectionString) {
+		//   using (OpsDataReader dbReader = new OpsDataReader() {
 		//      dbLib.WriteSomething;
 		//   }
 		public const string TIMESTAMP_FORMAT = "yyyy-MM-dd_HH:mm:ss_fff";
@@ -27,18 +27,36 @@ namespace SsOpsDatabaseLibrary
 
 		public OpsDataReader()
 		{
-			_dbConn = new SqlConnection();
-			_dbConn.ConnectionString = @"Data Source=BigBox\SQLExpress;Initial Catalog=SsOperations;Integrated Security=true;";
-			_dbConn.Open();
+			try
+			{
+				_dbConn = new SqlConnection();
+				_dbConn.ConnectionString = @"Data Source=BigBox;Initial Catalog=SsOperations;Integrated Security=true;";
+				_dbConn.Open();
+			}
+			catch (Exception ex)
+			{
+				string errTitle = this.GetType().Name + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
 		}
 
 		public OpsDataReader(string connectnString)
 		{
-			//Must have a database connection string
-			_dbConn = new SqlConnection();
-			_dbConn.ConnectionString = connectnString;
-			//Open a connection to the DB for the life of this instance
-			_dbConn.Open();
+			try
+			{
+				//Must have a database connection string
+				_dbConn = new SqlConnection();
+				_dbConn.ConnectionString = connectnString;
+				_dbConn.Open();
+			}
+			catch(Exception ex)
+			{
+				string errTitle = this.GetType().Name + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+
 		}
 
 		// =================================================
@@ -68,21 +86,21 @@ namespace SsOpsDatabaseLibrary
 						throw new InvalidOperationException("No record was found for " + firstName + " " + lastName);
 					}
 					emp = new Employee();
-					emp.EmployeeId = reader["EmloyeeId"].ToString();
+					emp.EmployeeId = reader["EmployeeId"].ToString();
 					emp.FirstName = (string)reader["FirstName"];
 					emp.LastName = (string)reader["LastName"];
 					emp.TaxIdNbr = (string)reader["TaxIdNbr"];
 					emp.SalaryYn = (string)reader["SalaryYn"];
 					emp.MainPhone = (string)reader["MainPhone"];
 					emp.Gender = (string)reader["Gender"];
-					emp.HireDate = (string)reader["HireDt"];
+					emp.HireDate = (string)reader["HiredDt"];
 					emp.TerminationDate = (string)reader["TerminationDt"];
 				}
 				return emp;
 			}
 			catch (Exception ex)
 			{
-				string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
 				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
 				throw;
 			}
@@ -91,28 +109,30 @@ namespace SsOpsDatabaseLibrary
 		// =================================================
 		#region Error Handling Support
 
-		public void LogHardErrorMessage(string methodName, string source, string msg)
+		public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
 		{
 			//Hard errors are ones that cant be appended to the database errors table
-			StringBuilder sbldr = new StringBuilder("=== " + DateTime.Now.ToString(TIMESTAMP_FORMAT) + " === " + "\n");
-			sbldr.Append("--- " + methodName + " encountered an error: \n");
-			sbldr.Append("--- Source: " + source + "\n");
-			sbldr.Append("--- " + msg);
+			string[] msgs = new string[]
+			{
+				"=== " + DateTime.Now.ToString(TIMESTAMP_FORMAT) + " === ",
+				"--- " + classNamAndMethod + " encountered an error: ",
+				"--- Source : " + source,
+				"--- Message: " + msg
+			};
 
 			string fileSpec = Directory.GetCurrentDirectory() + @"\ErrorLog.txt";
 			// Swallow any errors and work thru
 			try
 			{
-				LogMessage(sbldr.ToString(), fileSpec);
+				LogMessages(msgs, fileSpec);
 			}
 			finally { }
 		}
 
-		public void LogMessage(string message, string fileSpec)
+		public void LogMessages(string[] messages, string filespec)
 		{
-			TextWriter tw = new StreamWriter(fileSpec);
-			tw.WriteLine(message);
-			tw.Close();
+			File.AppendAllLines(filespec, messages);
+
 		}
 
 		#endregion

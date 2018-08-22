@@ -8,6 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using SsOpsDatabaseLibrary;
+using SsOpsDatabaseLibrary.Entity;
+using System.DirectoryServices.AccountManagement;
 
 namespace TimesheetForWindows
 {
@@ -18,7 +21,7 @@ namespace TimesheetForWindows
                 
         private Form _timecardForm;
         private Form _currentActiveForm;
-		private int _employeeId = 0;
+		private Employee _employee;
 
         // MainForm Constructor
         public MainForm() : base()
@@ -32,11 +35,18 @@ namespace TimesheetForWindows
 			Console.Write("****" + thisMethod.Name + "\n");
 
 			//The current employeeId is the urrent user's employee ID
-			_employeeId = 100;
+			string[] usr = UserPrincipal.Current.DisplayName.Split(' ');
+			
+			using (OpsDataReader dbReader = new OpsDataReader())
+			{
+				_employee = dbReader.GetEmployeeByName(usr[0], usr[1]);
+			}
 
-			// Instantiate the forms that the MainForm controls.
-			_timecardForm = new TimecardForm(_employeeId);
-			_timecardForm.Visible = false;
+
+
+				// Instantiate the forms that the MainForm controls.
+				//_timecardForm = new TimecardForm(_employeeId);
+				_timecardForm.Visible = false;
 
             // The current active form is the one the user is working
             _currentActiveForm = null;
