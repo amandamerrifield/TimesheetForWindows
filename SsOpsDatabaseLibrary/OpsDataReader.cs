@@ -106,15 +106,45 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
-		//public Timecard[] GetTimecardsForEmployee(int employeeId)
-		//{
-		//	SqlParameter parm;
-		//}
+        public List<Timecard> GetTimecardsForEmployee(int employeeId)
+        {
+            SqlParameter parm;
+            List<Timecard> timecards = new List<Timecard>();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardsByEmployeeId", _dbConn))
+                {
+                    parm = new SqlParameter("@employeeId", SqlDbType.VarChar);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = employeeId;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while(reader.Read())
+                    {
+                        Timecard tc = new Timecard();
+                        tc.DetailTable = null;
+                        tc.EmployeeId = (string)reader["EmployeeId"];
+						tc.TimecardId = (string)reader["TimecardId"];
+                        tc.WeekNumber = (string)reader["WeekNbr"];
+                        tc.Year = (string)reader["Year"];
 
-		// =================================================
-		#region Error Handling Support
+						timecards.Add(tc);
+                    }
+					// if there were no timecards, returned list.count will be 0.
+                }
+                return timecards;
+            }
+            catch (Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
 
-		public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
+        // =================================================
+        #region Error Handling Support
+
+        public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
 		{
 			//Hard errors are ones that cant be appended to the database errors table
 			string[] msgs = new string[]
