@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows.Forms;
 using SsOpsDatabaseLibrary;
 using SsOpsDatabaseLibrary.Entity;
@@ -26,6 +27,7 @@ namespace TimesheetForWindows
 		private List<Timecard> _timecards;
 		private Timecard _thisTimecard;
 		private List<TimecardDetail> _thisTcDetail;
+		private int _thisWeekNumber = 1;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -47,7 +49,6 @@ namespace TimesheetForWindows
 		#region FORM EVENT HANDLERS
 	    //
 		// Key_Down Event Handler
-		//
 		private void TimecardForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			_currentFormState = FormState.ViewingPotentialChanges;
@@ -57,23 +58,19 @@ namespace TimesheetForWindows
 		// Form Load Event Handler
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
+			// Calc the week number
+			_thisWeekNumber = GetIso8601WeekOfYear(DateTime.Now);
+
 			// Get the employee's data onto the form
 			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
 			
 			//Call opsdatareader to get timecards for this employee
 			using (OpsDataReader dbReader = new OpsDataReader())
 			{
-				//_timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
-				_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
+				_timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
+				//_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
 
-				foreach (Timecard tc in _timecards)
-				{
-					comboBoxWeek.Items.Add(tc);
-				}
-				comboBoxWeek.SelectedIndex = 0;
-				_thisTimecard = (Timecard) comboBoxWeek.SelectedItem;
-
-				this.Text += " --- " + comboBoxWeek.SelectedItem.ToString();
+				InitializeComboBox();
 
 				// Call OpsDataReader to get the details for the selected week
 				//_thisTcDetail = dbReader.GetTcDetailsByTimecardId(_thisTimecard.TimecardId);
@@ -83,6 +80,14 @@ namespace TimesheetForWindows
 			}
 
 		}
+
+		//
+		// Add Week Button Click
+		private void buttonAddWeek_Click(object sender, EventArgs e)
+		{
+
+		}
+
 		#endregion
 
 		// ====================================================
@@ -133,17 +138,54 @@ namespace TimesheetForWindows
 		// ====================================================
 		#region FORM HELPER FUNCTIONS
 
+		private void InitializeComboBox()
+		{
+			comboBoxWeek.Items.Clear();
+			if (_timecards.Count > 0)
+			{
+				foreach (Timecard tc in _timecards)
+				{
+					comboBoxWeek.Items.Add(tc);
+				}
+				comboBoxWeek.SelectedIndex = 0;
+				_thisTimecard = (Timecard)comboBoxWeek.SelectedItem;
+
+				this.Text += " --- " + comboBoxWeek.SelectedItem.ToString();
+			}
+			else
+			{
+				//Employee has no timecards. Add New Week.
+				AddNewWeekToTimecard();
+			}
+
+		}
+		// This presumes that weeks start with Monday.
+		// Week 1 is the 1st week of the year with a Thursday in it.
+		public static int GetIso8601WeekOfYear(DateTime time)
+		{
+			// Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
+			// be the same week# as whatever Thursday, Friday or Saturday are,
+			// and we always get those right
+			DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+			//if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+			//{
+			//	time = time.AddDays(3);
+			//}
+
+			// Return the week of our adjusted day
+			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+		}
+
 		private void InitializeDGV()
 		{
 			try
 			{
 				dgvTimecardDetail.Dock = DockStyle.Fill;
 				dgvTimecardDetail.AutoGenerateColumns = true;
-
 			}
 			catch (Exception ex)
 			{
-
+				// ToDo:
 				System.Threading.Thread.CurrentThread.Abort();
 			}
 		}
@@ -170,12 +212,18 @@ namespace TimesheetForWindows
 			}
 		}
 
+		private void AddNewWeekToTimecard()
+		{
+			//Empty the grid
+			_thisTcDetail.Clear();
+			//Append the new week to the combobox and select it
+
+
+		}
+
 
 		#endregion
 
-		private void buttonAddWeek_Click(object sender, EventArgs e)
-		{
 
-		}
 	}
 }

@@ -34,15 +34,22 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
-			//The current employeeId is the urrent user's employee ID
-			string[] usr = UserPrincipal.Current.DisplayName.Split(' ');
-			
 			using (OpsDataReader dbReader = new OpsDataReader())
 			{
-				_employee = dbReader.GetEmployeeByName(usr[0], usr[1]);
+				//The current employeeId is the current user's employee ID
+				try
+				{
+					string[] usr = UserPrincipal.Current.DisplayName.Split(' ');
+					_employee = dbReader.GetEmployeeByName(usr[0], usr[1]);
+				}
+				catch (Exception ex)
+				{
+					string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+					dbReader.LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+					throw;
+				}
 			}
-
-				// Instantiate the forms that the MainForm controls.
+				// Instantiate the forms that this MainForm controls.
 				_timecardForm = new TimecardForm(_employee);
 				_timecardForm.Visible = false;
 
