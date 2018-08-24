@@ -106,7 +106,7 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
-        public List<Timecard> GetTimecardsForEmployee(int employeeId)
+        public List<Timecard> GetTimecardsForEmployee(string employeeId)
         {
             SqlParameter parm;
             List<Timecard> timecards = new List<Timecard>();
@@ -141,10 +141,12 @@ namespace SsOpsDatabaseLibrary
             }
         }
 
-        // =================================================
-        #region Error Handling Support
 
-        public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
+
+		// =================================================
+		#region Error Handling Support
+
+		public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
 		{
 			//Hard errors are ones that cant be appended to the database errors table
 			string[] msgs = new string[]

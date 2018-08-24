@@ -23,6 +23,9 @@ namespace TimesheetForWindows
 		}
 		private FormState _currentFormState;
 		private Employee _employee;
+		private List<Timecard> _timecards;
+		private Timecard _thisTimecard;
+		private List<TimecardDetail> _thisTcDetail;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -56,9 +59,75 @@ namespace TimesheetForWindows
 		{
 			// Get the employee's data onto the form
 			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
-			//To Do call opsdatareader to get timecards for this employee
-			//To Do set default to this week 
+			
+			//Call opsdatareader to get timecards for this employee
+			using (OpsDataReader dbReader = new OpsDataReader())
+			{
+				//_timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
+				_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
+
+				foreach (Timecard tc in _timecards)
+				{
+					comboBoxWeek.Items.Add(tc);
+				}
+				comboBoxWeek.SelectedIndex = 0;
+				_thisTimecard = (Timecard) comboBoxWeek.SelectedItem;
+
+				this.Text += " --- " + comboBoxWeek.SelectedItem.ToString();
+
+				// Call OpsDataReader to get the details for the selected week
+				//_thisTcDetail = dbReader.GetTcDetailsByTimecardId(_thisTimecard.TimecardId);
+				_thisTcDetail = GetTcDetailsByTimecardIdSTUB(_thisTimecard.TimecardId);
+
+				dgvTimecardDetail.DataSource = _thisTcDetail;
+			}
+
 		}
+		#endregion
+
+		// ====================================================
+		#region DATA STUBS
+
+		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
+		public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
+		{
+			List<Timecard> tcards = new List<Timecard>();
+			for (int x = 5; x > 0; --x)
+			{
+				Timecard tc = new Timecard();
+				tc.DetailTable = null;
+				tc.EmployeeId = employeeId;
+				tc.TimecardId = Convert.ToString(2000 + x);
+				tc.WeekNumber = Convert.ToString(32 + x);
+				tc.Year = "2018";
+
+				tcards.Add(tc);
+			}
+			return tcards;
+		}
+		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
+		public List<TimecardDetail> GetTcDetailsByTimecardIdSTUB(string tcardId)
+		{
+			List<TimecardDetail> details = new List<TimecardDetail>();
+			for (int x = 0; x < 5; x++)
+			{
+				TimecardDetail dtl = new TimecardDetail();
+				dtl.Detail_ID = Convert.ToString(1010 + x);
+				dtl.Task_ID = Convert.ToString(10010 + x);
+				dtl.Timecard_ID = tcardId;
+				dtl.Monday_Hrs = "9.0";
+				dtl.Tuesday_Hrs = "8.0";
+				dtl.Wednesday_Hrs = "7.0";
+				dtl.Thursday_Hrs = "6.0";
+				dtl.Friday_Hrs = "4.0";
+				dtl.Saturday_Hrs = "2.0";
+				dtl.Sunday_Hrs = "1.0";
+
+				details.Add(dtl);
+			}
+			return details;
+		}
+
 		#endregion
 
 		// ====================================================
@@ -101,8 +170,12 @@ namespace TimesheetForWindows
 			}
 		}
 
+
 		#endregion
 
+		private void buttonAddWeek_Click(object sender, EventArgs e)
+		{
 
+		}
 	}
 }

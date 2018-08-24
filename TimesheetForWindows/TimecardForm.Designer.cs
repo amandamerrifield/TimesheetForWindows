@@ -35,22 +35,23 @@
 			this.buttonQuit = new System.Windows.Forms.Button();
 			this.comboBoxWeek = new System.Windows.Forms.ComboBox();
 			this.dgvTimecardDetail = new System.Windows.Forms.DataGridView();
+			this.buttonAddWeek = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dgvTimecardDetail)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// statusStrip1
 			// 
-			this.statusStrip1.Location = new System.Drawing.Point(0, 422);
+			this.statusStrip1.Location = new System.Drawing.Point(0, 442);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(779, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(795, 22);
 			this.statusStrip1.TabIndex = 0;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
 			// buttonUpdate
 			// 
-			this.buttonUpdate.Location = new System.Drawing.Point(497, 14);
+			this.buttonUpdate.Location = new System.Drawing.Point(546, 14);
 			this.buttonUpdate.Name = "buttonUpdate";
-			this.buttonUpdate.Size = new System.Drawing.Size(132, 25);
+			this.buttonUpdate.Size = new System.Drawing.Size(107, 25);
 			this.buttonUpdate.TabIndex = 97;
 			this.buttonUpdate.TabStop = false;
 			this.buttonUpdate.Text = "Save Changes";
@@ -58,9 +59,9 @@
 			// 
 			// buttonAddTask
 			// 
-			this.buttonAddTask.Location = new System.Drawing.Point(215, 14);
+			this.buttonAddTask.Location = new System.Drawing.Point(320, 14);
 			this.buttonAddTask.Name = "buttonAddTask";
-			this.buttonAddTask.Size = new System.Drawing.Size(137, 24);
+			this.buttonAddTask.Size = new System.Drawing.Size(107, 24);
 			this.buttonAddTask.TabIndex = 99;
 			this.buttonAddTask.TabStop = false;
 			this.buttonAddTask.Text = "Append Task";
@@ -68,9 +69,9 @@
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Location = new System.Drawing.Point(358, 14);
+			this.buttonCancel.Location = new System.Drawing.Point(433, 14);
 			this.buttonCancel.Name = "buttonCancel";
-			this.buttonCancel.Size = new System.Drawing.Size(133, 25);
+			this.buttonCancel.Size = new System.Drawing.Size(107, 25);
 			this.buttonCancel.TabIndex = 98;
 			this.buttonCancel.TabStop = false;
 			this.buttonCancel.Text = "Cancel Changes";
@@ -78,9 +79,9 @@
 			// 
 			// buttonQuit
 			// 
-			this.buttonQuit.Location = new System.Drawing.Point(635, 14);
+			this.buttonQuit.Location = new System.Drawing.Point(659, 14);
 			this.buttonQuit.Name = "buttonQuit";
-			this.buttonQuit.Size = new System.Drawing.Size(132, 25);
+			this.buttonQuit.Size = new System.Drawing.Size(108, 25);
 			this.buttonQuit.TabIndex = 96;
 			this.buttonQuit.TabStop = false;
 			this.buttonQuit.Text = "Quit";
@@ -89,49 +90,40 @@
 			// comboBoxWeek
 			// 
 			this.comboBoxWeek.FormattingEnabled = true;
-			this.comboBoxWeek.Items.AddRange(new object[] {
-            "Week 1",
-            "Week 2",
-            "Week 3",
-            "Week 4",
-            "Week 5",
-            "Week 6",
-            "Week 7",
-            "Week 8",
-            "Week 9",
-            "Week 10",
-            "Week 11",
-            "Week 12",
-            "Week 13",
-            "Week 14",
-            "Week 15",
-            "Week 16",
-            "Week 17",
-            "Week 18",
-            "Week 19",
-            "Week 20"});
-			this.comboBoxWeek.Location = new System.Drawing.Point(12, 18);
+			this.comboBoxWeek.Location = new System.Drawing.Point(22, 17);
 			this.comboBoxWeek.Name = "comboBoxWeek";
-			this.comboBoxWeek.Size = new System.Drawing.Size(161, 21);
+			this.comboBoxWeek.Size = new System.Drawing.Size(102, 21);
 			this.comboBoxWeek.TabIndex = 95;
 			this.comboBoxWeek.TabStop = false;
 			// 
 			// dgvTimecardDetail
 			// 
 			this.dgvTimecardDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dgvTimecardDetail.Location = new System.Drawing.Point(12, 58);
+			this.dgvTimecardDetail.Location = new System.Drawing.Point(22, 58);
 			this.dgvTimecardDetail.MultiSelect = false;
 			this.dgvTimecardDetail.Name = "dgvTimecardDetail";
 			this.dgvTimecardDetail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dgvTimecardDetail.Size = new System.Drawing.Size(754, 351);
+			this.dgvTimecardDetail.Size = new System.Drawing.Size(744, 339);
 			this.dgvTimecardDetail.TabIndex = 0;
+			// 
+			// buttonAddWeek
+			// 
+			this.buttonAddWeek.Location = new System.Drawing.Point(207, 14);
+			this.buttonAddWeek.Name = "buttonAddWeek";
+			this.buttonAddWeek.Size = new System.Drawing.Size(107, 24);
+			this.buttonAddWeek.TabIndex = 100;
+			this.buttonAddWeek.TabStop = false;
+			this.buttonAddWeek.Text = "Add New Week";
+			this.buttonAddWeek.UseVisualStyleBackColor = true;
+			this.buttonAddWeek.Click += new System.EventHandler(this.buttonAddWeek_Click);
 			// 
 			// TimecardForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(779, 444);
+			this.ClientSize = new System.Drawing.Size(795, 464);
 			this.ControlBox = false;
+			this.Controls.Add(this.buttonAddWeek);
 			this.Controls.Add(this.dgvTimecardDetail);
 			this.Controls.Add(this.comboBoxWeek);
 			this.Controls.Add(this.buttonQuit);
@@ -158,5 +150,6 @@
 		private System.Windows.Forms.Button buttonQuit;
 		private System.Windows.Forms.ComboBox comboBoxWeek;
 		private System.Windows.Forms.DataGridView dgvTimecardDetail;
+		private System.Windows.Forms.Button buttonAddWeek;
 	}
 }

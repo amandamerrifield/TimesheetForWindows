@@ -29,6 +29,12 @@ namespace SsOpsDatabaseLibrary.Entity
         public string WeekNumber { get; set; }
         public string EmployeeId { get; set; }
         public DataTable DetailTable { get; set; }
-       
-    }
+
+		// Override for use in combo boxes
+		public override string ToString()
+		{
+			return Year + " Week " + WeekNumber;
+		}
+
+	}
 }
