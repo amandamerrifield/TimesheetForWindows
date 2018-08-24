@@ -43,7 +43,7 @@
 			// 
 			this.statusStrip1.Location = new System.Drawing.Point(0, 442);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(795, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(1106, 22);
 			this.statusStrip1.TabIndex = 0;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -103,7 +103,7 @@
 			this.dgvTimecardDetail.MultiSelect = false;
 			this.dgvTimecardDetail.Name = "dgvTimecardDetail";
 			this.dgvTimecardDetail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dgvTimecardDetail.Size = new System.Drawing.Size(744, 339);
+			this.dgvTimecardDetail.Size = new System.Drawing.Size(1049, 339);
 			this.dgvTimecardDetail.TabIndex = 0;
 			// 
 			// buttonAddWeek
@@ -121,7 +121,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(795, 464);
+			this.ClientSize = new System.Drawing.Size(1106, 464);
 			this.ControlBox = false;
 			this.Controls.Add(this.buttonAddWeek);
 			this.Controls.Add(this.dgvTimecardDetail);
