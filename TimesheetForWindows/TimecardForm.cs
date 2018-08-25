@@ -64,9 +64,6 @@ namespace TimesheetForWindows
 		// Form Load Event Handler
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
-			// Calc the week number
-			_thisWeekNumber = GetIso8601WeekOfYear(DateTime.Now);
-
 			// Get the employee's data onto the form
 			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
 
@@ -74,8 +71,12 @@ namespace TimesheetForWindows
 			if(_timecards.Count < 1)
             {
                 //No timecards for this employee
+                // Calc the week number of this week
+                _thisWeekNumber = GetIso8601WeekOfYear(DateTime.Now);
+                // Add a timecard for it in the database
                 AddTimecardForEmployee();
             }
+            // All available weeks go into the Week combobox
             InitializeComboBox();
             GetTimecardDetail();
             if(_thisTcDetail.Count < 1)
@@ -89,16 +90,26 @@ namespace TimesheetForWindows
 		// Add Week Button Click
 		private void buttonAddWeek_Click(object sender, EventArgs e)
 		{
-            AddNewWeekToTimecard();
+            // Ask the user for a week number between 1 and 52
+            // Save the answer in _thisWeekNumber then call AddNewWeekToTimecard();
+
+        }
+        // Add Task Button Click
+        private void buttonAddTask_Click(object sender, EventArgs e)
+        {
+            // Whatever week is selected in the dropdown list, add a task to it
+            // Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
+            // 
+            
         }
 
-		#endregion
+        #endregion
 
-		// ====================================================
-		#region DATA STUBS
+        // ====================================================
+        #region DATA STUBS
 
-		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
-		public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
+        // !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
+        public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
 		{
 			List<Timecard> tcards = new List<Timecard>();
 			for (int x = 5; x > 0; --x)
@@ -153,40 +164,29 @@ namespace TimesheetForWindows
 				}
 				comboBoxWeek.SelectedIndex = 0;
 				_thisTimecard = (Timecard)comboBoxWeek.SelectedItem;
-
-				this.Text += " --- " + comboBoxWeek.SelectedItem.ToString();
+                _thisWeekNumber = Convert.ToInt32(_thisTimecard.WeekNumber);
 			}
 		}
-		// This presumes that weeks start with Monday.
-		// Week 1 is the 1st week of the year with a Thursday in it.
+
 		public static int GetIso8601WeekOfYear(DateTime time)
 		{
-			// Seriously cheat.  If its Monday, Tuesday or Wednesday, then it'll 
-			// be the same week# as whatever Thursday, Friday or Saturday are,
-			// and we always get those right
 			DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
-			//if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
-			//{
-			//	time = time.AddDays(3);
-			//}
-
-			// Return the week of our adjusted day
-			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
 		}
 
-		private void InitializeDGV()
-		{
-			try
-			{
-				dgvTimecardDetail.Dock = DockStyle.Fill;
-				dgvTimecardDetail.AutoGenerateColumns = true;
-			}
-			catch (Exception ex)
-			{
-				// ToDo: ex
-				System.Threading.Thread.CurrentThread.Abort();
-			}
-		}
+		//private void InitializeDGV()
+		//{
+		//	try
+		//	{
+		//		dgvTimecardDetail.Dock = DockStyle.Fill;
+		//		dgvTimecardDetail.AutoGenerateColumns = true;
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		// ToDo: ex
+		//		System.Threading.Thread.CurrentThread.Abort();
+		//	}
+		//}
 
 		private void assertFormState()
 		{
@@ -226,9 +226,6 @@ namespace TimesheetForWindows
                     tc.Year = Convert.ToString(DateTime.Today.Year);
                     int newTimecardId = dbLib.CreateTimeCard(tc);
                 }
-                
-
-
             }
             catch(Exception ex)
             {
@@ -242,11 +239,6 @@ namespace TimesheetForWindows
                 //Deny the wait cursor
                 Application.UseWaitCursor = false;
             }
-
-
-
-
-
         }
 
         private void GetEmployeeTimecards()
@@ -336,8 +328,9 @@ namespace TimesheetForWindows
         }
 
 
-		#endregion
+
+        #endregion
 
 
-	}
+    }
 }
