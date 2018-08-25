@@ -34,24 +34,24 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
-			using (OpsDataReader dbReader = new OpsDataReader())
+			using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 			{
 				//The current employeeId is the current user's employee ID
 				try
 				{
 					string[] usr = UserPrincipal.Current.DisplayName.Split(' ');
-					_employee = dbReader.GetEmployeeByName(usr[0], usr[1]);
+					_employee = dbLib.GetEmployeeByName(usr[0], usr[1]);
 				}
 				catch (Exception ex)
 				{
-					string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
-					dbReader.LogHardErrorMessage(errTitle, ex.Source, ex.Message);
-					throw;
-				}
+                    string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+                    MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+                    Application.Exit();
+                }
 			}
-				// Instantiate the forms that this MainForm controls.
-				_timecardForm = new TimecardForm(_employee);
-				_timecardForm.Visible = false;
+			// Instantiate the forms that this MainForm controls.
+			_timecardForm = new TimecardForm(_employee);
+			_timecardForm.Visible = false;
 
             // The current active form is the one the user is working
             _currentActiveForm = null;

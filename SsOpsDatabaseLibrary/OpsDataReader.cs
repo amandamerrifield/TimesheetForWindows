@@ -106,6 +106,9 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
+
+        //===================================================
+        // Functions that return a list of entity types
         public List<Timecard> GetTimecardsForEmployee(string employeeId)
         {
             SqlParameter parm;
@@ -141,12 +144,52 @@ namespace SsOpsDatabaseLibrary
             }
         }
 
+        public List<TimecardDetail> GetTimecardDetailsByTimecardId(string tcId)
+        {
+            SqlParameter parm;
+            List<TimecardDetail> listTcd = new List<TimecardDetail>();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardDetailByTimecardId",_dbConn))
+                {
+                    parm = new SqlParameter("@timecardId", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tcId;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while(reader.Read())
+                    {
+                        TimecardDetail tcd = new TimecardDetail();
+                        tcd.Detail_ID = (string) reader["TcDetailId"];
+                        tcd.Task_ID = (string) reader["TaskId"];
+                        tcd.Timecard_ID = (string) reader["TimecardId"];
+                        tcd.Monday_Hrs = (string) reader["MondayHrs"];
+                        tcd.Tuesday_Hrs = (string) reader["TuesdayHrs"];
+                        tcd.Wednesday_Hrs = (string) reader["WednesdayHrs"];
+                        tcd.Thursday_Hrs = (string) reader["ThursdayHrs"];
+                        tcd.Friday_Hrs = (string) reader["FridayHrs"];
+                        tcd.Saturday_Hrs = (string) reader["SaturdayHrs"];
+                        tcd.Sunday_Hrs = (string) reader["SundayHrs"];
+
+                        listTcd.Add(tcd);
+                    }
+                }
+                return listTcd;
+            }
+            catch(Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+
+        }
 
 
-		// =================================================
-		#region Error Handling Support
 
-		public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
+        // =================================================
+        #region Error Handling Support
+
+        public void LogHardErrorMessage(string classNamAndMethod, string source, string msg)
 		{
 			//Hard errors are ones that cant be appended to the database errors table
 			string[] msgs = new string[]

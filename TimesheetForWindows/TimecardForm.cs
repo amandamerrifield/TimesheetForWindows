@@ -15,6 +15,12 @@ namespace TimesheetForWindows
 {
 	public partial class TimecardForm : Form
 	{
+        // This timecard form requires that the timecard under glass exist in the underlying database.
+        // So if a user creates a new timecard for the week, then a new timecard record shall be
+        // appended/comitted to the database. However, timecard detail rows will not be added to the DB
+        // unless the user saves her changes.  When saving changes, it will be up to the DataWriter to
+        // detect that new rows are being added along with existing rows having been changed.
+
 		// Enums and variables having form-wide scope
 		private enum FormState
 		{
@@ -63,30 +69,29 @@ namespace TimesheetForWindows
 
 			// Get the employee's data onto the form
 			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
-			
-			//Call opsdatareader to get timecards for this employee
-			using (OpsDataReader dbReader = new OpsDataReader())
-			{
-				_timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
-				//_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
 
-				InitializeComboBox();
+            GetEmployeeTimecards();
+			if(_timecards.Count < 1)
+            {
+                //No timecards for this employee
+                AddTimecardForEmployee();
+            }
+            GetTimecardDetail();
+            if(_thisTcDetail.Count < 1)
+            {
+                //No detail rows for this timecard
+            }
+            InitializeComboBox();
 
-				// Call OpsDataReader to get the details for the selected week
-				//_thisTcDetail = dbReader.GetTcDetailsByTimecardId(_thisTimecard.TimecardId);
-				_thisTcDetail = GetTcDetailsByTimecardIdSTUB(_thisTimecard.TimecardId);
-
-				dgvTimecardDetail.DataSource = _thisTcDetail;
-			}
-
-		}
+            dgvTimecardDetail.DataSource = _thisTcDetail;
+        }
 
 		//
 		// Add Week Button Click
 		private void buttonAddWeek_Click(object sender, EventArgs e)
 		{
-
-		}
+            AddNewWeekToTimecard();
+        }
 
 		#endregion
 
@@ -152,12 +157,6 @@ namespace TimesheetForWindows
 
 				this.Text += " --- " + comboBoxWeek.SelectedItem.ToString();
 			}
-			else
-			{
-				//Employee has no timecards. Add New Week.
-				AddNewWeekToTimecard();
-			}
-
 		}
 		// This presumes that weeks start with Monday.
 		// Week 1 is the 1st week of the year with a Thursday in it.
@@ -185,7 +184,7 @@ namespace TimesheetForWindows
 			}
 			catch (Exception ex)
 			{
-				// ToDo:
+				// ToDo: ex
 				System.Threading.Thread.CurrentThread.Abort();
 			}
 		}
@@ -214,12 +213,128 @@ namespace TimesheetForWindows
 
 		private void AddNewWeekToTimecard()
 		{
-			//Empty the grid
-			_thisTcDetail.Clear();
-			//Append the new week to the combobox and select it
+            //Assert the wait cursor..
+            Application.UseWaitCursor = true;
+
+            try
+            {
+                //Create a new timecard in the DB
+                using(OpsDataWriter dbWriter = new OpsDataWriter())
+                {
+                    Timecard tc = new Timecard();
+                    tc.EmployeeId = _employee.EmployeeId;
+                    tc.WeekNumber = Convert.ToString(_thisWeekNumber);
+                    tc.Year = Convert.ToString(DateTime.Today.Year);
+                    int newTimecardId = dbWriter.CreateTimeCard(tc);
+                }
+                
 
 
-		}
+            }
+            catch(Exception ex)
+            {
+                Application.UseWaitCursor = false;
+                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+                Application.Exit();
+            }
+            finally
+            {
+                //Deny the wait cursor
+                Application.UseWaitCursor = false;
+            }
+
+
+
+
+
+        }
+
+        private void GetEmployeeTimecards()
+        {
+            try
+            {
+                //Assert wait cursor
+                Application.UseWaitCursor = true;
+
+                using (OpsDataReader dbReader = new OpsDataReader())
+                {
+                    _timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
+                    //_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
+                }
+            }
+            catch(Exception ex)
+            {
+                Application.UseWaitCursor = false;
+                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+                Application.Exit();
+            }
+            finally
+            {
+                //Deny the wait cursor
+                Application.UseWaitCursor = false;
+            }
+        }
+
+        private void GetTimecardDetail()
+        {
+            try
+            {
+                //Assert wait cursor
+                Application.UseWaitCursor = true;
+
+                using (OpsDataReader dbReader = new OpsDataReader())
+                {
+                    // Call OpsDataReader to get the details for the selected week
+                    _thisTcDetail = dbReader.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
+                    //_thisTcDetail = GetTcDetailsByTimecardIdSTUB(_thisTimecard.TimecardId); // STUB !!
+                }
+            }
+            catch(Exception ex)
+            {
+                Application.UseWaitCursor = false;
+                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+                Application.Exit();
+            }
+            finally
+            {
+                //Deny the wait cursor
+                Application.UseWaitCursor = false;
+            }
+        }
+
+        private void AddTimecardForEmployee()
+        {
+            try
+            {
+                //Assert wait cursor
+                Application.UseWaitCursor = true;
+
+                using(OpsDataWriter dbWriter = new OpsDataWriter())
+                {
+                    _thisTimecard = new Timecard();
+                    _thisTimecard.EmployeeId = _employee.EmployeeId;
+                    _thisTimecard.WeekNumber = Convert.ToString(_thisWeekNumber);
+                    _thisTimecard.Year = Convert.ToString(DateTime.Today.Year);
+                    int newTimecardID = dbWriter.CreateTimeCard(_thisTimecard);
+                    _thisTimecard.TimecardId = Convert.ToString(newTimecardID);
+                }
+            }
+            catch(Exception ex)
+            {
+                Application.UseWaitCursor = false;
+                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+                Application.Exit();
+            }
+            finally
+            {
+                //Deny the wait cursor
+                Application.UseWaitCursor = false;
+            }
+        }
 
 
 		#endregion

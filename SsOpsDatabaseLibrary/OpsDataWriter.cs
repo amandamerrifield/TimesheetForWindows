@@ -52,7 +52,7 @@ namespace SsOpsDatabaseLibrary
 
 			try
 			{
-				using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCard", _dbConn))
+				using (SqlCommand cmd = new SqlCommand("Isp_CreateTimecard", _dbConn))
 				{
 					cmd.CommandType = CommandType.StoredProcedure;
 
@@ -62,13 +62,17 @@ namespace SsOpsDatabaseLibrary
 
 					parm = new SqlParameter("@WeekNbr", SqlDbType.Int);
 					cmd.Parameters.Add(parm);
-					parm.Value = Convert.ToInt16(tcard.Year);
+					parm.Value = Convert.ToInt16(tcard.WeekNumber);
 
 					parm = new SqlParameter("@EmployeeId", SqlDbType.Int);
 					cmd.Parameters.Add(parm);
-					parm.Value = Convert.ToInt16(tcard.Year);
+					parm.Value = Convert.ToInt16(tcard.EmployeeId);
 
-					retVal = (Int32)cmd.ExecuteScalar();
+                    parm = new SqlParameter("@NewIdentity", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = 0;
+
+                    retVal = (Int32)cmd.ExecuteScalar();
 				}
 			}
 			catch (Exception ex)
