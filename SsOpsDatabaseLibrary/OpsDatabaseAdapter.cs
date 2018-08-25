@@ -100,9 +100,9 @@ namespace SsOpsDatabaseLibrary
             {
                 using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardsByEmployeeId", _dbConn))
                 {
-                    parm = new SqlParameter("@employeeId", SqlDbType.VarChar);
+                    parm = new SqlParameter("@employeeId", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
-                    parm.Value = employeeId;
+                    parm.Value = Convert.ToInt32(employeeId);
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
