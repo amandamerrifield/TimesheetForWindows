@@ -100,6 +100,8 @@ namespace SsOpsDatabaseLibrary
             {
                 using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardsByEmployeeId", _dbConn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
                     parm = new SqlParameter("@employeeId", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
                     parm.Value = Convert.ToInt32(employeeId);
@@ -108,10 +110,10 @@ namespace SsOpsDatabaseLibrary
                     {
                         Timecard tc = new Timecard();
                         tc.DetailTable = null;
-                        tc.EmployeeId = (string)reader["EmployeeId"];
-                        tc.TimecardId = (string)reader["TimecardId"];
-                        tc.WeekNumber = (string)reader["WeekNbr"];
-                        tc.Year = (string)reader["Year"];
+                        tc.EmployeeId = employeeId;
+                        tc.TimecardId = Convert.ToString(reader["TimecardId"]);
+                        tc.WeekNumber = Convert.ToString(reader["WeekNbr"]);
+                        tc.Year = Convert.ToString(reader["Year"]);
 
                         timecards.Add(tc);
                     }

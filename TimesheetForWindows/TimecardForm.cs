@@ -76,13 +76,12 @@ namespace TimesheetForWindows
                 //No timecards for this employee
                 AddTimecardForEmployee();
             }
+            InitializeComboBox();
             GetTimecardDetail();
             if(_thisTcDetail.Count < 1)
             {
                 //No detail rows for this timecard
             }
-            InitializeComboBox();
-
             dgvTimecardDetail.DataSource = _thisTcDetail;
         }
 
