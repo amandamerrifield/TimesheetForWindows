@@ -17,7 +17,7 @@ namespace SsOpsDatabaseLibrary
 		{
 			_errSource = ex.Source;
 			_errDescription = ex.Message;
-			_timeStamp = DateTime.Now.ToString(OpsDataWriter.TIMESTAMP_FORMAT);
+			_timeStamp = DateTime.Now.ToString(OpsDatabaseAdapter.TIMESTAMP_FORMAT);
 			_userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
 		}
 

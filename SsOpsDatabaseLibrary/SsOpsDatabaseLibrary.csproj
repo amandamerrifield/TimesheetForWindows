@@ -48,8 +48,6 @@
     <Compile Include="Entity\Timecard.cs" />
     <Compile Include="Entity\TimecardDetail.cs" />
     <Compile Include="OpsDatabaseAdapter.cs" />
-    <Compile Include="OpsDataReader.cs" />
-    <Compile Include="OpsDataWriter.cs" />
     <Compile Include="OpsError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

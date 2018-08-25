@@ -219,13 +219,13 @@ namespace TimesheetForWindows
             try
             {
                 //Create a new timecard in the DB
-                using(OpsDataWriter dbWriter = new OpsDataWriter())
+                using(OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
                 {
                     Timecard tc = new Timecard();
                     tc.EmployeeId = _employee.EmployeeId;
                     tc.WeekNumber = Convert.ToString(_thisWeekNumber);
                     tc.Year = Convert.ToString(DateTime.Today.Year);
-                    int newTimecardId = dbWriter.CreateTimeCard(tc);
+                    int newTimecardId = dbLib.CreateTimeCard(tc);
                 }
                 
 
@@ -257,9 +257,9 @@ namespace TimesheetForWindows
                 //Assert wait cursor
                 Application.UseWaitCursor = true;
 
-                using (OpsDataReader dbReader = new OpsDataReader())
+                using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
                 {
-                    _timecards = dbReader.GetTimecardsForEmployee(_employee.EmployeeId);
+                    _timecards = dbLib.GetTimecardsForEmployee(_employee.EmployeeId);
                     //_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
                 }
             }
@@ -284,10 +284,10 @@ namespace TimesheetForWindows
                 //Assert wait cursor
                 Application.UseWaitCursor = true;
 
-                using (OpsDataReader dbReader = new OpsDataReader())
+                using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
                 {
                     // Call OpsDataReader to get the details for the selected week
-                    _thisTcDetail = dbReader.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
+                    _thisTcDetail = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
                     //_thisTcDetail = GetTcDetailsByTimecardIdSTUB(_thisTimecard.TimecardId); // STUB !!
                 }
             }
@@ -312,13 +312,13 @@ namespace TimesheetForWindows
                 //Assert wait cursor
                 Application.UseWaitCursor = true;
 
-                using(OpsDataWriter dbWriter = new OpsDataWriter())
+                using(OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
                 {
                     _thisTimecard = new Timecard();
                     _thisTimecard.EmployeeId = _employee.EmployeeId;
                     _thisTimecard.WeekNumber = Convert.ToString(_thisWeekNumber);
                     _thisTimecard.Year = Convert.ToString(DateTime.Today.Year);
-                    int newTimecardID = dbWriter.CreateTimeCard(_thisTimecard);
+                    int newTimecardID = dbLib.CreateTimeCard(_thisTimecard);
                     _thisTimecard.TimecardId = Convert.ToString(newTimecardID);
                 }
             }
