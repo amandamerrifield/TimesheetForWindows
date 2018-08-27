@@ -14,11 +14,16 @@ namespace TimesheetForWindows
 {
 	public partial class SelectTaskForm : Form
 	{
+		private bool _canceled = false;
 		// Constructor
 		public SelectTaskForm(List<SsOpsDatabaseLibrary.Entity.Task> tasks)
 		{
 			InitializeComponent();
-			if(tasks.Count < 1)
+			
+			// We will manually control the form location on screen
+			this.StartPosition = FormStartPosition.Manual;
+
+			if (tasks.Count < 1)
 			{
 				throw new Exception("Error! We must have at least one task");
 			}
@@ -34,6 +39,7 @@ namespace TimesheetForWindows
 		public SsOpsDatabaseLibrary.Entity.Task GetSelectedTask()
 		{
 			SsOpsDatabaseLibrary.Entity.Task selectedTask = (SsOpsDatabaseLibrary.Entity.Task) listBox1.SelectedItem;
+			if (_canceled) return null;
 			return selectedTask;
 		}
 
@@ -45,12 +51,14 @@ namespace TimesheetForWindows
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-
+			_canceled = false;
+			this.Visible = false;
 		}
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-
+			_canceled = true;
+			this.Visible = false;
 		}
 
 		private void SelectTaskForm_Load(object sender, EventArgs e)

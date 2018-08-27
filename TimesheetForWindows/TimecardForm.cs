@@ -32,9 +32,9 @@ namespace TimesheetForWindows
 		private Employee _employee;
 		private List<Timecard> _timecards;
 		private Timecard _thisTimecard;
-		private List<TimecardDetail> _thisTcDetail;
+		private List<TimecardDetail> _thisTcDetail = null;
 		private int _thisWeekNumber = 1;
-		private List<SsOpsDatabaseLibrary.Entity.Task> _availableTasks = null;
+		private List<SsOpsDatabaseLibrary.Entity.Task> _activeTasks;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -50,6 +50,7 @@ namespace TimesheetForWindows
 
 			// Get a copy of the employee key
 			_employee = emp;
+			_activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 		}
 
 		// ====================================================
@@ -83,6 +84,9 @@ namespace TimesheetForWindows
             GetTimecardDetail();
 			// Update datagridview control
   			dgvTimecardDetail.DataSource = _thisTcDetail;
+
+			//Get all active tasks from the database
+			GetActiveTasks();
 		}
 
 		//
@@ -96,23 +100,50 @@ namespace TimesheetForWindows
         // Add Task Button Click
         private void buttonAddTask_Click(object sender, EventArgs e)
         {
-			// Whatever week is selected in the dropdown list, add a task to it
 			// Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
 			// Don't show tasks that are already on the time card
-			var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 			SsOpsDatabaseLibrary.Entity.Task theSelectedTask = new SsOpsDatabaseLibrary.Entity.Task();
 
-			//Add tasks to the list that are not already on the timecard
+			//Look at each active task and check that it is not found in the timecard detail list. If found, then it will not be available. 
+			//Else, the active task must be avail.
+			List<SsOpsDatabaseLibrary.Entity.Task> filteredTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			bool foundit = false;
 
-			GetActiveTasks();
-
-			using (SelectTaskForm stf = new SelectTaskForm(_availableTasks))
+			foreach (var task in _activeTasks)
 			{
+				foundit = false;
+				foreach (var tcd in _thisTcDetail)
+				{
+					if (task.TaskName == tcd.TaskName)
+					{
+						foundit = true;
+						break;
+					}
+				}
+				if (!foundit)
+				{
+					filteredTasks.Add(task);
+				}
+			}
+
+			using (SelectTaskForm stf = new SelectTaskForm(filteredTasks))
+			{
+				Point targetPoint = this.Location;
+				targetPoint.X = this.Location.X + 170;
+				targetPoint.Y = this.Location.Y + 25;
+
+				stf.Width = 272;
+				stf.Height = 458;
+				stf.Location = targetPoint;
+
 				stf.ShowDialog(this);
 				theSelectedTask = stf.GetSelectedTask();
 			}
-
-
+			if(theSelectedTask != null)
+			{
+				//Add the selected task to the timecard
+				
+			}
         }
 
         #endregion
@@ -347,7 +378,9 @@ namespace TimesheetForWindows
 
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
-					_availableTasks = dbLib.GetActiveTasks();
+					//Active tasks are the ones in the database that haven't ended yet
+					var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+					_activeTasks = dbLib.GetActiveTasks();
 				}
 			}
 			catch (Exception ex)
