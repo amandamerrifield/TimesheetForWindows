@@ -87,12 +87,48 @@ namespace SsOpsDatabaseLibrary
             }
         }
 
-        #endregion
+		#endregion
 
-        //=========================================================
-        #region Functions that return List<Entity>
+		//=========================================================
+		#region Functions that return List<Entity>
 
-        public List<Timecard> GetTimecardsForEmployee(string employeeId)
+		public List<Entity.Task> GetActiveTasks()
+		{
+			//SqlParameter parm;
+			List<Entity.Task> tasks = new List<Entity.Task>();
+			try
+			{
+				using (SqlCommand cmd = new SqlCommand("Gsp_GetActiveTasks", _dbConn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					SqlDataReader reader = cmd.ExecuteReader();
+					while (reader.Read())
+					{
+						Entity.Task et = new Entity.Task();
+						et.TaskId = Convert.ToString(reader["TaskId"]);
+						et.TaskCategoryId = Convert.ToString(reader["TaskCategoryId"]);
+						et.TaskName = (string) reader["TaskName"];
+						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
+						et.ActualHours = Convert.ToString(reader["ActualHours"]);
+						et.StartDate = Convert.ToString(reader["StartDate"]);
+						et.EndDate = Convert.ToString(reader["EndDate"]);
+
+						tasks.Add(et);
+					}
+
+				}
+				return tasks;
+			}
+			catch (Exception ex)
+			{
+				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+		}
+
+		public List<Timecard> GetTimecardsForEmployee(string employeeId)
         {
             SqlParameter parm;
             List<Timecard> timecards = new List<Timecard>();

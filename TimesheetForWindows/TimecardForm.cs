@@ -34,6 +34,7 @@ namespace TimesheetForWindows
 		private Timecard _thisTimecard;
 		private List<TimecardDetail> _thisTcDetail;
 		private int _thisWeekNumber = 1;
+		private List<SsOpsDatabaseLibrary.Entity.Task> _availableTasks = null;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -95,10 +96,23 @@ namespace TimesheetForWindows
         // Add Task Button Click
         private void buttonAddTask_Click(object sender, EventArgs e)
         {
-            // Whatever week is selected in the dropdown list, add a task to it
-            // Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
-            // 
-            
+			// Whatever week is selected in the dropdown list, add a task to it
+			// Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
+			// Don't show tasks that are already on the time card
+			var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			SsOpsDatabaseLibrary.Entity.Task theSelectedTask = new SsOpsDatabaseLibrary.Entity.Task();
+
+			//Add tasks to the list that are not already on the timecard
+
+			GetActiveTasks();
+
+			using (SelectTaskForm stf = new SelectTaskForm(_availableTasks))
+			{
+				stf.ShowDialog(this);
+				theSelectedTask = stf.GetSelectedTask();
+			}
+
+
         }
 
         #endregion
@@ -324,10 +338,35 @@ namespace TimesheetForWindows
             }
         }
 
+		private void GetActiveTasks()
+		{
+			try
+			{
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
+
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				{
+					_availableTasks = dbLib.GetActiveTasks();
+				}
+			}
+			catch (Exception ex)
+			{
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally
+			{
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
 
 
-        #endregion
+		#endregion
 
 
-    }
+	}
 }

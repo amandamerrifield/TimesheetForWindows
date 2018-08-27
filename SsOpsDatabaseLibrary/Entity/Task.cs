@@ -17,5 +17,9 @@ namespace SsOpsDatabaseLibrary.Entity
         public string ActualHours { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-    }
+		public override String ToString()
+		{
+			return TaskName;
+		}
+	}
 }
