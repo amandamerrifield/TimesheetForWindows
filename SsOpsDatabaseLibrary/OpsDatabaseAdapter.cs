@@ -137,23 +137,26 @@ namespace SsOpsDatabaseLibrary
             {
                 using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardDetailByTimecardId", _dbConn))
                 {
-                    parm = new SqlParameter("@timecardId", SqlDbType.Int);
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					parm = new SqlParameter("@timecardId", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
                     parm.Value = tcId;
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         TimecardDetail tcd = new TimecardDetail();
-                        tcd.Detail_ID = (string)reader["TcDetailId"];
-                        tcd.Task_ID = (string)reader["TaskId"];
-                        tcd.Timecard_ID = (string)reader["TimecardId"];
-                        tcd.Monday_Hrs = (string)reader["MondayHrs"];
-                        tcd.Tuesday_Hrs = (string)reader["TuesdayHrs"];
-                        tcd.Wednesday_Hrs = (string)reader["WednesdayHrs"];
-                        tcd.Thursday_Hrs = (string)reader["ThursdayHrs"];
-                        tcd.Friday_Hrs = (string)reader["FridayHrs"];
-                        tcd.Saturday_Hrs = (string)reader["SaturdayHrs"];
-                        tcd.Sunday_Hrs = (string)reader["SundayHrs"];
+                        tcd.Detail_ID = Convert.ToString(reader["TcDetailId"]);
+                        tcd.Task_ID = Convert.ToString(reader["TaskId"]);
+                        tcd.Timecard_ID = Convert.ToString(reader["TimecardId"]);
+                        tcd.Monday_Hrs = Convert.ToString(reader["MondayHrs"]);
+                        tcd.Tuesday_Hrs = Convert.ToString(reader["TuesdayHrs"]);
+                        tcd.Wednesday_Hrs = Convert.ToString(reader["WednesdayHrs"]);
+                        tcd.Thursday_Hrs = Convert.ToString(reader["ThursdayHrs"]);
+                        tcd.Friday_Hrs = Convert.ToString(reader["FridayHrs"]);
+                        tcd.Saturday_Hrs = Convert.ToString(reader["SaturdayHrs"]);
+                        tcd.Sunday_Hrs = Convert.ToString(reader["SundayHrs"]);
+						tcd.TaskName = (string)reader["TaskName"];
 
                         listTcd.Add(tcd);
                     }

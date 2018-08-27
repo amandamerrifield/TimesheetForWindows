@@ -57,8 +57,8 @@ namespace TimesheetForWindows
 		// Key_Down Event Handler
 		private void TimecardForm_KeyDown(object sender, KeyEventArgs e)
 		{
-			_currentFormState = FormState.ViewingPotentialChanges;
-			assertFormState();
+			//_currentFormState = FormState.ViewingPotentialChanges;
+			//assertFormState();
 		}
 		//
 		// Form Load Event Handler
@@ -78,13 +78,20 @@ namespace TimesheetForWindows
             }
             // All available weeks go into the Week combobox
             InitializeComboBox();
+			// The selected week - get details
             GetTimecardDetail();
             if(_thisTcDetail.Count < 1)
             {
-                //No detail rows for this timecard
-            }
-            dgvTimecardDetail.DataSource = _thisTcDetail;
-        }
+				//No detail rows for this timecard
+				dgvTimecardDetail.DataSource = _thisTcDetail;
+			}
+			else
+			{
+				dgvTimecardDetail.DataSource = _thisTcDetail;
+			}
+
+
+		}
 
 		//
 		// Add Week Button Click

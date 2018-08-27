@@ -20,5 +20,6 @@ namespace SsOpsDatabaseLibrary.Entity
 		public string Friday_Hrs { get; set; }
 		public string Saturday_Hrs { get; set; }
 		public string Sunday_Hrs { get; set; }
+		public string TaskName { get; set; }
 	}
 }
