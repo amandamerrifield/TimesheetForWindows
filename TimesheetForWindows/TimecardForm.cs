@@ -80,17 +80,8 @@ namespace TimesheetForWindows
             InitializeComboBox();
 			// The selected week - get details
             GetTimecardDetail();
-            if(_thisTcDetail.Count < 1)
-            {
-				//No detail rows for this timecard
-				dgvTimecardDetail.DataSource = _thisTcDetail;
-			}
-			else
-			{
-				dgvTimecardDetail.DataSource = _thisTcDetail;
-			}
-
-
+			// Update datagridview control
+  			dgvTimecardDetail.DataSource = _thisTcDetail;
 		}
 
 		//
@@ -286,7 +277,6 @@ namespace TimesheetForWindows
                 {
                     // Call OpsDataReader to get the details for the selected week
                     _thisTcDetail = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
-                    //_thisTcDetail = GetTcDetailsByTimecardIdSTUB(_thisTimecard.TimecardId); // STUB !!
                 }
             }
             catch(Exception ex)

@@ -28,6 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.buttonUpdate = new System.Windows.Forms.Button();
 			this.buttonAddTask = new System.Windows.Forms.Button();
@@ -54,13 +56,13 @@
 			// 
 			this.statusStrip1.Location = new System.Drawing.Point(0, 442);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(1042, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(761, 22);
 			this.statusStrip1.TabIndex = 0;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
 			// buttonUpdate
 			// 
-			this.buttonUpdate.Location = new System.Drawing.Point(546, 14);
+			this.buttonUpdate.Location = new System.Drawing.Point(509, 14);
 			this.buttonUpdate.Name = "buttonUpdate";
 			this.buttonUpdate.Size = new System.Drawing.Size(107, 25);
 			this.buttonUpdate.TabIndex = 97;
@@ -70,7 +72,7 @@
 			// 
 			// buttonAddTask
 			// 
-			this.buttonAddTask.Location = new System.Drawing.Point(320, 14);
+			this.buttonAddTask.Location = new System.Drawing.Point(283, 14);
 			this.buttonAddTask.Name = "buttonAddTask";
 			this.buttonAddTask.Size = new System.Drawing.Size(107, 24);
 			this.buttonAddTask.TabIndex = 99;
@@ -81,7 +83,7 @@
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Location = new System.Drawing.Point(433, 14);
+			this.buttonCancel.Location = new System.Drawing.Point(396, 14);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(107, 25);
 			this.buttonCancel.TabIndex = 98;
@@ -91,7 +93,7 @@
 			// 
 			// buttonQuit
 			// 
-			this.buttonQuit.Location = new System.Drawing.Point(659, 14);
+			this.buttonQuit.Location = new System.Drawing.Point(622, 14);
 			this.buttonQuit.Name = "buttonQuit";
 			this.buttonQuit.Size = new System.Drawing.Size(108, 25);
 			this.buttonQuit.TabIndex = 96;
@@ -123,16 +125,24 @@
             this.Detail_ID,
             this.Task_ID,
             this.Timecard_ID});
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dgvTimecardDetail.DefaultCellStyle = dataGridViewCellStyle2;
 			this.dgvTimecardDetail.Location = new System.Drawing.Point(22, 58);
 			this.dgvTimecardDetail.MultiSelect = false;
 			this.dgvTimecardDetail.Name = "dgvTimecardDetail";
 			this.dgvTimecardDetail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dgvTimecardDetail.Size = new System.Drawing.Size(994, 339);
+			this.dgvTimecardDetail.Size = new System.Drawing.Size(708, 339);
 			this.dgvTimecardDetail.TabIndex = 0;
 			// 
 			// buttonAddWeek
 			// 
-			this.buttonAddWeek.Location = new System.Drawing.Point(207, 14);
+			this.buttonAddWeek.Location = new System.Drawing.Point(170, 14);
 			this.buttonAddWeek.Name = "buttonAddWeek";
 			this.buttonAddWeek.Size = new System.Drawing.Size(107, 24);
 			this.buttonAddWeek.TabIndex = 100;
@@ -144,6 +154,8 @@
 			// TaskName
 			// 
 			this.TaskName.DataPropertyName = "TaskName";
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			this.TaskName.DefaultCellStyle = dataGridViewCellStyle1;
 			this.TaskName.HeaderText = "Task";
 			this.TaskName.Name = "TaskName";
 			this.TaskName.Width = 220;
@@ -153,42 +165,49 @@
 			this.Monday_Hrs.DataPropertyName = "Monday_Hrs";
 			this.Monday_Hrs.HeaderText = "Monday";
 			this.Monday_Hrs.Name = "Monday_Hrs";
+			this.Monday_Hrs.Width = 60;
 			// 
 			// Tuesday_Hrs
 			// 
 			this.Tuesday_Hrs.DataPropertyName = "Tuesday_Hrs";
 			this.Tuesday_Hrs.HeaderText = "Tuesday";
 			this.Tuesday_Hrs.Name = "Tuesday_Hrs";
+			this.Tuesday_Hrs.Width = 60;
 			// 
 			// Wednesday_Hrs
 			// 
 			this.Wednesday_Hrs.DataPropertyName = "Wednesday_Hrs";
-			this.Wednesday_Hrs.HeaderText = "Wednesday";
+			this.Wednesday_Hrs.HeaderText = "Wednsday";
 			this.Wednesday_Hrs.Name = "Wednesday_Hrs";
+			this.Wednesday_Hrs.Width = 60;
 			// 
 			// Thursday_Hrs
 			// 
 			this.Thursday_Hrs.DataPropertyName = "Thursday_Hrs";
 			this.Thursday_Hrs.HeaderText = "Thursday";
 			this.Thursday_Hrs.Name = "Thursday_Hrs";
+			this.Thursday_Hrs.Width = 60;
 			// 
 			// Friday_Hrs
 			// 
 			this.Friday_Hrs.DataPropertyName = "Friday_Hrs";
 			this.Friday_Hrs.HeaderText = "Friday";
 			this.Friday_Hrs.Name = "Friday_Hrs";
+			this.Friday_Hrs.Width = 60;
 			// 
 			// Saturday_Hrs
 			// 
 			this.Saturday_Hrs.DataPropertyName = "Saturday_Hrs";
 			this.Saturday_Hrs.HeaderText = "Saturday";
 			this.Saturday_Hrs.Name = "Saturday_Hrs";
+			this.Saturday_Hrs.Width = 60;
 			// 
 			// Sunday_Hrs
 			// 
 			this.Sunday_Hrs.DataPropertyName = "Sunday_Hrs";
 			this.Sunday_Hrs.HeaderText = "Sunday";
 			this.Sunday_Hrs.Name = "Sunday_Hrs";
+			this.Sunday_Hrs.Width = 60;
 			// 
 			// Detail_ID
 			// 
@@ -196,6 +215,7 @@
 			this.Detail_ID.HeaderText = "Detail_ID";
 			this.Detail_ID.Name = "Detail_ID";
 			this.Detail_ID.Visible = false;
+			this.Detail_ID.Width = 60;
 			// 
 			// Task_ID
 			// 
@@ -203,6 +223,7 @@
 			this.Task_ID.HeaderText = "Task_ID";
 			this.Task_ID.Name = "Task_ID";
 			this.Task_ID.Visible = false;
+			this.Task_ID.Width = 60;
 			// 
 			// Timecard_ID
 			// 
@@ -210,12 +231,13 @@
 			this.Timecard_ID.HeaderText = "Timecard_ID";
 			this.Timecard_ID.Name = "Timecard_ID";
 			this.Timecard_ID.Visible = false;
+			this.Timecard_ID.Width = 60;
 			// 
 			// TimecardForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1042, 464);
+			this.ClientSize = new System.Drawing.Size(761, 464);
 			this.ControlBox = false;
 			this.Controls.Add(this.buttonAddWeek);
 			this.Controls.Add(this.dgvTimecardDetail);
