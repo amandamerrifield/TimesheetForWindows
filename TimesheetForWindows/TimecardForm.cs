@@ -111,7 +111,7 @@ namespace TimesheetForWindows
 
 			foreach (var task in _activeTasks)
 			{
-				foundit = false;
+				foundit = false; 
 				foreach (var tcd in _thisTcDetail)
 				{
 					if (task.TaskName == tcd.TaskName)

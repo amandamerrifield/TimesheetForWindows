@@ -223,13 +223,43 @@ namespace SsOpsDatabaseLibrary
             }
 
         }
+		public List<TaskCategory> GetTaskCategories()
+		{
 
-        #endregion
+			List<TaskCategory> cats = new List<TaskCategory>();
+			try
+			{
+				using (SqlCommand cmd = new SqlCommand("Gsp_GetTaskCategories", _dbConn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+					SqlDataReader reader = cmd.ExecuteReader();
+					while (reader.Read())
+					{
+						TaskCategory tc = new TaskCategory();
+						tc.CategoryDescription = (string) reader["CategoryDescription"];
+						tc.CategoryId = Convert.ToString(reader["CategoryId"]);
+						tc.CategoryName = (string)reader["CategoryName"];
 
-        // ========================================================
-        #region Public Functions that return a newly generated primary key
+						cats.Add(tc);
+					}
+					
+				}
+				return cats;
+			}
+			catch (Exception ex)
+			{
+				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+		}
 
-        public Int32 CreateTimeCard(Timecard tcard)
+		#endregion
+
+		// ======================================================== 
+		#region Public Functions that return a newly generated primary key
+
+		public Int32 CreateTimeCard(Timecard tcard)
         {
             Int32 retVal = 0;
             SqlParameter parm;

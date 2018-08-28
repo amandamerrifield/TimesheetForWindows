@@ -22,9 +22,10 @@ namespace TimesheetForWindows
         private Form _timecardForm;
         private Form _currentActiveForm;
 		private Employee _employee;
+		private Form _taskcategoriesform;
 
-        // MainForm Constructor
-        public MainForm() : base()
+		// MainForm Constructor
+		public MainForm() : base()
         {
             InitializeComponent();
         }
@@ -52,6 +53,8 @@ namespace TimesheetForWindows
 			// Instantiate the forms that this MainForm controls.
 			_timecardForm = new TimecardForm(_employee);
 			_timecardForm.Visible = false;
+			_taskcategoriesform = new TaskCategoriesForm();
+			_taskcategoriesform.Visible = false;
 
             // The current active form is the one the user is working
             _currentActiveForm = null;
@@ -102,8 +105,19 @@ namespace TimesheetForWindows
 
         }
 
-
-        
-
-    }
+		private void btnDefineTaskCategories_Click(object sender, EventArgs e)
+		{
+			if (_currentActiveForm != null)
+			{
+				_currentActiveForm.Visible = false;
+			}
+			_currentActiveForm = _taskcategoriesform;
+			// And now it is positioned relative to ourself and made visible
+			Point targetPoint = this.Location;
+			targetPoint.X = this.Location.X + 170;
+			targetPoint.Y = this.Location.Y + 25;
+			_currentActiveForm.Location = targetPoint;
+			_currentActiveForm.Visible = true;
+		}
+	}
 }

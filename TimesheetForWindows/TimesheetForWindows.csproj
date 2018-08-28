@@ -76,6 +76,12 @@
     <Compile Include="SelectTaskForm.Designer.cs">
       <DependentUpon>SelectTaskForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskCategoriesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskCategoriesForm.Designer.cs">
+      <DependentUpon>TaskCategoriesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="TimecardForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,9 @@
     </Compile>
     <EmbeddedResource Include="SelectTaskForm.resx">
       <DependentUpon>SelectTaskForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskCategoriesForm.resx">
+      <DependentUpon>TaskCategoriesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TimecardForm.resx">
       <DependentUpon>TimecardForm.cs</DependentUpon>
