@@ -62,6 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefineTasksForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DefineTasksForm.Designer.cs">
+      <DependentUpon>DefineTasksForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +94,9 @@
     <Compile Include="TimecardForm.Designer.cs">
       <DependentUpon>TimecardForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DefineTasksForm.resx">
+      <DependentUpon>DefineTasksForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

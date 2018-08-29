@@ -23,6 +23,7 @@ namespace TimesheetForWindows
         private Form _currentActiveForm;
 		private Employee _employee;
 		private Form _taskcategoriesform;
+		private Form _DefineTasksForm;
 
 		// MainForm Constructor
 		public MainForm() : base()
@@ -55,6 +56,8 @@ namespace TimesheetForWindows
 			_timecardForm.Visible = false;
 			_taskcategoriesform = new TaskCategoriesForm();
 			_taskcategoriesform.Visible = false;
+			_DefineTasksForm = new DefineTasksForm();
+			_DefineTasksForm.Visible = false;
 
             // The current active form is the one the user is working
             _currentActiveForm = null;
@@ -112,6 +115,21 @@ namespace TimesheetForWindows
 				_currentActiveForm.Visible = false;
 			}
 			_currentActiveForm = _taskcategoriesform;
+			// And now it is positioned relative to ourself and made visible
+			Point targetPoint = this.Location;
+			targetPoint.X = this.Location.X + 170;
+			targetPoint.Y = this.Location.Y + 25;
+			_currentActiveForm.Location = targetPoint;
+			_currentActiveForm.Visible = true;
+		}
+
+		private void btnDefineTasks_Click(object sender, EventArgs e)
+		{
+			if (_currentActiveForm != null)
+			{
+				_currentActiveForm.Visible = false;
+			}
+			_currentActiveForm = _DefineTasksForm;
 			// And now it is positioned relative to ourself and made visible
 			Point targetPoint = this.Location;
 			targetPoint.X = this.Location.X + 170;

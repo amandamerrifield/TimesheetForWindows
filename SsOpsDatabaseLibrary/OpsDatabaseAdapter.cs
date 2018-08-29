@@ -128,6 +128,42 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
+		public List<Entity.Task> GetAllTasks()
+		{
+			//SqlParameter parm;
+			List<Entity.Task> tasks = new List<Entity.Task>();
+			try
+			{
+				using (SqlCommand cmd = new SqlCommand("Gsp_GetAllTasks", _dbConn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					SqlDataReader reader = cmd.ExecuteReader();
+					while (reader.Read())
+					{
+						Entity.Task et = new Entity.Task();
+						et.TaskId = Convert.ToString(reader["TaskId"]);
+						et.TaskCategoryId = Convert.ToString(reader["TaskCategoryId"]);
+						et.TaskName = (string)reader["TaskName"];
+						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
+						et.ActualHours = Convert.ToString(reader["ActualHours"]);
+						et.StartDate = Convert.ToString(reader["StartDate"]);
+						et.EndDate = Convert.ToString(reader["EndDate"]);
+
+						tasks.Add(et);
+					}
+
+				}
+				return tasks;
+			}
+			catch (Exception ex)
+			{
+				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+		}
+
 		public List<Timecard> GetTimecardsForEmployee(string employeeId)
         {
             SqlParameter parm;
@@ -254,6 +290,8 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
+		
+
 		#endregion
 
 		// ======================================================== 
@@ -297,6 +335,46 @@ namespace SsOpsDatabaseLibrary
             }
             return retVal;
         }
+
+		public int CreateTaskCategory(TaskCategory tc)
+		{
+			int retVal = 0;
+			SqlParameter parm;
+
+			try
+			{
+				using (SqlCommand cmd = new SqlCommand("Isp_CreateTaskCategory", _dbConn))
+				{
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					parm = new SqlParameter("@CategoryDescription", SqlDbType.VarChar);
+					cmd.Parameters.Add(parm);
+					parm.Value = tc.CategoryDescription;
+
+
+					parm = new SqlParameter("@CategoryName", SqlDbType.VarChar);
+					cmd.Parameters.Add(parm);
+					parm.Value = tc.CategoryName;
+
+					parm = new SqlParameter("@IsOverheadYN", SqlDbType.NChar);
+					cmd.Parameters.Add(parm);
+					parm.Value = tc.IsOverheadYN;
+
+					parm = new SqlParameter("@NewIdentity", SqlDbType.Int);
+					cmd.Parameters.Add(parm);
+					parm.Value = 0;
+
+					retVal = (Int32)cmd.ExecuteScalar();
+				}
+			}
+			catch (Exception ex)
+			{
+				string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+			return retVal;
+		}
 
         #endregion
 

@@ -75,6 +75,7 @@
 			this.btnDefineTasks.TabIndex = 4;
 			this.btnDefineTasks.Text = "Define Tasks";
 			this.btnDefineTasks.UseVisualStyleBackColor = true;
+			this.btnDefineTasks.Click += new System.EventHandler(this.btnDefineTasks_Click);
 			// 
 			// btnEnterHours
 			// 

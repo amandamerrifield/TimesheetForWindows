@@ -29,61 +29,64 @@
 		private void InitializeComponent()
 		{
 			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.button1 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
-			this.button3 = new System.Windows.Forms.Button();
-			this.textBox5 = new System.Windows.Forms.TextBox();
+			this.btnSaveChanges = new System.Windows.Forms.Button();
+			this.btnClearChanges = new System.Windows.Forms.Button();
+			this.btnCancelChanges = new System.Windows.Forms.Button();
+			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CategoryId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// textBox1
 			// 
-			this.textBox1.Location = new System.Drawing.Point(28, 445);
+			this.textBox1.Location = new System.Drawing.Point(66, 431);
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(220, 20);
 			this.textBox1.TabIndex = 0;
 			// 
-			// button1
+			// btnSaveChanges
 			// 
-			this.button1.Location = new System.Drawing.Point(28, 480);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "Submit";
-			this.button1.UseVisualStyleBackColor = true;
+			this.btnSaveChanges.Location = new System.Drawing.Point(453, 481);
+			this.btnSaveChanges.Name = "btnSaveChanges";
+			this.btnSaveChanges.Size = new System.Drawing.Size(171, 23);
+			this.btnSaveChanges.TabIndex = 5;
+			this.btnSaveChanges.Text = "Save Changes";
+			this.btnSaveChanges.UseVisualStyleBackColor = true;
+			this.btnSaveChanges.Click += new System.EventHandler(this.btnSaveChanges_Click);
 			// 
-			// button2
+			// btnClearChanges
 			// 
-			this.button2.Location = new System.Drawing.Point(146, 480);
-			this.button2.Name = "button2";
-			this.button2.Size = new System.Drawing.Size(75, 23);
-			this.button2.TabIndex = 2;
-			this.button2.Text = "Clear Changes";
-			this.button2.UseVisualStyleBackColor = true;
+			this.btnClearChanges.Location = new System.Drawing.Point(66, 481);
+			this.btnClearChanges.Name = "btnClearChanges";
+			this.btnClearChanges.Size = new System.Drawing.Size(176, 23);
+			this.btnClearChanges.TabIndex = 3;
+			this.btnClearChanges.Text = "Clear Changes";
+			this.btnClearChanges.UseVisualStyleBackColor = true;
+			this.btnClearChanges.Click += new System.EventHandler(this.btnClearChanges_Click);
 			// 
-			// button3
+			// btnCancelChanges
 			// 
-			this.button3.Location = new System.Drawing.Point(274, 480);
-			this.button3.Name = "button3";
-			this.button3.Size = new System.Drawing.Size(75, 23);
-			this.button3.TabIndex = 3;
-			this.button3.Text = "Cancel";
-			this.button3.UseVisualStyleBackColor = true;
+			this.btnCancelChanges.Location = new System.Drawing.Point(266, 481);
+			this.btnCancelChanges.Name = "btnCancelChanges";
+			this.btnCancelChanges.Size = new System.Drawing.Size(166, 23);
+			this.btnCancelChanges.TabIndex = 4;
+			this.btnCancelChanges.Text = "Cancel Changes";
+			this.btnCancelChanges.UseVisualStyleBackColor = true;
+			this.btnCancelChanges.Click += new System.EventHandler(this.btnCancelChanges_Click);
 			// 
-			// textBox5
+			// textBox2
 			// 
-			this.textBox5.Location = new System.Drawing.Point(347, 454);
-			this.textBox5.Name = "textBox5";
-			this.textBox5.Size = new System.Drawing.Size(321, 20);
-			this.textBox5.TabIndex = 9;
+			this.textBox2.Location = new System.Drawing.Point(303, 431);
+			this.textBox2.Name = "textBox2";
+			this.textBox2.Size = new System.Drawing.Size(321, 20);
+			this.textBox2.TabIndex = 1;
 			// 
 			// dataGridView1
 			// 
@@ -101,35 +104,6 @@
 			this.dataGridView1.Name = "dataGridView1";
 			this.dataGridView1.Size = new System.Drawing.Size(776, 377);
 			this.dataGridView1.TabIndex = 15;
-			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(344, 424);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(152, 13);
-			this.label2.TabIndex = 17;
-			this.label2.Text = "Add New Category Description";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(25, 424);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(127, 13);
-			this.label3.TabIndex = 18;
-			this.label3.Text = "Add New Category Name";
-			// 
-			// checkBox1
-			// 
-			this.checkBox1.AutoSize = true;
-			this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.TopRight;
-			this.checkBox1.Location = new System.Drawing.Point(688, 454);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(84, 17);
-			this.checkBox1.TabIndex = 19;
-			this.checkBox1.Text = "Is Overhead";
-			this.checkBox1.UseVisualStyleBackColor = true;
 			// 
 			// Column1
 			// 
@@ -159,22 +133,52 @@
 			this.CategoryId.Name = "CategoryId";
 			this.CategoryId.Visible = false;
 			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(300, 415);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(152, 13);
+			this.label2.TabIndex = 17;
+			this.label2.Text = "Add New Category Description";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(63, 415);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(127, 13);
+			this.label3.TabIndex = 18;
+			this.label3.Text = "Add New Category Name";
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.TopRight;
+			this.checkBox1.Location = new System.Drawing.Point(639, 434);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(84, 17);
+			this.checkBox1.TabIndex = 2;
+			this.checkBox1.Text = "Is Overhead";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			// 
 			// TaskCategoriesForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(803, 516);
+			this.ControlBox = false;
 			this.Controls.Add(this.checkBox1);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.dataGridView1);
-			this.Controls.Add(this.textBox5);
-			this.Controls.Add(this.button3);
-			this.Controls.Add(this.button2);
-			this.Controls.Add(this.button1);
+			this.Controls.Add(this.textBox2);
+			this.Controls.Add(this.btnCancelChanges);
+			this.Controls.Add(this.btnClearChanges);
+			this.Controls.Add(this.btnSaveChanges);
 			this.Controls.Add(this.textBox1);
 			this.Name = "TaskCategoriesForm";
-			this.Text = "Enter a task below";
+			this.Text = "Viewing Task Categories";
 			this.Load += new System.EventHandler(this.TaskCategoriesForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.ResumeLayout(false);
@@ -185,10 +189,10 @@
 		#endregion
 
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.TextBox textBox5;
+		private System.Windows.Forms.Button btnSaveChanges;
+		private System.Windows.Forms.Button btnClearChanges;
+		private System.Windows.Forms.Button btnCancelChanges;
+		private System.Windows.Forms.TextBox textBox2;
 		private System.Windows.Forms.DataGridView dataGridView1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
