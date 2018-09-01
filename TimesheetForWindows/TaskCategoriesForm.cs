@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DecoratorsLibrary;
+using static DecoratorsLibrary.ControlTextValidator;
 
 namespace TimesheetForWindows
 {
@@ -27,6 +29,40 @@ namespace TimesheetForWindows
 
 		// ====================================================
 		#region Formhelperfunctions
+
+		private bool ValidateForm()
+		{
+			List<string> problemMessages = new List<string>();
+
+			//Perform validation on every control that has a validator in its tag
+			foreach (Control ctrl in Controls)
+			{
+				//if(whatsThere.GetType() == typeof(ControlTextValidator)) {} This is an altenate test of type
+				if (ctrl.Tag != null)
+				{
+					if (ctrl.Tag is ControlTextValidator)
+					{
+						var validatr = (ControlTextValidator)ctrl.Tag;
+						string validationMsg = validatr.ValidationMsg();
+						if (validationMsg.Length > 0)
+						{
+							// failed validation...
+							problemMessages.Add(validationMsg);
+						}
+					}
+				}
+			}
+
+			if(problemMessages.Count > 1)
+			{
+				foreach(string problem in problemMessages)
+				{
+					MessageBox.Show(problem);
+				}
+				return false;
+			}
+			return true;
+		}
 
 		private void GetTaskCategories()
 		{
@@ -92,6 +128,11 @@ namespace TimesheetForWindows
 			//Get task categories
 			GetTaskCategories();
 			this.dataGridView1.DataSource = _taskcategories;
+
+			//Get some validators going here
+			textBox1.Tag = new ControlTextValidator(textBox1,"Add New Category Name",true,ValidationStyle.NoValidation);
+			textBox2.Tag = new ControlTextValidator(textBox2, "Add New Category Description", true, ValidationStyle.NoValidation);
+
 		}
 
 		private void btnClearChanges_Click(object sender, EventArgs e)
@@ -109,6 +150,9 @@ namespace TimesheetForWindows
 
 		private void btnSaveChanges_Click(object sender, EventArgs e)
 		{
+			//If we fail validation, skip all the other stuff and return
+			if (ValidateForm() != true) return;
+
 			//Remove any whitespace from the text in the control
 			textBox1.Text = textBox1.Text.Trim();
 			textBox2.Text = textBox2.Text.Trim();

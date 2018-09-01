@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using DecoratorsLibrary.Validator;
 using static DecoratorsLibrary.Validator.DateValidator;
 using static DecoratorsLibrary.Validator.DigitsValidator;
+using static DecoratorsLibrary.Validator.PureTextValidator;
 
 namespace DecoratorsLibrary
 {
@@ -14,12 +15,11 @@ namespace DecoratorsLibrary
     {
         public enum ValidationStyle
         {
-            PhoneNumber, PhoneNumWithExtension,
+            PhoneNumber,
             DateFuture, DatePast, DateAny,
             DigitsOnly, DigitsNotZero, Money, MoneyNotZero, Percentage, PercentageNotZero,
-            EmailAddr,
-            NoWhiteSpace, NoPunctuation, NoWhiteSpaceAndNoPunct,
-            NoOriginalValue, NoValidation,  StateAbbreviation, Time, ZipPlus4, SSN
+            EmailAddr, NoWhiteSpace, NoPunctuation, NoWhiteSpaceAndNoPunct, StateAbbreviation,
+			NoOriginalValue, NoValidation,  Time, ZipPlus4, SSN
         }
 
         // TextValidator needs these internal variables
@@ -70,6 +70,9 @@ namespace DecoratorsLibrary
 
             switch (_validationStyle)
             {
+				case ValidationStyle.NoValidation:
+					returnMsg = String.Empty;
+					break;
                 case ValidationStyle.DateAny:
                     validator = new DateValidator(DateStyle.DontCare);
                     returnMsg = validator.Validate(_attachedTextControl.Text);
@@ -106,7 +109,43 @@ namespace DecoratorsLibrary
                     validator = new DigitsValidator(DigitStyle.PercentageNotZero);
                     returnMsg = validator.Validate(_attachedTextControl.Text);
                     break;
-            }
+				case ValidationStyle.PhoneNumber:
+					validator = new PhoneNumberValidator();
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.EmailAddr:
+					validator = new PureTextValidator(PureTextStyle.EmailAddress);
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.StateAbbreviation:
+					validator = new PureTextValidator(PureTextStyle.StateAbbreviation);
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.NoWhiteSpace:
+					validator = new PureTextValidator(PureTextStyle.NoWhiteSpace);
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.NoPunctuation:
+					validator = new PureTextValidator(PureTextStyle.NoPunctuation);
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.NoWhiteSpaceAndNoPunct:
+					validator = new PureTextValidator(PureTextStyle.NoWhiteSpaceAndNoPunct);
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.SSN:
+					validator = new SSNValidator();
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.Time:
+					validator = new TimeValidator();
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+				case ValidationStyle.ZipPlus4:
+					validator = new ZipCodeValidator();
+					returnMsg = validator.Validate(_attachedTextControl.Text);
+					break;
+			}
 
             return returnMsg;
         }

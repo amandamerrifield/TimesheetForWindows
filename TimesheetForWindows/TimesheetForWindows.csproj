@@ -148,6 +148,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DecoratorsLibrary\DecoratorsLibrary.csproj">
+      <Project>{cd4a392a-a818-4594-a06b-5e4f818523b4}</Project>
+      <Name>DecoratorsLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SsOpsDatabaseLibrary\SsOpsDatabaseLibrary.csproj">
       <Project>{31d81958-5386-4203-9de4-c3fa046eb4cc}</Project>
       <Name>SsOpsDatabaseLibrary</Name>

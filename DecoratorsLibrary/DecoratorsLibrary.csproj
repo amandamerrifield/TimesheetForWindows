@@ -41,12 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Validator\CharsValidator.cs" />
+    <Compile Include="Validator\SSNValidator.cs" />
     <Compile Include="Validator\DateValidator.cs" />
     <Compile Include="ControlTextValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AbstractTextValidator.cs" />
     <Compile Include="Validator\DigitsValidator.cs" />
+    <Compile Include="Validator\PureTextValidator.cs" />
+    <Compile Include="Validator\PhoneNumberValidator.cs" />
+    <Compile Include="Validator\TimeValidator.cs" />
+    <Compile Include="Validator\ZipCodeValidator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
