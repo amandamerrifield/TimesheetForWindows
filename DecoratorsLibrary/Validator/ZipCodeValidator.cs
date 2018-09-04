@@ -14,6 +14,11 @@ namespace DecoratorsLibrary.Validator
 		{
 			string errMsg = "Please enter zip code as 5 digits or 5 digits, -, 4 digits";
 
+			if (!(text.Length == 5 || text.Length == 10))
+			{
+				return errMsg;
+			}
+
 			if (text.Length == 5)
 			{
 				char[] array = text.ToCharArray();

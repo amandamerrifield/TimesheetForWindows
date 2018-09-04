@@ -29,9 +29,25 @@ namespace DecoratorsLibrary.Validator
 				emailDelimiters.Add('@');
 				emailDelimiters.Add('.');
 
-				if (text.Contains("@") && text.Contains("."))
+				if (! text.Contains (" ") )
 				{
-					return String.Empty;
+					char[] arry = text.ToCharArray();
+					int atLoc = 0;
+					int dotLoc = 0;
+
+					for (int counter = 0; counter < text.Length; counter++)
+					{
+						if (arry[counter] == '@') atLoc = counter;
+						if (arry[counter] == '.') dotLoc = counter;
+					}
+					// No dot, No @
+					if (atLoc == 0 || dotLoc == 0)
+					{
+						return "Please enter a valid e-mail address";
+					}
+					// We have a dot and an @
+					if (dotLoc >= atLoc + 2 && dotLoc < text.Length -1) return string.Empty;
+
 				}
 
 				return "Please enter a valid e-mail address";
@@ -54,7 +70,7 @@ namespace DecoratorsLibrary.Validator
 						return String.Empty;
 					}
 				}
-				return "Please enter a two character state abbreviation";
+				return "Please enter a two character state abbreviation in upper case";
 			}
 
 			if(_style == PureTextStyle.NoWhiteSpace)

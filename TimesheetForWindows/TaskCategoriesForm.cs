@@ -53,11 +53,11 @@ namespace TimesheetForWindows
 				}
 			}
 
-			if(problemMessages.Count > 1)
+			if(problemMessages.Count > 0)
 			{
 				foreach(string problem in problemMessages)
 				{
-					MessageBox.Show(problem);
+					MessageBox.Show(problem, "Attention", MessageBoxButtons.OK);
 				}
 				return false;
 			}
@@ -130,8 +130,9 @@ namespace TimesheetForWindows
 			this.dataGridView1.DataSource = _taskcategories;
 
 			//Get some validators going here
-			textBox1.Tag = new ControlTextValidator(textBox1,"Add New Category Name",true,ValidationStyle.NoValidation);
-			textBox2.Tag = new ControlTextValidator(textBox2, "Add New Category Description", true, ValidationStyle.NoValidation);
+			bool required = true;
+			textBox1.Tag = new ControlTextValidator(textBox1,"Add New Category Name", required, ValidationStyle.NoValidation);
+			textBox2.Tag = new ControlTextValidator(textBox2, "Add New Category Description", required, ValidationStyle.NoValidation);
 
 		}
 
@@ -150,21 +151,13 @@ namespace TimesheetForWindows
 
 		private void btnSaveChanges_Click(object sender, EventArgs e)
 		{
-			//If we fail validation, skip all the other stuff and return
-			if (ValidateForm() != true) return;
-
 			//Remove any whitespace from the text in the control
 			textBox1.Text = textBox1.Text.Trim();
 			textBox2.Text = textBox2.Text.Trim();
 
-			if (textBox1.Text.Length < 1 || textBox2.Text.Length <1)
-			{
-				MessageBox.Show("Must enter a Category Name or Description", "Attention", MessageBoxButtons.OK);
-				textBox1.Focus();
-				return;
-			}
+			//If we fail validation, skip all the other stuff and return
+			if (ValidateForm() != true) return;
 
-			
 			textBox1.Text = textBox1.Text.Substring(0, 1).ToUpper() + textBox1.Text.Substring(1);
 			textBox2.Text = textBox2.Text.Substring(0, 1).ToUpper() + textBox2.Text.Substring(1);
 

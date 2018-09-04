@@ -31,7 +31,7 @@ namespace DecoratorsLibrary.Validator
             if(_digitStyl == DigitStyle.DigitsNotZero)
             {
                 if (IsOnlyDigits(text) && Convert.ToInt32(text) > 0) return String.Empty;
-                return "Please enter only digits whose value is greater than zero.";
+                return "Please enter only digits whose value is greater than zero";
             }
             if(_digitStyl == DigitStyle.Money || _digitStyl == DigitStyle.MoneyNotZero)
             {

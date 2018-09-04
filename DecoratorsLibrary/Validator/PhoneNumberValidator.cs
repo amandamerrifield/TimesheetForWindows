@@ -18,7 +18,7 @@ namespace DecoratorsLibrary.Validator
 
 			if (text.Length == 14 && text.StartsWith ("(") && text.Substring (4,2) == ") " && text.Substring (9,1) == "-")
 			{
-				bool ok = int.TryParse(text.Substring(2, 3), out testint);
+				bool ok = int.TryParse(text.Substring(1, 3), out testint);
 				if (ok)
 				{
 					ok = int.TryParse(text.Substring(6, 3), out testint);
