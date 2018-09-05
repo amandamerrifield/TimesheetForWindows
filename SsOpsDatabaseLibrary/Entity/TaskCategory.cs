@@ -16,5 +16,9 @@ namespace SsOpsDatabaseLibrary.Entity
 		public string CategoryName { get; set; }
 		public string CategoryDescription { get; set; }
 		public string IsOverheadYN { get; set; }
+		public override String ToString()
+		{
+			return CategoryName;
+		}
 	}
 }

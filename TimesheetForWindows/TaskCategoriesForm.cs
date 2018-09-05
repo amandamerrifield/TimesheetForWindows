@@ -156,14 +156,11 @@ namespace TimesheetForWindows
 			textBox2.Text = textBox2.Text.Trim();
 
 			//If we fail validation, skip all the other stuff and return
-			if (ValidateForm() != true) return;
-
-			textBox1.Text = textBox1.Text.Substring(0, 1).ToUpper() + textBox1.Text.Substring(1);
-			textBox2.Text = textBox2.Text.Substring(0, 1).ToUpper() + textBox2.Text.Substring(1);
+			if (! ValidateForm()) return;
 
 			foreach (TaskCategory cat in _taskcategories)
 			{
-				if (cat.CategoryName == textBox1.Text)
+				if (cat.CategoryName.ToUpper() == textBox1.Text.ToUpper())
 				{
 					MessageBox.Show("This category already exists in the grid.","Attention", MessageBoxButtons.OK);
 					textBox1.Focus();
@@ -171,6 +168,10 @@ namespace TimesheetForWindows
 					textBox1.SelectionLength = textBox1.Text.Length;
 				}
 			}
+			//Uppercase the first character of each to ensure title case
+			textBox1.Text = textBox1.Text.Substring(0, 1).ToUpper() + textBox1.Text.Substring(1);
+			textBox2.Text = textBox2.Text.Substring(0, 1).ToUpper() + textBox2.Text.Substring(1);
+
 			TaskCategory tc = new TaskCategory();
 			tc.CategoryDescription = textBox2.Text;
 			tc.CategoryName = textBox1.Text;

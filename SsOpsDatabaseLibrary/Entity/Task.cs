@@ -10,8 +10,9 @@ namespace SsOpsDatabaseLibrary.Entity
     {
         public Task() { }
 
+		public string CategoryId { get; set; }
+		public string CategoryName { get; set; }
         public string TaskId { get; set; }
-        public string TaskCategoryId { get; set; }
         public string TaskName { get; set; }
         public string BudgetHours { get; set; }
         public string ActualHours { get; set; }

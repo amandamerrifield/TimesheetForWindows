@@ -107,7 +107,7 @@ namespace SsOpsDatabaseLibrary
 					{
 						Entity.Task et = new Entity.Task();
 						et.TaskId = Convert.ToString(reader["TaskId"]);
-						et.TaskCategoryId = Convert.ToString(reader["TaskCategoryId"]);
+						et.CategoryId = Convert.ToString(reader["TaskCategoryId"]);
 						et.TaskName = (string) reader["TaskName"];
 						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
 						et.ActualHours = Convert.ToString(reader["ActualHours"]);
@@ -142,13 +142,17 @@ namespace SsOpsDatabaseLibrary
 					while (reader.Read())
 					{
 						Entity.Task et = new Entity.Task();
+						et.CategoryId = Convert.ToString(reader["CategoryId"]);
+						et.CategoryName = Convert.ToString(reader["CategoryName"]);
 						et.TaskId = Convert.ToString(reader["TaskId"]);
-						et.TaskCategoryId = Convert.ToString(reader["TaskCategoryId"]);
 						et.TaskName = (string)reader["TaskName"];
 						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
 						et.ActualHours = Convert.ToString(reader["ActualHours"]);
 						et.StartDate = Convert.ToString(reader["StartDate"]);
 						et.EndDate = Convert.ToString(reader["EndDate"]);
+
+						if (!et.BudgetHours.Contains(".")) et.BudgetHours += ".0";
+						if (!et.ActualHours.Contains(".")) et.ActualHours += ".0";
 
 						tasks.Add(et);
 					}
