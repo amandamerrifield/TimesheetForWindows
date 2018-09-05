@@ -25,6 +25,10 @@ namespace TimesheetForWindows
 			this.StartPosition = FormStartPosition.Manual;
 			_defineTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 		}
+
+		// ==============================================
+		#region FORM HELPER FUNCTIONS
+
 		private void GetAllTasks()
 		{
 			try
@@ -37,7 +41,7 @@ namespace TimesheetForWindows
 					// Call OpsDataReader to get the details for the selected week
 					_defineTasks = dbLib.GetAllTasks();
 				}
-				using(OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
 					_categories = dbLib.GetTaskCategories();
 				}
@@ -60,7 +64,7 @@ namespace TimesheetForWindows
 			List<string> problemMessages = new List<string>();
 
 			//Validate the combobox
-			if(cbxCategories.SelectedIndex == -1)
+			if (cbxCategories.SelectedIndex == -1)
 			{
 				problemMessages.Add("Please select a category using the 'to Category' dropdown list");
 			}
@@ -95,12 +99,18 @@ namespace TimesheetForWindows
 		}
 
 
+		#endregion
+
+
+		// ==============================================
+		#region FORM EVENT HANDLERS
+
 		private void DefineTasksForm_Load(object sender, EventArgs e)
 		{
 			GetAllTasks();
 			this.dataGridView1.DataSource = _defineTasks;
 
-			foreach(var taskCat in _categories)
+			foreach (var taskCat in _categories)
 			{
 				cbxCategories.Items.Add(taskCat);
 			}
@@ -146,6 +156,11 @@ namespace TimesheetForWindows
 
 			MessageBox.Show("TEST PASSED!!", ProductName, MessageBoxButtons.OK);
 
+			//ToDo: Save data to the database ##################################
+
 		}
+
+		#endregion
+
 	}
 }
