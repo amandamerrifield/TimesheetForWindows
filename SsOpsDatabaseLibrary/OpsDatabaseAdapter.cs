@@ -29,8 +29,9 @@ namespace SsOpsDatabaseLibrary
             try
             {
                 _dbConn = new SqlConnection();
-                _dbConn.ConnectionString = @"Data Source=BigBox;Initial Catalog=SsOperations;Integrated Security=true;";
-                _dbConn.Open();
+				//_dbConn.ConnectionString = @"Data Source=BigBox;Initial Catalog=SsOperations;Integrated Security=true;";
+				_dbConn.ConnectionString = @"Server=184.168.194.70;Database=SSCorpMSSQL03;User Id=Karl;Password=superkf#1;";
+				_dbConn.Open();
             }
             catch (Exception ex)
             {
@@ -71,11 +72,10 @@ namespace SsOpsDatabaseLibrary
                     emp.FirstName = (string)reader["FirstName"];
                     emp.LastName = (string)reader["LastName"];
                     emp.TaxIdNbr = (string)reader["TaxIdNbr"];
-                    emp.SalaryYn = (string)reader["SalaryYn"];
                     emp.MainPhone = (string)reader["MainPhone"];
                     emp.Gender = (string)reader["Gender"];
-                    emp.HireDate = (string)reader["HiredDt"];
-                    emp.TerminationDate = (string)reader["TerminationDt"];
+                    emp.HireDate = (string)reader["HireDt"];
+                    emp.TermDate = (string)reader["TermDt"];
                 }
                 return emp;
             }
@@ -189,7 +189,7 @@ namespace SsOpsDatabaseLibrary
                         tc.EmployeeId = employeeId;
                         tc.TimecardId = Convert.ToString(reader["TimecardId"]);
                         tc.WeekNumber = Convert.ToString(reader["WeekNbr"]);
-                        tc.Year = Convert.ToString(reader["Year"]);
+                        tc.Year = Convert.ToString(reader["YearNbr"]);
 
                         timecards.Add(tc);
                     }
