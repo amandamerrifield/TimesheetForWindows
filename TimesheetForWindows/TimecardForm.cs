@@ -10,16 +10,17 @@ using System.Globalization;
 using System.Windows.Forms;
 using SsOpsDatabaseLibrary;
 using SsOpsDatabaseLibrary.Entity;
+using Task = SsOpsDatabaseLibrary.Entity.Task;
 
 namespace TimesheetForWindows
 {
 	public partial class TimecardForm : Form
 	{
-        // This timecard form requires that the timecard under glass exist in the underlying database.
-        // So if a user creates a new timecard for the week, then a new timecard record shall be
-        // appended/comitted to the database. However, timecard detail rows will not be added to the DB
-        // unless the user saves her changes.  When saving changes, it will be up to the DataWriter to
-        // detect that new rows are being added along with existing rows having been changed.
+		// This timecard form requires that the timecard under glass exist in the underlying database.
+		// So if a user creates a new timecard for the week, then a new timecard record shall be
+		// appended/comitted to the database. However, timecard detail rows will not be added to the DB
+		// unless the user saves her changes.  When saving changes, it will be up to the DataWriter to
+		// detect that new rows are being added along with existing rows having been changed.
 
 		// Enums and variables having form-wide scope
 		private enum FormState
@@ -32,9 +33,11 @@ namespace TimesheetForWindows
 		private Employee _employee;
 		private List<Timecard> _timecards;
 		private Timecard _thisTimecard;
-		private List<TimecardDetail> _thisTcDetail = null;
-		private int _thisWeekNumber = 1;
+		private List<TimecardDetail> _thisTcDetail;
+		private string _thisWeekNumber = "1";
 		private List<SsOpsDatabaseLibrary.Entity.Task> _activeTasks;
+		private List<SsOpsDatabaseLibrary.Entity.Task> _filteredTasks;
+		private List<SsOpsDatabaseLibrary.Entity.Task> _displayTasks;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -51,11 +54,14 @@ namespace TimesheetForWindows
 			// Get a copy of the employee key
 			_employee = emp;
 			_activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			_thisTcDetail = new List<TimecardDetail>();
+			_filteredTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			_displayTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 		}
 
 		// ====================================================
 		#region FORM EVENT HANDLERS
-	    //
+		//
 		// Key_Down Event Handler
 		private void TimecardForm_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -66,67 +72,72 @@ namespace TimesheetForWindows
 		// Form Load Event Handler
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
-			// Get the employee's data onto the form
-			this.Text = "TimeCard -- " + _employee.FirstName +  " "  + _employee.LastName;
-
-            GetEmployeeTimecards();
-			if(_timecards.Count < 1)
-            {
-                //No timecards for this employee
-                // Calc the week number of this week
-                _thisWeekNumber = GetIso8601WeekOfYear(DateTime.Now);
-                // Add a timecard for it in the database
-                AddTimecardForEmployee();
-            }
-            // All available weeks go into the Week combobox
-            InitializeComboBox();
-			// The selected week - get details
-            GetTimecardDetail();
-			// Update datagridview control
-  			dgvTimecardDetail.DataSource = _thisTcDetail;
-
-			//Get all active tasks from the database
+			//Cache all active tasks from the database
 			GetActiveTasks();
+			foreach (var task in _activeTasks)
+			{
+				_filteredTasks.Add(task);
+			}
+
+			// Get the employee's data onto the form
+			this.Text = "TimeCard -- " + _employee.FirstName + " " + _employee.LastName;
+
+			// Get all timecards for this employee
+			GetEmployeeTimecards();
+
+			// Get recent weeks go into the Week combobox
+			InitializeComboBox();
+
+			// If we have weeks in our combo box then select the most recent monday and determine what week number that is
+			if (comboBoxWeek.Items.Count > 0)
+			{
+				comboBoxWeek.SelectedIndex = comboBoxWeek.Items.Count - 1;
+				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
+			}
+
+			// if we have a timecard for the given week...
+			if (_timecards.Count > 0)
+			{
+				foreach (Timecard tc in _timecards)
+				{
+					if (tc.WeekNumber == _thisWeekNumber)
+					{
+						_thisTimecard = tc;
+						// Fetch timecard detail from the DB
+						GetTimecardDetail();
+						// Update datagridview control with fetched details
+						dgvTimecardDetail.DataSource = _thisTcDetail;
+					}
+				}
+			}
 		}
 
-		//
-		// Add Week Button Click
-		private void buttonAddWeek_Click(object sender, EventArgs e)
+		// Add Task Button Click
+		private void buttonAddTask_Click(object sender, EventArgs e)
 		{
-            // Ask the user for a week number between 1 and 52
-            // Save the answer in _thisWeekNumber then call AddNewWeekToTimecard();
-
-        }
-        // Add Task Button Click
-        private void buttonAddTask_Click(object sender, EventArgs e)
-        {
 			// Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
 			// Don't show tasks that are already on the time card
 			SsOpsDatabaseLibrary.Entity.Task theSelectedTask = new SsOpsDatabaseLibrary.Entity.Task();
 
 			//Look at each active task and check that it is not found in the timecard detail list. If found, then it will not be available. 
 			//Else, the active task must be avail.
-			List<SsOpsDatabaseLibrary.Entity.Task> filteredTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
-			bool foundit = false;
 
-			foreach (var task in _activeTasks)
+			if (_thisTcDetail.Count != 0)
 			{
-				foundit = false; 
-				foreach (var tcd in _thisTcDetail)
+				foreach (var task in _thisTcDetail)
 				{
-					if (task.TaskName == tcd.TaskName)
+					//remove task from _filteredList
+					foreach (var filteredtask in _filteredTasks)
 					{
-						foundit = true;
-						break;
+						if (filteredtask.TaskName == task.TaskName)
+						{
+							_filteredTasks.Remove(filteredtask);
+						}
 					}
-				}
-				if (!foundit)
-				{
-					filteredTasks.Add(task);
 				}
 			}
 
-			using (SelectTaskForm stf = new SelectTaskForm(filteredTasks))
+			using (SelectTaskForm stf = new SelectTaskForm(_filteredTasks))
 			{
 				Point targetPoint = this.Location;
 				targetPoint.X = this.Location.X + 170;
@@ -139,20 +150,21 @@ namespace TimesheetForWindows
 				stf.ShowDialog(this);
 				theSelectedTask = stf.GetSelectedTask();
 			}
-			if(theSelectedTask != null)
+			if (theSelectedTask != null)
 			{
 				//Add the selected task to the timecard
-				
+				_displayTasks.Add(theSelectedTask);
+				dgvTimecardDetail.DataSource = _displayTasks;
 			}
-        }
+		}
 
-        #endregion
+		#endregion
 
-        // ====================================================
-        #region DATA STUBS
+		// ====================================================
+		#region DATA STUBS
 
-        // !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
-        public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
+		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
+		public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
 		{
 			List<Timecard> tcards = new List<Timecard>();
 			for (int x = 5; x > 0; --x)
@@ -199,22 +211,25 @@ namespace TimesheetForWindows
 		private void InitializeComboBox()
 		{
 			comboBoxWeek.Items.Clear();
-			if (_timecards.Count > 0)
-			{
-				foreach (Timecard tc in _timecards)
-				{
-					comboBoxWeek.Items.Add(tc);
-				}
-				comboBoxWeek.SelectedIndex = 0;
-				_thisTimecard = (Timecard)comboBoxWeek.SelectedItem;
-                _thisWeekNumber = Convert.ToInt32(_thisTimecard.WeekNumber);
-			}
-		}
 
-		public static int GetIso8601WeekOfYear(DateTime time)
-		{
-			DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
-			return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+			string firstDoY = "01/01/" + DateTime.Today.Year.ToString();
+			DateTime firstMondayOfYear = DateTime.Parse(firstDoY);
+			while (firstMondayOfYear.DayOfWeek != DayOfWeek.Monday)
+			{
+				firstMondayOfYear = firstMondayOfYear.AddDays(1);
+			}
+			List<DateTime> mondays = new List<DateTime>();
+			for (int weeek = 1; weeek < 52; weeek++)
+			{
+				DateTime another_monday = firstMondayOfYear.AddDays(7 * weeek);
+				if (another_monday.DayOfYear > DateTime.Today.DayOfYear - 30)
+				{
+					if (another_monday.DayOfYear <= DateTime.Today.DayOfYear)
+					{
+						comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+					}
+				}
+			}
 		}
 
 		//private void InitializeDGV()
@@ -255,132 +270,19 @@ namespace TimesheetForWindows
 
 		private void AddNewWeekToTimecard()
 		{
-            //Assert the wait cursor..
-            Application.UseWaitCursor = true;
+			//Assert the wait cursor..
+			Application.UseWaitCursor = true;
 
-            try
-            {
-                //Create a new timecard in the DB
-                using(OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-                {
-                    Timecard tc = new Timecard();
-                    tc.EmployeeId = _employee.EmployeeId;
-                    tc.WeekNumber = Convert.ToString(_thisWeekNumber);
-                    tc.Year = Convert.ToString(DateTime.Today.Year);
-                    int newTimecardId = dbLib.CreateTimeCard(tc);
-                }
-            }
-            catch(Exception ex)
-            {
-                Application.UseWaitCursor = false;
-                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
-                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
-                Application.Exit();
-            }
-            finally
-            {
-                //Deny the wait cursor
-                Application.UseWaitCursor = false;
-            }
-        }
-
-        private void GetEmployeeTimecards()
-        {
-            try
-            {
-                //Assert wait cursor
-                Application.UseWaitCursor = true;
-
-                using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-                {
-                    _timecards = dbLib.GetTimecardsForEmployee(_employee.EmployeeId);
-                    //_timecards = GetTimecardsForEmployeeSTUB(_employee.EmployeeId);  // STUB !!
-                }
-            }
-            catch(Exception ex)
-            {
-                Application.UseWaitCursor = false;
-                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
-                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
-                Application.Exit();
-            }
-            finally
-            {
-                //Deny the wait cursor
-                Application.UseWaitCursor = false;
-            }
-        }
-
-        private void GetTimecardDetail()
-        {
-            try
-            {
-                //Assert wait cursor
-                Application.UseWaitCursor = true;
-
-                using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-                {
-                    // Call OpsDataReader to get the details for the selected week
-                    _thisTcDetail = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
-                }
-            }
-            catch(Exception ex)
-            {
-                Application.UseWaitCursor = false;
-                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
-                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
-                Application.Exit();
-            }
-            finally
-            {
-                //Deny the wait cursor
-                Application.UseWaitCursor = false;
-            }
-        }
-
-        private void AddTimecardForEmployee()
-        {
-            try
-            {
-                //Assert wait cursor
-                Application.UseWaitCursor = true;
-
-                using(OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-                {
-                    _thisTimecard = new Timecard();
-                    _thisTimecard.EmployeeId = _employee.EmployeeId;
-                    _thisTimecard.WeekNumber = Convert.ToString(_thisWeekNumber);
-                    _thisTimecard.Year = Convert.ToString(DateTime.Today.Year);
-                    int newTimecardID = dbLib.CreateTimeCard(_thisTimecard);
-                    _thisTimecard.TimecardId = Convert.ToString(newTimecardID);
-                }
-            }
-            catch(Exception ex)
-            {
-                Application.UseWaitCursor = false;
-                string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
-                MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
-                Application.Exit();
-            }
-            finally
-            {
-                //Deny the wait cursor
-                Application.UseWaitCursor = false;
-            }
-        }
-
-		private void GetActiveTasks()
-		{
 			try
 			{
-				//Assert wait cursor
-				Application.UseWaitCursor = true;
-
+				//Create a new timecard in the DB
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
-					//Active tasks are the ones in the database that haven't ended yet
-					var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
-					_activeTasks = dbLib.GetActiveTasks();
+					Timecard tc = new Timecard();
+					tc.EmployeeId = _employee.EmployeeId;
+					tc.WeekNumber = Convert.ToString(_thisWeekNumber);
+					tc.Year = Convert.ToString(DateTime.Today.Year);
+					int newTimecardId = dbLib.CreateTimeCard(tc);
 				}
 			}
 			catch (Exception ex)
@@ -397,9 +299,118 @@ namespace TimesheetForWindows
 			}
 		}
 
+		private void GetEmployeeTimecards()
+		{
+			try
+			{
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
 
-		#endregion
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				{
+					_timecards = dbLib.GetTimecardsForEmployee(_employee.EmployeeId);
+				}
+			}
+			catch (Exception ex)
+			{
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally
+			{
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
 
+		private void GetTimecardDetail()
+		{
+			try
+			{
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
 
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				{
+					// Call OpsDataReader to get the details for the selected week
+					_thisTcDetail = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
+				}
+			}
+			catch (Exception ex)
+			{
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally
+			{
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
+
+		private void AddTimecardForEmployee()
+		{
+			try
+			{
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
+
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				{
+					_thisTimecard = new Timecard();
+					_thisTimecard.EmployeeId = _employee.EmployeeId;
+					_thisTimecard.WeekNumber = Convert.ToString(_thisWeekNumber);
+					_thisTimecard.Year = Convert.ToString(DateTime.Today.Year);
+					int newTimecardID = dbLib.CreateTimeCard(_thisTimecard);
+					_thisTimecard.TimecardId = Convert.ToString(newTimecardID);
+				}
+			}
+			catch (Exception ex)
+			{
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally
+			{
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
+
+		private void GetActiveTasks()
+		{
+			try
+			{
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
+
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+				{
+					//Active tasks are the ones in the database that haven't ended yet
+					var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+					_activeTasks = dbLib.GetActiveTasks();
+
+				}
+			}
+			catch (Exception ex)
+			{
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally
+			{
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
 	}
 }
+        #endregion
