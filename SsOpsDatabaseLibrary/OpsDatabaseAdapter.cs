@@ -116,7 +116,7 @@ namespace SsOpsDatabaseLibrary
 
 						tasks.Add(et);
 					}
-
+					reader.Close();
 				}
 				return tasks;
 			}
@@ -156,7 +156,7 @@ namespace SsOpsDatabaseLibrary
 
 						tasks.Add(et);
 					}
-
+					reader.Close();
 				}
 				return tasks;
 			}
@@ -193,7 +193,7 @@ namespace SsOpsDatabaseLibrary
 
                         timecards.Add(tc);
                     }
-                    // if there were no timecards, returned list.count will be 0.
+					reader.Close();
                 }
                 return timecards;
             }
@@ -252,6 +252,7 @@ namespace SsOpsDatabaseLibrary
 
                         listTcd.Add(tcd);
                     }
+					reader.Close();
                 }
                 return listTcd;
             }
@@ -282,7 +283,7 @@ namespace SsOpsDatabaseLibrary
 
 						cats.Add(tc);
 					}
-					
+					reader.Close();
 				}
 				return cats;
 			}

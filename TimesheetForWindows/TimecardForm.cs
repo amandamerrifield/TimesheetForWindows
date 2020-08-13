@@ -154,7 +154,10 @@ namespace TimesheetForWindows
 			{
 				//Add the selected task to the timecard
 				_displayTasks.Add(theSelectedTask);
-				dgvTimecardDetail.DataSource = _displayTasks;
+				dgvTimecardDetail.Rows.Add(theSelectedTask);
+
+
+				
 			}
 		}
 
