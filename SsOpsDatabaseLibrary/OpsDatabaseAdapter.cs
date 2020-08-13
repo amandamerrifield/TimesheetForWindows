@@ -229,24 +229,38 @@ namespace SsOpsDatabaseLibrary
 						// We want hours format to be 99.9 and we have 4 chars, so if decimal point in position 1, then string m/b 3 chars long.
 						tcd.Monday_Hrs = Convert.ToString(reader["MondayHrs"]).Substring(0,4);
 						if (tcd.Monday_Hrs.Substring(1, 1) == ".") tcd.Monday_Hrs = tcd.Monday_Hrs.Substring(0, 3);
+						if (tcd.Monday_Hrs == "0.0")
+							tcd.Monday_Hrs = String.Empty;
 
 						tcd.Tuesday_Hrs = Convert.ToString(reader["TuesdayHrs"]).Substring(0, 4);
 						if (tcd.Tuesday_Hrs.Substring(1, 1) == ".") tcd.Tuesday_Hrs = tcd.Tuesday_Hrs.Substring(0, 3);
+						if (tcd.Tuesday_Hrs == "0.0")
+							tcd.Tuesday_Hrs = String.Empty;
 
 						tcd.Wednesday_Hrs = Convert.ToString(reader["WednesdayHrs"]).Substring(0, 4);
 						if (tcd.Wednesday_Hrs.Substring(1, 1) == ".") tcd.Wednesday_Hrs = tcd.Wednesday_Hrs.Substring(0, 3);
+						if (tcd.Wednesday_Hrs == "0.0")
+							tcd.Wednesday_Hrs = String.Empty;
 
 						tcd.Thursday_Hrs = Convert.ToString(reader["ThursdayHrs"]).Substring(0, 4);
 						if (tcd.Thursday_Hrs.Substring(1, 1) == ".") tcd.Thursday_Hrs = tcd.Thursday_Hrs.Substring(0, 3);
+						if (tcd.Thursday_Hrs == "0.0")
+							tcd.Thursday_Hrs = String.Empty;
 
 						tcd.Friday_Hrs = Convert.ToString(reader["FridayHrs"]).Substring(0, 4);
 						if (tcd.Friday_Hrs.Substring(1, 1) == ".") tcd.Friday_Hrs = tcd.Friday_Hrs.Substring(0, 3);
+						if (tcd.Friday_Hrs == "0.0")
+							tcd.Friday_Hrs = String.Empty;
 
 						tcd.Saturday_Hrs = Convert.ToString(reader["SaturdayHrs"]).Substring(0, 4);
 						if (tcd.Saturday_Hrs.Substring(1, 1) == ".") tcd.Saturday_Hrs = tcd.Saturday_Hrs.Substring(0, 3);
+						if (tcd.Saturday_Hrs == "0.0")
+							tcd.Saturday_Hrs = String.Empty;
 
 						tcd.Sunday_Hrs = Convert.ToString(reader["SundayHrs"]).Substring(0, 4);
 						if (tcd.Sunday_Hrs.Substring(1, 1) == ".") tcd.Sunday_Hrs = tcd.Sunday_Hrs.Substring(0, 3);
+						if (tcd.Sunday_Hrs == "0.0")
+							tcd.Sunday_Hrs = String.Empty;
 
 						tcd.TaskName = (string)reader["TaskName"];
 

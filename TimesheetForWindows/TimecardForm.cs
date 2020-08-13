@@ -33,11 +33,11 @@ namespace TimesheetForWindows
 		private Employee _employee;
 		private List<Timecard> _timecards;
 		private Timecard _thisTimecard;
-		private List<TimecardDetail> _thisTcDetail;
+		private List<TimecardDetail> _thisTcDetails;
 		private string _thisWeekNumber = "1";
 		private List<SsOpsDatabaseLibrary.Entity.Task> _activeTasks;
 		private List<SsOpsDatabaseLibrary.Entity.Task> _filteredTasks;
-		private List<SsOpsDatabaseLibrary.Entity.Task> _displayTasks;
+		private BindingSource _bindingSource1;
 
 		// =======================================================
 		// FORM CONSTRUCTOR
@@ -53,10 +53,13 @@ namespace TimesheetForWindows
 
 			// Get a copy of the employee key
 			_employee = emp;
-			_activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
-			_thisTcDetail = new List<TimecardDetail>();
-			_filteredTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
-			_displayTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+
+			//Our list of timecard detail lines
+			_thisTcDetails = new List<TimecardDetail>();
+			_bindingSource1 = new BindingSource();
+			
+			_activeTasks = new List<Task>();
+			_filteredTasks = new List<Task>();
 		}
 
 		// ====================================================
@@ -74,6 +77,8 @@ namespace TimesheetForWindows
 		{
 			//Cache all active tasks from the database
 			GetActiveTasks();
+
+			//Get a deep copy of active tasks in our filtered tasks
 			foreach (var task in _activeTasks)
 			{
 				_filteredTasks.Add(task);
@@ -103,10 +108,15 @@ namespace TimesheetForWindows
 					if (tc.WeekNumber == _thisWeekNumber)
 					{
 						_thisTimecard = tc;
-						// Fetch timecard detail from the DB
+						// Fetch timecard detail from the DB into _thisTcDetail
 						GetTimecardDetail();
 						// Update datagridview control with fetched details
-						dgvTimecardDetail.DataSource = _thisTcDetail;
+						dgvTimecardDetail.DataSource = _bindingSource1;
+						_bindingSource1.DataSource = _thisTcDetails;
+
+						//foreach(TimecardDetail tcd in _thisTcDetails) {
+						//	dgvTimecardDetail.Rows.Add(tcd);
+						//}
 					}
 				}
 			}
@@ -117,21 +127,20 @@ namespace TimesheetForWindows
 		{
 			// Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
 			// Don't show tasks that are already on the time card
-			SsOpsDatabaseLibrary.Entity.Task theSelectedTask = new SsOpsDatabaseLibrary.Entity.Task();
+			Task theSelectedTask = new Task();
 
 			//Look at each active task and check that it is not found in the timecard detail list. If found, then it will not be available. 
 			//Else, the active task must be avail.
 
-			if (_thisTcDetail.Count != 0)
+			if (_thisTcDetails.Count != 0)
 			{
-				foreach (var task in _thisTcDetail)
+				foreach (TimecardDetail tcd in _thisTcDetails)
 				{
-					//remove task from _filteredList
-					foreach (var filteredtask in _filteredTasks)
+					foreach (Task task in _activeTasks)
 					{
-						if (filteredtask.TaskName == task.TaskName)
+						if (task.TaskName == tcd.TaskName)
 						{
-							_filteredTasks.Remove(filteredtask);
+							_filteredTasks.Remove(task);
 						}
 					}
 				}
@@ -149,15 +158,16 @@ namespace TimesheetForWindows
 
 				stf.ShowDialog(this);
 				theSelectedTask = stf.GetSelectedTask();
+				stf.Dispose();
 			}
+
 			if (theSelectedTask != null)
 			{
 				//Add the selected task to the timecard
-				_displayTasks.Add(theSelectedTask);
-				dgvTimecardDetail.Rows.Add(theSelectedTask);
-
-
-				
+				TimecardDetail tcDetail = new TimecardDetail();
+				tcDetail.TaskName = theSelectedTask.TaskName;
+				_thisTcDetails.Add(tcDetail);
+				_bindingSource1.ResetBindings(false);
 			}
 		}
 
@@ -338,7 +348,7 @@ namespace TimesheetForWindows
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
 					// Call OpsDataReader to get the details for the selected week
-					_thisTcDetail = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
+					_thisTcDetails = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
 				}
 			}
 			catch (Exception ex)

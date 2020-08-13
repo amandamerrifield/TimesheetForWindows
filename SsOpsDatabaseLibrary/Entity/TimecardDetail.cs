@@ -21,5 +21,8 @@ namespace SsOpsDatabaseLibrary.Entity
 		public string Saturday_Hrs { get; set; }
 		public string Sunday_Hrs { get; set; }
 		public string TaskName { get; set; }
+		public override String ToString() {
+			return TaskName;
+		}
 	}
 }
