@@ -111,8 +111,7 @@ namespace TimesheetForWindows
 						// Fetch timecard detail from the DB into _thisTcDetail
 						GetTimecardDetail();
 						// Update datagridview control with fetched details
-						dgvTimecardDetail.DataSource = _bindingSource1;
-						_bindingSource1.DataSource = _thisTcDetails;
+						
 
 						//foreach(TimecardDetail tcd in _thisTcDetails) {
 						//	dgvTimecardDetail.Rows.Add(tcd);
@@ -120,6 +119,9 @@ namespace TimesheetForWindows
 					}
 				}
 			}
+
+			dgvTimecardDetail.DataSource = _bindingSource1;
+			_bindingSource1.DataSource = _thisTcDetails;
 		}
 
 		// Add Task Button Click
