@@ -25,6 +25,7 @@ namespace TimesheetForWindows
 		// Enums and variables having form-wide scope
 		private enum FormState
 		{
+			Loading,
 			ViewingData,
 			ViewingPotentialChanges,
 			SavingChanges
@@ -75,6 +76,8 @@ namespace TimesheetForWindows
 		// Form Load Event Handler
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
+			_currentFormState = FormState.Loading;
+
 			//Cache all active tasks from the database
 			GetActiveTasks();
 
@@ -122,6 +125,8 @@ namespace TimesheetForWindows
 
 			dgvTimecardDetail.DataSource = _bindingSource1;
 			_bindingSource1.DataSource = _thisTcDetails;
+
+			_currentFormState = FormState.ViewingData;
 		}
 
 		// Add Task Button Click
@@ -170,6 +175,11 @@ namespace TimesheetForWindows
 				tcDetail.TaskName = theSelectedTask.TaskName;
 				_thisTcDetails.Add(tcDetail);
 				_bindingSource1.ResetBindings(false);
+			}
+		}
+		private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e) {
+			if(_currentFormState != FormState.Loading) {
+				String mystring = String.Empty;
 			}
 		}
 
@@ -426,6 +436,8 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
+
+
 	}
 }
         #endregion
