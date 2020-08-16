@@ -179,8 +179,22 @@ namespace TimesheetForWindows
 		}
 		private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e) {
 			if(_currentFormState != FormState.Loading) {
-				String mystring = String.Empty;
+				_thisTcDetails.Clear();
+				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
+				foreach(Timecard tc in _timecards) {
+					if(tc.WeekNumber == _thisWeekNumber) {
+						GetTimecardDetail();
+						break;
+					}
+				}
+				_bindingSource1.ResetBindings(false);
 			}
+		}
+		private void buttonUpdate_Click(object sender, EventArgs e) {
+			//If we do not have a timecard for this week then create and insert
+			//In either case, update the detail rows for this timecard
+			
+
 		}
 
 		#endregion
