@@ -108,6 +108,7 @@
             this.comboBoxWeek.Size = new System.Drawing.Size(142, 21);
             this.comboBoxWeek.TabIndex = 95;
             this.comboBoxWeek.TabStop = false;
+            this.comboBoxWeek.SelectedIndexChanged += new System.EventHandler(this.comboBoxWeek_SelectedIndexChanged);
             // 
             // dgvTimecardDetail
             // 

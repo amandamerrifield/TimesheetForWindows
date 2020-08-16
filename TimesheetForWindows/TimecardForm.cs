@@ -109,13 +109,8 @@ namespace TimesheetForWindows
 					{
 						_thisTimecard = tc;
 						// Fetch timecard detail from the DB into _thisTcDetail
-						GetTimecardDetail();
 						// Update datagridview control with fetched details
-						
-
-						//foreach(TimecardDetail tcd in _thisTcDetails) {
-						//	dgvTimecardDetail.Rows.Add(tcd);
-						//}
+						GetTimecardDetail();
 					}
 				}
 			}
@@ -425,6 +420,24 @@ namespace TimesheetForWindows
 				//Deny the wait cursor
 				Application.UseWaitCursor = false;
 			}
+		}
+
+        private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e)
+        {
+			//What is the week number of the timecard we've selected?
+			_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
+			//Get that timecarddetails into dvg
+			foreach (Timecard tc in _timecards)
+			{
+				if (tc.WeekNumber == _thisWeekNumber)
+				{
+					_thisTimecard = tc;
+					// Fetch timecard detail from the DB into _thisTcDetail
+					// Update datagridview control with fetched details
+					GetTimecardDetail();
+				}
+			}
+			_bindingSource1.ResetBindings(false);
 		}
 	}
 }
