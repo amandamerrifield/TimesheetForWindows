@@ -179,19 +179,14 @@ namespace TimesheetForWindows
 				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
 				// Find the target timecard using its week number
 				_timecardUnderGlass = null;
-				// Flag
 				foreach(Timecard tc in _timecards) {
 					if(tc.WeekNumber == _thisWeekNumber) {
 						// We found the timecard!
 						_timecardUnderGlass = tc;
 						// Fetch timecard details from the DB into a new _timecardDetailsUnderGlass list
 						GetTimecardDetails();
-						// Cannot use the old bindingSource now b/c its holding a reference to a discarded list
-						_bindingSource1 = new BindingSource();
-						// BindingSource now bound to new instance of _timecardDetailsUnderGlass list
+						// BindingSource now gets bound to a new instance of _timecardDetailsUnderGlass list
 						_bindingSource1.DataSource = _timecardDetailsUnderGlass;
-						// The dgv Datasource must now point to the new binding source instead of the discarded one
-						dgvTimecardDetail.DataSource = _bindingSource1;
 						_bindingSource1.ResetBindings(false);
 						break;
 					}
