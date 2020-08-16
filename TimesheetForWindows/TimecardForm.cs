@@ -33,8 +33,8 @@ namespace TimesheetForWindows
 		private FormState _currentFormState;
 		private Employee _employee;
 		private List<Timecard> _timecards;
-		private Timecard _thisTimecard;
-		private List<TimecardDetail> _thisTcDetails;
+		private Timecard _timecardUnderGlass;
+		private List<TimecardDetail> _timecardDetailsUnderGlass;
 		private string _thisWeekNumber = "1";
 		private List<SsOpsDatabaseLibrary.Entity.Task> _activeTasks;
 		private List<SsOpsDatabaseLibrary.Entity.Task> _filteredTasks;
@@ -42,7 +42,7 @@ namespace TimesheetForWindows
 
 		// =======================================================
 		// FORM CONSTRUCTOR
-		public TimecardForm(Employee emp)
+		public TimecardForm(Employee targetEmployee)
 		{
 			InitializeComponent();
 			// We will manually control the form location on screen
@@ -53,10 +53,10 @@ namespace TimesheetForWindows
 			this.KeyPreview = true;
 
 			// Get a copy of the employee key
-			_employee = emp;
+			_employee = targetEmployee;
 
 			//Our list of timecard detail lines
-			_thisTcDetails = new List<TimecardDetail>();
+			_timecardDetailsUnderGlass = new List<TimecardDetail>();
 			_bindingSource1 = new BindingSource();
 			
 			_activeTasks = new List<Task>();
@@ -110,21 +110,15 @@ namespace TimesheetForWindows
 				{
 					if (tc.WeekNumber == _thisWeekNumber)
 					{
-						_thisTimecard = tc;
+						_timecardUnderGlass = tc;
 						// Fetch timecard detail from the DB into _thisTcDetail
-						GetTimecardDetail();
-						// Update datagridview control with fetched details
-						
-
-						//foreach(TimecardDetail tcd in _thisTcDetails) {
-						//	dgvTimecardDetail.Rows.Add(tcd);
-						//}
+						GetTimecardDetails();
 					}
 				}
 			}
 
 			dgvTimecardDetail.DataSource = _bindingSource1;
-			_bindingSource1.DataSource = _thisTcDetails;
+			_bindingSource1.DataSource = _timecardDetailsUnderGlass;
 
 			_currentFormState = FormState.ViewingData;
 		}
@@ -132,16 +126,14 @@ namespace TimesheetForWindows
 		// Add Task Button Click
 		private void buttonAddTask_Click(object sender, EventArgs e)
 		{
-			// Putup a modal dialog where the user can pick a task from an existing list of tasks in our database
+			// Putup a modal dialog where the user can pick a task
 			// Don't show tasks that are already on the time card
 			Task theSelectedTask = new Task();
 
-			//Look at each active task and check that it is not found in the timecard detail list. If found, then it will not be available. 
-			//Else, the active task must be avail.
-
-			if (_thisTcDetails.Count != 0)
+			// Filtered tasks are the ones that are not already on the timecard
+			if (_timecardDetailsUnderGlass.Count != 0)
 			{
-				foreach (TimecardDetail tcd in _thisTcDetails)
+				foreach (TimecardDetail tcd in _timecardDetailsUnderGlass)
 				{
 					foreach (Task task in _activeTasks)
 					{
@@ -173,27 +165,58 @@ namespace TimesheetForWindows
 				//Add the selected task to the timecard
 				TimecardDetail tcDetail = new TimecardDetail();
 				tcDetail.TaskName = theSelectedTask.TaskName;
-				_thisTcDetails.Add(tcDetail);
-				_bindingSource1.ResetBindings(false);
+				//adding a row to the binding source will in-turn add the row to our _timecardDetailsUnderGlass list
+				_bindingSource1.Add(tcDetail);
+				//There are now changes made to this timecard that have not yet been committed to the DB
+				_currentFormState = FormState.ViewingPotentialChanges;
 			}
 		}
 		private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e) {
 			if(_currentFormState != FormState.Loading) {
-				_thisTcDetails.Clear();
+				//Start with an empty detail list (clearing the binding source causes _timecardDetailsUnderGlass to be cleared)
+				_bindingSource1.Clear();
+				// Get the target week number
 				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
+				// Find the target timecard using its week number
+				_timecardUnderGlass = null;
+				// Flag
 				foreach(Timecard tc in _timecards) {
 					if(tc.WeekNumber == _thisWeekNumber) {
-						GetTimecardDetail();
+						// We found the timecard!
+						_timecardUnderGlass = tc;
+						// Fetch timecard details from the DB into a new _timecardDetailsUnderGlass list
+						GetTimecardDetails();
+						// Cannot use the old bindingSource now b/c its holding a reference to a discarded list
+						_bindingSource1 = new BindingSource();
+						// BindingSource now bound to new instance of _timecardDetailsUnderGlass list
+						_bindingSource1.DataSource = _timecardDetailsUnderGlass;
+						// The dgv Datasource must now point to the new binding source instead of the discarded one
+						dgvTimecardDetail.DataSource = _bindingSource1;
+						_bindingSource1.ResetBindings(false);
 						break;
 					}
 				}
-				_bindingSource1.ResetBindings(false);
+				// Note that if there is no timecard in the database for this week..
+				// then we exit here with a cleared binding source/dgv, and _timecardUnderGlass = null;
+				// and _thisWeekNumber set to the number of the week that is missing a timecard
+
+				// We can still select and add timecard details on screen, but keep in mind that the 
+				// Timecard record must be created and inserted into the database before we attempt
+				// to insert detail rows that are joined to it. [KFF]
 			}
 		}
 		private void buttonUpdate_Click(object sender, EventArgs e) {
+			//If there are no pending changes then skip all this
+			if(_currentFormState != FormState.ViewingPotentialChanges) return;
+
 			//If we do not have a timecard for this week then create and insert
-			//In either case, update the detail rows for this timecard
-			
+			//In either case, we will update the detail rows for this timecard
+			if(_timecardDetailsUnderGlass == null) {
+				//ToDo: Insert new timecard
+
+			}
+			// We don't get to this point w/o having a timecard under glass
+
 
 		}
 
@@ -257,7 +280,6 @@ namespace TimesheetForWindows
 			{
 				firstMondayOfYear = firstMondayOfYear.AddDays(1);
 			}
-			List<DateTime> mondays = new List<DateTime>();
 			for (int weeek = 1; weeek < 52; weeek++)
 			{
 				DateTime another_monday = firstMondayOfYear.AddDays(7 * weeek);
@@ -270,20 +292,6 @@ namespace TimesheetForWindows
 				}
 			}
 		}
-
-		//private void InitializeDGV()
-		//{
-		//	try
-		//	{
-		//		dgvTimecardDetail.Dock = DockStyle.Fill;
-		//		dgvTimecardDetail.AutoGenerateColumns = true;
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		// ToDo: ex
-		//		System.Threading.Thread.CurrentThread.Abort();
-		//	}
-		//}
 
 		private void assertFormState()
 		{
@@ -364,7 +372,7 @@ namespace TimesheetForWindows
 			}
 		}
 
-		private void GetTimecardDetail()
+		private void GetTimecardDetails()
 		{
 			try
 			{
@@ -374,7 +382,7 @@ namespace TimesheetForWindows
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
 					// Call OpsDataReader to get the details for the selected week
-					_thisTcDetails = dbLib.GetTimecardDetailsByTimecardId(_thisTimecard.TimecardId);
+					_timecardDetailsUnderGlass = dbLib.GetTimecardDetailsByTimecardId(_timecardUnderGlass.TimecardId);
 				}
 			}
 			catch (Exception ex)
@@ -400,12 +408,12 @@ namespace TimesheetForWindows
 
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
-					_thisTimecard = new Timecard();
-					_thisTimecard.EmployeeId = _employee.EmployeeId;
-					_thisTimecard.WeekNumber = Convert.ToString(_thisWeekNumber);
-					_thisTimecard.Year = Convert.ToString(DateTime.Today.Year);
-					int newTimecardID = dbLib.CreateTimeCard(_thisTimecard);
-					_thisTimecard.TimecardId = Convert.ToString(newTimecardID);
+					_timecardUnderGlass = new Timecard();
+					_timecardUnderGlass.EmployeeId = _employee.EmployeeId;
+					_timecardUnderGlass.WeekNumber = Convert.ToString(_thisWeekNumber);
+					_timecardUnderGlass.Year = Convert.ToString(DateTime.Today.Year);
+					int newTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
+					_timecardUnderGlass.TimecardId = Convert.ToString(newTimecardID);
 				}
 			}
 			catch (Exception ex)
