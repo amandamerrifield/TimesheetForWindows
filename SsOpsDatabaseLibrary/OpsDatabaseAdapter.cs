@@ -185,7 +185,7 @@ namespace SsOpsDatabaseLibrary
                     while (reader.Read())
                     {
                         Timecard tc = new Timecard();
-                        tc.DetailTable = null;
+						tc.DetailList = new List<TimecardDetail>();
                         tc.EmployeeId = employeeId;
                         tc.TimecardId = Convert.ToString(reader["TimecardId"]);
                         tc.WeekNumber = Convert.ToString(reader["WeekNbr"]);
@@ -316,9 +316,9 @@ namespace SsOpsDatabaseLibrary
 		// ======================================================== 
 		#region Public Functions that return a newly generated primary key
 
-		public Int32 CreateTimeCard(Timecard tcard)
+		public int CreateTimeCard(Timecard tcard)
         {
-            Int32 retVal = 0;
+			int retVal = 0;
             SqlParameter parm;
 
             try
@@ -397,8 +397,8 @@ namespace SsOpsDatabaseLibrary
 
         #endregion
 
-        // =======================================================
-        #region Public Functions that return an updated DataTable
+        // ================================================================
+        #region Public Functions that update the entity that you pass to it
 
         public void CreateTimeCardDetail(ref Timecard tcard)
         {
@@ -409,9 +409,9 @@ namespace SsOpsDatabaseLibrary
                 //Must have EmployeeID, TimecardId, and each row must have a TaskId
                 bool isMissingKey = false;
                 isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
-                foreach (DataRow row in tcard.DetailTable.Rows)
+                foreach (TimecardDetail detail in tcard.DetailList)
                 {
-                    if (String.IsNullOrEmpty((string)row[(int)Timecard.DetailFields.Task_ID]))
+                    if (String.IsNullOrEmpty(detail.Task_ID))
                     {
                         isMissingKey = true;
                         break;
@@ -422,57 +422,57 @@ namespace SsOpsDatabaseLibrary
                     throw new Exception("Unable to create timecard detail.  A key value is missing.");
                 }
 
-                // Okay to insert these new rows. Do it in a transaction (all or none)
+                // Okay to insert these new rows. Do it in a transaction (all rows or none)
                 using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCardDetail", _dbConn))
                 {
                     SqlTransaction xaction = _dbConn.BeginTransaction();
 
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    foreach (DataRow row in tcard.DetailTable.Rows)
+                    foreach (TimecardDetail tcd in tcard.DetailList)
                     {
                         parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Detail_ID]);
+						parm.Value = Convert.ToInt32(tcd.Detail_ID);
 
                         parm = new SqlParameter("@TaskId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Task_ID]);
+						parm.Value = Convert.ToInt32(tcd.Task_ID);
 
-                        parm = new SqlParameter("@TimecardId", SqlDbType.Int);
+						parm = new SqlParameter("@TimecardId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToInt32(row[(int)Timecard.DetailFields.Timecard_ID]);
+						parm.Value = Convert.ToInt32(tcd.Timecard_ID);
 
-                        parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
+						parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Monday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Monday_Hrs);
 
                         parm = new SqlParameter("@TuesdayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Tuesday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Tuesday_Hrs);
 
                         parm = new SqlParameter("@WednesdayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Wednesday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Wednesday_Hrs);
 
                         parm = new SqlParameter("@ThursdayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Thursday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Thursday_Hrs);
 
                         parm = new SqlParameter("@FridayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Friday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Friday_Hrs);
 
                         parm = new SqlParameter("@SaturdayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Saturday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Saturday_Hrs);
 
                         parm = new SqlParameter("@SundayHrs", SqlDbType.SmallMoney);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToDecimal(row[(int)Timecard.DetailFields.Sunday_Hrs]);
+                        parm.Value = Convert.ToDecimal(tcd.Sunday_Hrs);
 
                         // Update caller's row with newly created ID
-                        row[(int)Timecard.DetailFields.Detail_ID] = (Int32)cmd.ExecuteScalar();
+                        tcd.Detail_ID = Convert.ToString(cmd.ExecuteScalar());
                     }
                     // Commit the transaction to the database
                     xaction.Commit();

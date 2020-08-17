@@ -63,17 +63,17 @@ namespace TimesheetForWindows
 			_filteredTasks = new List<Task>();
 		}
 
-		// ====================================================
+		// =====================================================
 		#region FORM EVENT HANDLERS
-		//
-		// Key_Down Event Handler
+		// -----------------------------------------------------
+		// Form -- Keyboard Key_Down Event Handler
 		private void TimecardForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			//_currentFormState = FormState.ViewingPotentialChanges;
 			//assertFormState();
 		}
-		//
-		// Form Load Event Handler
+		// -----------------------------------------------------
+		// Form -- Load Event Handler
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
 			_currentFormState = FormState.Loading;
@@ -122,8 +122,8 @@ namespace TimesheetForWindows
 
 			_currentFormState = FormState.ViewingData;
 		}
-
-		// Add Task Button Click
+		// -----------------------------------------------------
+		// Add Task Button -- Click Event Handler
 		private void buttonAddTask_Click(object sender, EventArgs e)
 		{
 			// Putup a modal dialog where the user can pick a task
@@ -171,6 +171,8 @@ namespace TimesheetForWindows
 				_currentFormState = FormState.ViewingPotentialChanges;
 			}
 		}
+		// -----------------------------------------------------
+		// Week Under Glass ComboBox -- Selection Changed Event Handler
 		private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e) {
 			if(_currentFormState != FormState.Loading) {
 				//Start with an empty detail list (clearing the binding source causes _timecardDetailsUnderGlass to be cleared)
@@ -200,18 +202,28 @@ namespace TimesheetForWindows
 				// to insert detail rows that are joined to it. [KFF]
 			}
 		}
+		// -----------------------------------------------------
+		// Save Changes Button -- Click Event Handler
 		private void buttonUpdate_Click(object sender, EventArgs e) {
 			//If there are no pending changes then skip all this
 			if(_currentFormState != FormState.ViewingPotentialChanges) return;
 
-			//If we do not have a timecard for this week then create and insert
-			//In either case, we will update the detail rows for this timecard
-			if(_timecardDetailsUnderGlass == null) {
-				//ToDo: Insert new timecard
-
+			//If we do not have a timecard for this week then create and insert in the DB
+			if(_timecardUnderGlass == null) {
+				CreateNewTimecard();				
 			}
-			// We don't get to this point w/o having a timecard under glass
-
+			// We don't get to this point w/o having _timecardUnderGlass in the database
+			// If the user is saving a new, but empty timecard then we are done
+			if (_timecardDetailsUnderGlass.Count == 0) return;
+			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
+			foreach(TimecardDetail tcd in _timecardDetailsUnderGlass) {
+				if (! _timecardUnderGlass.DetailList.Contains(tcd)) {
+					_timecardUnderGlass.DetailList.Add(tcd);
+				}
+			}
+			// Next, we want to update the timecard detail rows in the database that are joined to this timecard
+			// in a special way.  First, any timecard detail with zero hours for every day of the week should be
+			// deleted from the database (if its in the database)
 
 		}
 
@@ -227,7 +239,7 @@ namespace TimesheetForWindows
 			for (int x = 5; x > 0; --x)
 			{
 				Timecard tc = new Timecard();
-				tc.DetailTable = null;
+				tc.DetailList = new List<TimecardDetail>();
 				tc.EmployeeId = employeeId;
 				tc.TimecardId = Convert.ToString(2000 + x);
 				tc.WeekNumber = Convert.ToString(32 + x);
@@ -310,7 +322,7 @@ namespace TimesheetForWindows
 			}
 		}
 
-		private void AddNewWeekToTimecard()
+		private void CreateNewTimecard()
 		{
 			//Assert the wait cursor..
 			Application.UseWaitCursor = true;
@@ -320,11 +332,13 @@ namespace TimesheetForWindows
 				//Create a new timecard in the DB
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
-					Timecard tc = new Timecard();
-					tc.EmployeeId = _employee.EmployeeId;
-					tc.WeekNumber = Convert.ToString(_thisWeekNumber);
-					tc.Year = Convert.ToString(DateTime.Today.Year);
-					int newTimecardId = dbLib.CreateTimeCard(tc);
+					//Instantiate a new timecard and save it in the database
+					_timecardUnderGlass = new Timecard();
+					_timecardUnderGlass.EmployeeId = _employee.EmployeeId;
+					_timecardUnderGlass.WeekNumber = _thisWeekNumber;
+					_timecardUnderGlass.Year = DateTime.Today.ToString("yyyy");
+					int newlyMintedTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
+					_timecardUnderGlass.TimecardId = newlyMintedTimecardID.ToString();
 				}
 			}
 			catch (Exception ex)
