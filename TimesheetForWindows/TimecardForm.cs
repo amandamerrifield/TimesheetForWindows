@@ -546,9 +546,35 @@ namespace TimesheetForWindows
 		// ---------------------------------------------
 		// Return True if the given TimecardDetail has all "0.0" or Blank entries
 		private bool isBlankTimecardDetail(TimecardDetail tcDetail) {
-			//TODO for [ARM]
-			throw new Exception("Function isBlankTimecardDetail is not yet implemented");
-			//return true;
+
+			if (tcDetail == null)
+            {
+				throw new Exception("Function isBlankTimeCardDetail can't examine a null timecard");
+            }
+			if (tcDetail.Monday_Hrs != string.Empty)
+            {
+				return false;
+            }
+			if (tcDetail.Tuesday_Hrs != string.Empty) {
+				return false;
+			}
+			if (tcDetail.Wednesday_Hrs != string.Empty) {
+				return false;
+			}
+			if (tcDetail.Thursday_Hrs != string.Empty) {
+				return false;
+			}
+			if (tcDetail.Friday_Hrs != string.Empty) {
+				return false;
+			}
+			if (tcDetail.Saturday_Hrs != string.Empty) {
+				return false;
+			}
+			if (tcDetail.Sunday_Hrs != string.Empty) {
+				return false;
+			}
+			//throw new Exception("Function isBlankTimecardDetail is not yet implemented");
+			return true;
 		}
 
 	}

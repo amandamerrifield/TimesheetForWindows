@@ -9,9 +9,6 @@ namespace SsOpsDatabaseLibrary.Entity
 {
 	public class Timecard {
 		public enum DetailFields {
-			Detail_ID,
-			Task_ID,
-			Timecard_ID,
 			Monday_Hrs,
 			Tuesday_Hrs,
 			Wednesday_Hrs,
