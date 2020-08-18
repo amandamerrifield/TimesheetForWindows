@@ -294,7 +294,7 @@ namespace SsOpsDatabaseLibrary
 						tc.CategoryDescription = (string) reader["CategoryDescription"];
 						tc.CategoryId = Convert.ToString(reader["CategoryId"]);
 						tc.CategoryName = (string)reader["CategoryName"];
-
+						tc.IsOverheadYN = (string)reader["IsOverheadYn"];
 						cats.Add(tc);
 					}
 					reader.Close();
@@ -488,6 +488,13 @@ namespace SsOpsDatabaseLibrary
 
         #endregion
 
+        // ================================================================
+        #region Public Functions that return Void
+        public void DeleteTimeCardDetail(List<TimecardDetail> detailsToDelete) {
+            throw new Exception("Unable to delete timecard detail.  Function not implemented.");
+        }
+
+        #endregion
 
         // ========================================================
         #region Error Handling Support
@@ -500,7 +507,8 @@ namespace SsOpsDatabaseLibrary
                 "=== " + DateTime.Now.ToString(TIMESTAMP_FORMAT) + " === ",
                 "--- " + classNamAndMethod + " encountered an error: ",
                 "--- Source : " + source,
-                "--- Message: " + msg
+                "--- Message: " + msg,
+				String.Empty
             };
 
             string fileSpec = Directory.GetCurrentDirectory() + @"\ErrorLog.txt";
@@ -515,7 +523,6 @@ namespace SsOpsDatabaseLibrary
         public void LogMessages(string[] messages, string filespec)
         {
             File.AppendAllLines(filespec, messages);
-
         }
 
         #endregion

@@ -34,7 +34,7 @@ namespace TimesheetForWindows
 		private Employee _employee;
 		private List<Timecard> _timecards;
 		private Timecard _timecardUnderGlass;
-		private List<TimecardDetail> _timecardDetailsUnderGlass;
+		private List<TimecardDetail> _tcDetailsUnderGlass;
 		private string _thisWeekNumber = "1";
 		private List<SsOpsDatabaseLibrary.Entity.Task> _activeTasks;
 		private List<SsOpsDatabaseLibrary.Entity.Task> _filteredTasks;
@@ -56,7 +56,7 @@ namespace TimesheetForWindows
 			_employee = targetEmployee;
 
 			//Our list of timecard detail lines
-			_timecardDetailsUnderGlass = new List<TimecardDetail>();
+			_tcDetailsUnderGlass = new List<TimecardDetail>();
 			_bindingSource1 = new BindingSource();
 			
 			_activeTasks = new List<Task>();
@@ -118,7 +118,7 @@ namespace TimesheetForWindows
 			}
 
 			dgvTimecardDetail.DataSource = _bindingSource1;
-			_bindingSource1.DataSource = _timecardDetailsUnderGlass;
+			_bindingSource1.DataSource = _tcDetailsUnderGlass;
 
 			_currentFormState = FormState.ViewingData;
 		}
@@ -131,9 +131,9 @@ namespace TimesheetForWindows
 			Task theSelectedTask = new Task();
 
 			// Filtered tasks are the ones that are not already on the timecard
-			if (_timecardDetailsUnderGlass.Count != 0)
+			if (_tcDetailsUnderGlass.Count != 0)
 			{
-				foreach (TimecardDetail tcd in _timecardDetailsUnderGlass)
+				foreach (TimecardDetail tcd in _tcDetailsUnderGlass)
 				{
 					foreach (Task task in _activeTasks)
 					{
@@ -175,7 +175,7 @@ namespace TimesheetForWindows
 		// Week Under Glass ComboBox -- Selection Changed Event Handler
 		private void comboBoxWeek_SelectedIndexChanged(object sender, EventArgs e) {
 			if(_currentFormState != FormState.Loading) {
-				//Start with an empty detail list (clearing the binding source causes _timecardDetailsUnderGlass to be cleared)
+				//Start with an empty detail list (clearing the binding source causes _tcDetailsUnderGlass to be cleared)
 				_bindingSource1.Clear();
 				// Get the target week number
 				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
@@ -185,10 +185,10 @@ namespace TimesheetForWindows
 					if(tc.WeekNumber == _thisWeekNumber) {
 						// We found the timecard!
 						_timecardUnderGlass = tc;
-						// Fetch timecard details from the DB into a new _timecardDetailsUnderGlass list
+						// Fetch timecard details from the DB into a new _tcDetailsUnderGlass list
 						GetTimecardDetails();
-						// BindingSource now gets bound to a new instance of _timecardDetailsUnderGlass list
-						_bindingSource1.DataSource = _timecardDetailsUnderGlass;
+						// BindingSource now gets bound to a new instance of _tcDetailsUnderGlass list
+						_bindingSource1.DataSource = _tcDetailsUnderGlass;
 						_bindingSource1.ResetBindings(false);
 						break;
 					}
@@ -209,22 +209,34 @@ namespace TimesheetForWindows
 			if(_currentFormState != FormState.ViewingPotentialChanges) return;
 
 			//If we do not have a timecard for this week then create and insert in the DB
+			bool isNewlyCreatedTimecard = false;
 			if(_timecardUnderGlass == null) {
-				CreateNewTimecard();				
+				CreateNewTimecard();
+				isNewlyCreatedTimecard = true;
 			}
 			// We don't get to this point w/o having _timecardUnderGlass in the database
-			// If the user is saving a new, but empty timecard then we are done
-			if (_timecardDetailsUnderGlass.Count == 0) return;
-			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
-			foreach(TimecardDetail tcd in _timecardDetailsUnderGlass) {
-				if (! _timecardUnderGlass.DetailList.Contains(tcd)) {
-					_timecardUnderGlass.DetailList.Add(tcd);
+
+			// First discard all timecard detail entries that have zero or blank for every day this week
+			List<TimecardDetail> toBeRemoved = new List<TimecardDetail>();
+			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
+				if(isBlankTimecardDetail(tcd)) {
+					toBeRemoved.Add(tcd);
 				}
 			}
-			// Next, we want to update the timecard detail rows in the database that are joined to this timecard
-			// in a special way.  First, any timecard detail with zero hours for every day of the week should be
-			// deleted from the database (if its in the database)
+			foreach(TimecardDetail xx in toBeRemoved) {
+				_tcDetailsUnderGlass.Remove(xx);
+			}
 
+			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
+			_timecardUnderGlass.DetailList = new List<TimecardDetail>();
+			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
+				_timecardUnderGlass.DetailList.Add(tcd);
+			}
+			// Update the timecard detail rows in the database that are joined to this timecard
+			// Any timecard details that are IN the DB but NOT in _timecardUnderGlass.DetailList will be deleted
+			// Any timecard details that are IN the DB AND IN _timecardUnderGlass.DetailList will be updated
+			// Finally, any time card detail that is missing in the DB will be inserted into the DB [KFF]
+			UpdateTimecardDetails(isNewlyCreatedTimecard);
 		}
 
 		#endregion
@@ -277,6 +289,8 @@ namespace TimesheetForWindows
 		// ====================================================
 		#region FORM HELPER FUNCTIONS
 
+		// ----------------------------------------------------
+		// Initialize the Week Selection Drop Down
 		private void InitializeComboBox()
 		{
 			comboBoxWeek.Items.Clear();
@@ -300,6 +314,8 @@ namespace TimesheetForWindows
 			}
 		}
 
+		// ------------------------------------------------
+		// Enforce the current State of the Form against the buttons
 		private void assertFormState()
 		{
 			switch (_currentFormState)
@@ -322,6 +338,9 @@ namespace TimesheetForWindows
 			}
 		}
 
+		// ------------------------------------------------
+		// Create a new timecard in the DB for the given Employee and Week, then
+		// copy the new TimecardId that is returned by the DB insert function
 		private void CreateNewTimecard()
 		{
 			//Assert the wait cursor..
@@ -354,7 +373,8 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
-
+		// -----------------------------------------------
+		// Get All this Employee's Timecard Records into _Timecards
 		private void GetEmployeeTimecards()
 		{
 			try
@@ -380,7 +400,8 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
-
+		// -----------------------------------------------
+		// Get All this Employee's Timecard Detail Records into _timecardDetailsUnderGlass
 		private void GetTimecardDetails()
 		{
 			try
@@ -391,7 +412,7 @@ namespace TimesheetForWindows
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
 					// Call OpsDataReader to get the details for the selected week
-					_timecardDetailsUnderGlass = dbLib.GetTimecardDetailsByTimecardId(_timecardUnderGlass.TimecardId);
+					_tcDetailsUnderGlass = dbLib.GetTimecardDetailsByTimecardId(_timecardUnderGlass.TimecardId);
 				}
 			}
 			catch (Exception ex)
@@ -407,38 +428,8 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
-
-		private void AddTimecardForEmployee()
-		{
-			try
-			{
-				//Assert wait cursor
-				Application.UseWaitCursor = true;
-
-				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-				{
-					_timecardUnderGlass = new Timecard();
-					_timecardUnderGlass.EmployeeId = _employee.EmployeeId;
-					_timecardUnderGlass.WeekNumber = Convert.ToString(_thisWeekNumber);
-					_timecardUnderGlass.Year = Convert.ToString(DateTime.Today.Year);
-					int newTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
-					_timecardUnderGlass.TimecardId = Convert.ToString(newTimecardID);
-				}
-			}
-			catch (Exception ex)
-			{
-				Application.UseWaitCursor = false;
-				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
-				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
-				Application.Exit();
-			}
-			finally
-			{
-				//Deny the wait cursor
-				Application.UseWaitCursor = false;
-			}
-		}
-
+		// ----------------------------------------------------
+		// Get All the task records from the DB that are still in use.
 		private void GetActiveTasks()
 		{
 			try
@@ -448,7 +439,6 @@ namespace TimesheetForWindows
 
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
-					//Active tasks are the ones in the database that haven't ended yet
 					var activeTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 					_activeTasks = dbLib.GetActiveTasks();
 
@@ -467,7 +457,99 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
+		// ----------------------------------------------------------------
+		// Update the TimecardDetail records for _timecardUnderGlass
+		// If the timecard was newly created, it has no existing detail records.
+		// Insert any records that are within _timecardUnderGlass.DetailList.
+		// Otherwise, update or remove the existing records such that they match
+		// the records within _timecardUnderGlass.DetailList
+		private void UpdateTimecardDetails(bool isNewTimecard) {
+			try {
+				Application.UseWaitCursor = true;
 
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
+					//If we get here with an empty timecard then delete all detail records for this timecard and exit
+					if (_timecardUnderGlass.DetailList.Count == 0 && isNewTimecard ) return;
+
+					//Get any existing rows from the DB
+					List<TimecardDetail> existingDetails = dbLib.GetTimecardDetailsByTimecardId(_timecardUnderGlass.TimecardId);
+
+					//If there is nothing in the database to update or delete then this is an insert only operation
+					if(existingDetails.Count == 0) {
+						if (_timecardUnderGlass.DetailList.Count == 0) return;
+						//Insert all items in the _timecardUnderGlass.DetailList into the DB and return
+						dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+						return;
+					}
+					// The database has existing records
+					//Look for deletes first, then Updates, and lastly inserts
+					List<TimecardDetail> pendingDeletes = new List<TimecardDetail>();
+					List<TimecardDetail> pendingUpdates = new List<TimecardDetail>();
+					List<TimecardDetail> pendingInserts = new List<TimecardDetail>();
+
+					bool isNotExistingInDatabase;
+					foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
+						isNotExistingInDatabase = true;
+						foreach (TimecardDetail existingTcd in existingDetails) {
+							if (tcd.TaskName == existingTcd.TaskName) {
+								isNotExistingInDatabase = false;
+								pendingUpdates.Add(tcd);
+								break;
+							}
+						}
+						if (isNotExistingInDatabase) {
+							pendingInserts.Add(tcd);
+						}
+					}
+					//Here all the timecard detail records in the grid are also inside one of the 2 pending lists.
+					//Now find the records that are to be deleted (records that do not exist in the grid)
+					bool isNotFoundUnderGlass;
+					foreach (TimecardDetail existingTcd in existingDetails) {
+						isNotFoundUnderGlass = true;
+						foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
+							if (tcd.TaskName == existingTcd.TaskName) {
+								isNotFoundUnderGlass = false;
+								break;
+							}
+						}
+						if (isNotFoundUnderGlass) {
+							pendingDeletes.Add(existingTcd);
+						}
+					}
+					// If we have records to delete then do it now
+					if(pendingDeletes.Count > 0) {
+						//TODO for [ARM]
+						dbLib.DeleteTimeCardDetail(pendingDeletes);
+					}
+					// If we have records to insert then insert them now
+					if (pendingInserts.Count > 0) {
+						//TODO for [KFF]
+					}
+					// If we have records to update then update them now
+					if(pendingUpdates.Count > 0) {
+						//TODO for [ARM]
+					}
+
+				}
+			}
+			catch (Exception ex) {
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally {
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
+		// ---------------------------------------------
+		// Return True if the given TimecardDetail has all "0.0" or Blank entries
+		private bool isBlankTimecardDetail(TimecardDetail tcDetail) {
+			//TODO for [ARM]
+			throw new Exception("Function isBlankTimecardDetail is not yet implemented");
+			//return true;
+		}
 
 	}
 }
