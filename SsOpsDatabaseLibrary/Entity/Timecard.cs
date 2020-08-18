@@ -7,10 +7,8 @@ using System.Data;
 
 namespace SsOpsDatabaseLibrary.Entity
 {
-	public class Timecard
-	{
-		public enum DetailFields
-		{
+	public class Timecard {
+		public enum DetailFields {
 			Detail_ID,
 			Task_ID,
 			Timecard_ID,
@@ -24,13 +22,14 @@ namespace SsOpsDatabaseLibrary.Entity
 		}
 		public Timecard() { }
 
-		public string TimecardId {get;set;}
-        public string Year { get; set; }
-        public string WeekNumber { get; set; }
-        public string EmployeeId { get; set; }
-        public DataTable DetailTable { get; set; }
+		public string TimecardId { get; set; }
+		public string Year { get; set; }
+		public string WeekNumber { get; set; }
+		public string EmployeeId { get; set; }
+		//public DataTable DetailTable { get; set; } Too heavy and more complex than necessary
+		public List<TimecardDetail> DetailList {get; set; }
 
-		// Override for use in combo boxes
+		// Override ToString() for use in combo boxes
 		public override string ToString()
 		{
 			return Year + " Week " + WeekNumber;
