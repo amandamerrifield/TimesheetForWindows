@@ -165,6 +165,7 @@ namespace TimesheetForWindows
 				//Add the selected task to the timecard
 				TimecardDetail tcDetail = new TimecardDetail();
 				tcDetail.TaskName = theSelectedTask.TaskName;
+				tcDetail.Task_ID = theSelectedTask.TaskId;
 				//adding a row to the binding source will in-turn add the row to our _timecardDetailsUnderGlass list
 				_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
@@ -224,13 +225,15 @@ namespace TimesheetForWindows
 				}
 			}
 			foreach(TimecardDetail xx in toBeRemoved) {
-				_tcDetailsUnderGlass.Remove(xx);
+				//_tcDetailsUnderGlass.Remove(xx);
+				_bindingSource1.Remove(xx);
 			}
 
 			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
 			_timecardUnderGlass.DetailList = new List<TimecardDetail>();
 			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
 				_timecardUnderGlass.DetailList.Add(tcd);
+
 			}
 			// Update the timecard detail rows in the database that are joined to this timecard
 			// Any timecard details that are IN the DB but NOT in _timecardUnderGlass.DetailList will be deleted
@@ -516,29 +519,28 @@ namespace TimesheetForWindows
 						}
 						if (isNotFoundUnderGlass) {
 							pendingDeletes.Add(existingTcd);
-						}
-					}
-					// If we have records to delete then do it now
-					if(pendingDeletes.Count > 0) {
-						//TODO for [ARM]
-						dbLib.DeleteTimeCardDetail(pendingDeletes);
-					}
-					//// If we have records to insert then insert them now
-					//if (pendingInserts.Count > 0) {
-					//	dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
-					//}
-					//// If we have records to update then update them now
-					//if(pendingUpdates.Count > 0) {
-					//	//TODO for [ARM]
-					//}
+                        }
+                    }
+                    // If we have records to delete then do it now
+                    if (pendingDeletes.Count > 0) {
+                        dbLib.DeleteTimeCardDetail(pendingDeletes);
+                    }
+                    //// If we have records to insert then insert them now
+                    //if (pendingInserts.Count > 0) {
+                    //	dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+                    //}
+                    //// If we have records to update then update them now
+                    //if(pendingUpdates.Count > 0) {
+                    //	//TODO for [ARM]
+                    //}
 
-					// The UpdateTimecardDetails function will update all records that are already in the DB
-					dbLib.UpdateTimeCardDetail(ref _timecardUnderGlass);
-					// CreateTimecardDetail will insert any records NOT yet in the DB
-					dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
-				}
-			}
-			catch (Exception ex) {
+                    // The UpdateTimecardDetails function will update all records that are already in the DB
+                    dbLib.UpdateTimeCardDetail(ref _timecardUnderGlass);
+                    // CreateTimecardDetail will insert any records NOT yet in the DB
+                    dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+                }
+            }
+            catch (Exception ex) {
 				Application.UseWaitCursor = false;
 				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
 				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
@@ -557,26 +559,26 @@ namespace TimesheetForWindows
             {
 				throw new Exception("Function isBlankTimeCardDetail can't examine a null timecard");
             }
-			if (tcDetail.Monday_Hrs != string.Empty)
+			if (! String.IsNullOrEmpty(tcDetail.Monday_Hrs))
             {
 				return false;
             }
-			if (tcDetail.Tuesday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Tuesday_Hrs)) {
 				return false;
 			}
-			if (tcDetail.Wednesday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Wednesday_Hrs)) {
 				return false;
 			}
-			if (tcDetail.Thursday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Thursday_Hrs)) {
 				return false;
 			}
-			if (tcDetail.Friday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Friday_Hrs)) {
 				return false;
 			}
-			if (tcDetail.Saturday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Saturday_Hrs)) {
 				return false;
 			}
-			if (tcDetail.Sunday_Hrs != string.Empty) {
+			if (!String.IsNullOrEmpty(tcDetail.Sunday_Hrs)) {
 				return false;
 			}
 			//throw new Exception("Function isBlankTimecardDetail is not yet implemented");

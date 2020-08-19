@@ -327,7 +327,7 @@ namespace SsOpsDatabaseLibrary
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    parm = new SqlParameter("@Year", SqlDbType.Int);
+                    parm = new SqlParameter("@YearNbr", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
                     parm.Value = Convert.ToInt16(tcard.Year);
 

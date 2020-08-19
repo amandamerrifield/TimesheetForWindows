@@ -8,7 +8,15 @@ namespace SsOpsDatabaseLibrary.Entity
 {
 	public class TimecardDetail
 	{
-		public TimecardDetail() { }
+		public TimecardDetail() {
+			Monday_Hrs = String.Empty;
+			Tuesday_Hrs = String.Empty;
+			Wednesday_Hrs = String.Empty;
+			Thursday_Hrs = String.Empty;
+			Friday_Hrs = String.Empty;
+			Saturday_Hrs = String.Empty;
+			Sunday_Hrs = String.Empty;
+		}
 
 		public string Detail_ID { get; set; }
 		public string Task_ID { get; set; }
