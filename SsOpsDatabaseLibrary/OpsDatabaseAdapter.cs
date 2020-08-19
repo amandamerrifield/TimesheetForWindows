@@ -581,7 +581,35 @@ namespace SsOpsDatabaseLibrary
         // ================================================================
         #region Public Functions that return Void
         public void DeleteTimeCardDetail(List<TimecardDetail> detailsToDelete) {
-            throw new Exception("Unable to delete timecard detail.  Function not implemented.");
+            SqlParameter parm;
+
+            try {
+                bool isMissingKey = false;
+                foreach (TimecardDetail detail in detailsToDelete) {
+                    if (String.IsNullOrEmpty(detail.Detail_ID)) {
+                        isMissingKey = true;
+                        break;
+                    }
+                }
+                if (isMissingKey) {
+                    throw new Exception("Unable to delete timecard detail.  A key value is missing.");
+                }
+                using (SqlCommand cmd = new SqlCommand("Dsp_DeleteTimeCardDetail", _dbConn)) {
+                    foreach(TimecardDetail tcd in detailsToDelete) {
+                        parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
+                        cmd.Parameters.Add(parm);
+                        parm.Value = Convert.ToInt32(tcd.Detail_ID);
+                        _ = cmd.ExecuteScalar();
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+            //throw new Exception("Unable to delete timecard detail.  Function not implemented.");
         }
 
         #endregion
