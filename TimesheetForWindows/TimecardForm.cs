@@ -484,24 +484,26 @@ namespace TimesheetForWindows
 					// The database has existing records
 					//Look for deletes first, then Updates, and lastly inserts
 					List<TimecardDetail> pendingDeletes = new List<TimecardDetail>();
-					List<TimecardDetail> pendingUpdates = new List<TimecardDetail>();
-					List<TimecardDetail> pendingInserts = new List<TimecardDetail>();
 
-					bool isNotExistingInDatabase;
-					foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
-						isNotExistingInDatabase = true;
-						foreach (TimecardDetail existingTcd in existingDetails) {
-							if (tcd.TaskName == existingTcd.TaskName) {
-								isNotExistingInDatabase = false;
-								pendingUpdates.Add(tcd);
-								break;
-							}
-						}
-						if (isNotExistingInDatabase) {
-							pendingInserts.Add(tcd);
-						}
-					}
+					//List<TimecardDetail> pendingUpdates = new List<TimecardDetail>();
+					//List<TimecardDetail> pendingInserts = new List<TimecardDetail>();
+
+					//bool isNotExistingInDatabase;
+					//foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
+					//	isNotExistingInDatabase = true;
+					//	foreach (TimecardDetail existingTcd in existingDetails) {
+					//		if (tcd.TaskName == existingTcd.TaskName) {
+					//			isNotExistingInDatabase = false;
+					//			pendingUpdates.Add(tcd);
+					//			break;
+					//		}
+					//	}
+					//	if (isNotExistingInDatabase) {
+					//		pendingInserts.Add(tcd);
+					//	}
+					//}
 					//Here all the timecard detail records in the grid are also inside one of the 2 pending lists.
+
 					//Now find the records that are to be deleted (records that do not exist in the grid)
 					bool isNotFoundUnderGlass;
 					foreach (TimecardDetail existingTcd in existingDetails) {
@@ -521,15 +523,19 @@ namespace TimesheetForWindows
 						//TODO for [ARM]
 						dbLib.DeleteTimeCardDetail(pendingDeletes);
 					}
-					// If we have records to insert then insert them now
-					if (pendingInserts.Count > 0) {
-						//TODO for [KFF]
-					}
-					// If we have records to update then update them now
-					if(pendingUpdates.Count > 0) {
-						//TODO for [ARM]
-					}
+					//// If we have records to insert then insert them now
+					//if (pendingInserts.Count > 0) {
+					//	dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+					//}
+					//// If we have records to update then update them now
+					//if(pendingUpdates.Count > 0) {
+					//	//TODO for [ARM]
+					//}
 
+					// The UpdateTimecardDetails function will update all records that are already in the DB
+					dbLib.UpdateTimeCardDetail(ref _timecardUnderGlass);
+					// CreateTimecardDetail will insert any records NOT yet in the DB
+					dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
 				}
 			}
 			catch (Exception ex) {
