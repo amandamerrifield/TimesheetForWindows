@@ -137,7 +137,7 @@ namespace TimesheetForWindows
 				{
 					foreach (Task task in _activeTasks)
 					{
-						if (task.TaskName == tcd.TaskName)
+						if (task.TaskName == tcd.Task_Name)
 						{
 							_filteredTasks.Remove(task);
 						}
@@ -164,8 +164,8 @@ namespace TimesheetForWindows
 			{
 				//Add the selected task to the timecard
 				TimecardDetail tcDetail = new TimecardDetail();
-				tcDetail.TaskName = theSelectedTask.TaskName;
-				tcDetail.Task_ID = theSelectedTask.TaskId;
+				tcDetail.Task_Name= theSelectedTask.TaskName;
+				tcDetail.Task_Id = Convert.ToInt32(theSelectedTask.TaskId);
 				//adding a row to the binding source will in-turn add the row to our _timecardDetailsUnderGlass list
 				_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
@@ -220,7 +220,7 @@ namespace TimesheetForWindows
 			// First discard all timecard detail entries that have zero or blank for every day this week
 			List<TimecardDetail> toBeRemoved = new List<TimecardDetail>();
 			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
-				if(isBlankTimecardDetail(tcd)) {
+				if(tcd.IsBlank) {
 					toBeRemoved.Add(tcd);
 				}
 			}
@@ -244,50 +244,6 @@ namespace TimesheetForWindows
 
 		#endregion
 
-		// ====================================================
-		#region DATA STUBS
-
-		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
-		public List<Timecard> GetTimecardsForEmployeeSTUB(string employeeId)
-		{
-			List<Timecard> tcards = new List<Timecard>();
-			for (int x = 5; x > 0; --x)
-			{
-				Timecard tc = new Timecard();
-				tc.DetailList = new List<TimecardDetail>();
-				tc.EmployeeId = employeeId;
-				tc.TimecardId = Convert.ToString(2000 + x);
-				tc.WeekNumber = Convert.ToString(32 + x);
-				tc.Year = "2018";
-
-				tcards.Add(tc);
-			}
-			return tcards;
-		}
-		// !!##!!## STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!STUB ##!!##!!
-		public List<TimecardDetail> GetTcDetailsByTimecardIdSTUB(string tcardId)
-		{
-			List<TimecardDetail> details = new List<TimecardDetail>();
-			for (int x = 0; x < 5; x++)
-			{
-				TimecardDetail dtl = new TimecardDetail();
-				dtl.Detail_ID = Convert.ToString(1010 + x);
-				dtl.Task_ID = Convert.ToString(10010 + x);
-				dtl.Timecard_ID = tcardId;
-				dtl.Monday_Hrs = "9.0";
-				dtl.Tuesday_Hrs = "8.0";
-				dtl.Wednesday_Hrs = "7.0";
-				dtl.Thursday_Hrs = "6.0";
-				dtl.Friday_Hrs = "4.0";
-				dtl.Saturday_Hrs = "2.0";
-				dtl.Sunday_Hrs = "1.0";
-
-				details.Add(dtl);
-			}
-			return details;
-		}
-
-		#endregion
 
 		// ====================================================
 		#region FORM HELPER FUNCTIONS
@@ -512,7 +468,7 @@ namespace TimesheetForWindows
 					foreach (TimecardDetail existingTcd in existingDetails) {
 						isNotFoundUnderGlass = true;
 						foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
-							if (tcd.TaskName == existingTcd.TaskName) {
+							if (tcd.Task_Name == existingTcd.Task_Name) {
 								isNotFoundUnderGlass = false;
 								break;
 							}
@@ -550,39 +506,6 @@ namespace TimesheetForWindows
 				//Deny the wait cursor
 				Application.UseWaitCursor = false;
 			}
-		}
-		// ---------------------------------------------
-		// Return True if the given TimecardDetail has all "0.0" or Blank entries
-		private bool isBlankTimecardDetail(TimecardDetail tcDetail) {
-
-			if (tcDetail == null)
-            {
-				throw new Exception("Function isBlankTimeCardDetail can't examine a null timecard");
-            }
-			if (! String.IsNullOrEmpty(tcDetail.Monday_Hrs))
-            {
-				return false;
-            }
-			if (!String.IsNullOrEmpty(tcDetail.Tuesday_Hrs)) {
-				return false;
-			}
-			if (!String.IsNullOrEmpty(tcDetail.Wednesday_Hrs)) {
-				return false;
-			}
-			if (!String.IsNullOrEmpty(tcDetail.Thursday_Hrs)) {
-				return false;
-			}
-			if (!String.IsNullOrEmpty(tcDetail.Friday_Hrs)) {
-				return false;
-			}
-			if (!String.IsNullOrEmpty(tcDetail.Saturday_Hrs)) {
-				return false;
-			}
-			if (!String.IsNullOrEmpty(tcDetail.Sunday_Hrs)) {
-				return false;
-			}
-			//throw new Exception("Function isBlankTimecardDetail is not yet implemented");
-			return true;
 		}
 
 	}

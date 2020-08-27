@@ -222,47 +222,19 @@ namespace SsOpsDatabaseLibrary
                     while (reader.Read())
                     {
                         TimecardDetail tcd = new TimecardDetail();
-                        tcd.Detail_ID = Convert.ToString(reader["TcDetailId"]);
-                        tcd.Task_ID = Convert.ToString(reader["TaskId"]);
-                        tcd.Timecard_ID = Convert.ToString(reader["TimecardId"]);
+                        tcd.Detail_Id = Convert.ToInt32(reader["TcDetailId"]);
+                        tcd.Task_Id = Convert.ToInt32(reader["TaskId"]);
+                        tcd.Timecard_Id = Convert.ToInt32(reader["TimecardId"]);
 
-						// We want hours format to be 99.9 and we have 4 chars, so if decimal point in position 1, then string m/b 3 chars long.
-						tcd.Monday_Hrs = Convert.ToString(reader["MondayHrs"]).Substring(0,4);
-						if (tcd.Monday_Hrs.Substring(1, 1) == ".") tcd.Monday_Hrs = tcd.Monday_Hrs.Substring(0, 3);
-						if (tcd.Monday_Hrs == "0.0")
-							tcd.Monday_Hrs = String.Empty;
+                        tcd.PutValueForDay(Timecard.DetailFields.Monday_Hrs, Convert.ToDecimal(reader["MondayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Tuesday_Hrs, Convert.ToDecimal(reader["TuesdayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Wednesday_Hrs, Convert.ToDecimal(reader["WednesdayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Thursday_Hrs, Convert.ToDecimal(reader["ThursdayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Friday_Hrs, Convert.ToDecimal(reader["FridayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Saturday_Hrs, Convert.ToDecimal(reader["SaturdayHrs"]));
+                        tcd.PutValueForDay(Timecard.DetailFields.Sunday_Hrs, Convert.ToDecimal(reader["SundayHrs"]));
 
-						tcd.Tuesday_Hrs = Convert.ToString(reader["TuesdayHrs"]).Substring(0, 4);
-						if (tcd.Tuesday_Hrs.Substring(1, 1) == ".") tcd.Tuesday_Hrs = tcd.Tuesday_Hrs.Substring(0, 3);
-						if (tcd.Tuesday_Hrs == "0.0")
-							tcd.Tuesday_Hrs = String.Empty;
-
-						tcd.Wednesday_Hrs = Convert.ToString(reader["WednesdayHrs"]).Substring(0, 4);
-						if (tcd.Wednesday_Hrs.Substring(1, 1) == ".") tcd.Wednesday_Hrs = tcd.Wednesday_Hrs.Substring(0, 3);
-						if (tcd.Wednesday_Hrs == "0.0")
-							tcd.Wednesday_Hrs = String.Empty;
-
-						tcd.Thursday_Hrs = Convert.ToString(reader["ThursdayHrs"]).Substring(0, 4);
-						if (tcd.Thursday_Hrs.Substring(1, 1) == ".") tcd.Thursday_Hrs = tcd.Thursday_Hrs.Substring(0, 3);
-						if (tcd.Thursday_Hrs == "0.0")
-							tcd.Thursday_Hrs = String.Empty;
-
-						tcd.Friday_Hrs = Convert.ToString(reader["FridayHrs"]).Substring(0, 4);
-						if (tcd.Friday_Hrs.Substring(1, 1) == ".") tcd.Friday_Hrs = tcd.Friday_Hrs.Substring(0, 3);
-						if (tcd.Friday_Hrs == "0.0")
-							tcd.Friday_Hrs = String.Empty;
-
-						tcd.Saturday_Hrs = Convert.ToString(reader["SaturdayHrs"]).Substring(0, 4);
-						if (tcd.Saturday_Hrs.Substring(1, 1) == ".") tcd.Saturday_Hrs = tcd.Saturday_Hrs.Substring(0, 3);
-						if (tcd.Saturday_Hrs == "0.0")
-							tcd.Saturday_Hrs = String.Empty;
-
-						tcd.Sunday_Hrs = Convert.ToString(reader["SundayHrs"]).Substring(0, 4);
-						if (tcd.Sunday_Hrs.Substring(1, 1) == ".") tcd.Sunday_Hrs = tcd.Sunday_Hrs.Substring(0, 3);
-						if (tcd.Sunday_Hrs == "0.0")
-							tcd.Sunday_Hrs = String.Empty;
-
-						tcd.TaskName = (string)reader["TaskName"];
+                        tcd.Task_Name = (string)reader["TaskName"];
 
                         listTcd.Add(tcd);
                     }
@@ -408,7 +380,7 @@ namespace SsOpsDatabaseLibrary
 				bool isMissingKey = false;
 				isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
 				foreach (TimecardDetail detail in tcard.DetailList) {
-					if (String.IsNullOrEmpty(detail.Task_ID)) {
+					if (detail.Task_Id == 0) {
 						isMissingKey = true;
 						break;
 					}
@@ -419,7 +391,7 @@ namespace SsOpsDatabaseLibrary
 				//Must have something to insert
 				bool isNothingToInsert = true;
 				foreach (TimecardDetail tcd in tcard.DetailList) {
-					if (String.IsNullOrEmpty(tcd.Detail_ID)) {
+					if (tcd.Detail_Id == 0) {
 						isNothingToInsert = false;
 						break;
 					}
@@ -429,51 +401,52 @@ namespace SsOpsDatabaseLibrary
 				// Okay to insert these new rows. Do it in a transaction (all rows or none)
 				using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCardDetail", _dbConn)) {
 					SqlTransaction xaction = _dbConn.BeginTransaction();
-
+                    cmd.Transaction = xaction;
 					cmd.CommandType = CommandType.StoredProcedure;
 
 					foreach (TimecardDetail tcd in tcard.DetailList) {
 						//Do not attempt to insert detail rows that are already in the DB
-						if (String.IsNullOrEmpty(tcd.Detail_ID)) {
-
+						if (tcd.Detail_Id == 0) {
+                            cmd.Parameters.Clear();
+                            
 							parm = new SqlParameter("@TaskId", SqlDbType.Int);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToInt32(tcd.Task_ID);
+							parm.Value = tcd.Task_Id;
 
 							parm = new SqlParameter("@TimecardId", SqlDbType.Int);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToInt32(tcd.Timecard_ID);
+							parm.Value = tcd.Timecard_Id;
 
 							parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Monday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Monday_Hrs);
 
 							parm = new SqlParameter("@TuesdayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Tuesday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Tuesday_Hrs);
 
 							parm = new SqlParameter("@WednesdayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Wednesday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Wednesday_Hrs);
 
 							parm = new SqlParameter("@ThursdayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Thursday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Thursday_Hrs);
 
 							parm = new SqlParameter("@FridayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Friday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Friday_Hrs);
 
 							parm = new SqlParameter("@SaturdayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Saturday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Saturday_Hrs);
 
 							parm = new SqlParameter("@SundayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
-							parm.Value = Convert.ToDecimal(tcd.Sunday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Sunday_Hrs);
 
 							// Update caller's row with newly created ID
-							tcd.Detail_ID = Convert.ToString(cmd.ExecuteScalar());
+							tcd.Detail_Id = Convert.ToInt32(cmd.ExecuteScalar());
 						}
 					}
 					// Commit the transaction to the database
@@ -494,7 +467,7 @@ namespace SsOpsDatabaseLibrary
                 bool isMissingKey = false;
                 isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
                 foreach (TimecardDetail detail in tcard.DetailList) {
-                    if (String.IsNullOrEmpty(detail.Task_ID)) {
+                    if (detail.Task_Id == 0) {
                         isMissingKey = true;
                         break;
                     }
@@ -505,7 +478,7 @@ namespace SsOpsDatabaseLibrary
                 //Must have something to insert
                 bool isNothingToUpdate = true;
                 foreach (TimecardDetail tcd in tcard.DetailList) {
-                    if (! String.IsNullOrEmpty(tcd.Detail_ID)) {
+                    if (tcd.Detail_Id != 0) {
                         isNothingToUpdate = false;
                         break;
                     }
@@ -513,54 +486,49 @@ namespace SsOpsDatabaseLibrary
                 if (isNothingToUpdate) { return; }
 
                 // Okay to update these existing rows. Do it in a transaction (all rows or none)
-                using (SqlCommand cmd = new SqlCommand("sp_UpdateTimeCardDetail", _dbConn)) {
+                using (SqlCommand cmd = new SqlCommand("Usp_UpdateTimeCardDetail", _dbConn)) {
                     SqlTransaction xaction = _dbConn.BeginTransaction();
-
+                    cmd.Transaction = xaction;
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     foreach (TimecardDetail tcd in tcard.DetailList) {
                         //Do not attempt to update detail rows that are NOT in the DB
-                        if (! String.IsNullOrEmpty(tcd.Detail_ID)) {
+                        if (tcd.Detail_Id != 0) {
+
+                            cmd.Parameters.Clear();
 
                             parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToInt32(tcd.Detail_ID);
+                            parm.Value = Convert.ToInt32(tcd.Detail_Id);
 
-                            //parm = new SqlParameter("@TaskId", SqlDbType.Int);
-                            //cmd.Parameters.Add(parm);
-                            //parm.Value = Convert.ToInt32(tcd.Task_ID);
-
-                            //parm = new SqlParameter("@TimecardId", SqlDbType.Int);
-                            //cmd.Parameters.Add(parm);
-                            //parm.Value = Convert.ToInt32(tcd.Timecard_ID);
 
                             parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Monday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Monday_Hrs);
 
                             parm = new SqlParameter("@TuesdayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Tuesday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Tuesday_Hrs);
 
                             parm = new SqlParameter("@WednesdayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Wednesday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Wednesday_Hrs);
 
                             parm = new SqlParameter("@ThursdayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Thursday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Thursday_Hrs);
 
                             parm = new SqlParameter("@FridayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Friday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Friday_Hrs);
 
                             parm = new SqlParameter("@SaturdayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Saturday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Saturday_Hrs);
 
                             parm = new SqlParameter("@SundayHrs", SqlDbType.SmallMoney);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToDecimal(tcd.Sunday_Hrs);
+                            parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Sunday_Hrs);
 
                             _ = cmd.ExecuteScalar();
                         }
@@ -586,7 +554,7 @@ namespace SsOpsDatabaseLibrary
             try {
                 bool isMissingKey = false;
                 foreach (TimecardDetail detail in detailsToDelete) {
-                    if (String.IsNullOrEmpty(detail.Detail_ID)) {
+                    if (detail.Detail_Id == 0) {
                         isMissingKey = true;
                         break;
                     }
@@ -596,13 +564,14 @@ namespace SsOpsDatabaseLibrary
                 }
                 using (SqlCommand cmd = new SqlCommand("Dsp_DeleteTimeCardDetail", _dbConn)) {
                     foreach(TimecardDetail tcd in detailsToDelete) {
+                        cmd.Parameters.Clear();
                         parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
-                        parm.Value = Convert.ToInt32(tcd.Detail_ID);
+                        parm.Value = tcd.Detail_Id;
                         _ = cmd.ExecuteScalar();
-                        return;
                     }
                 }
+                return;
             }
             catch (Exception ex) {
                 string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
