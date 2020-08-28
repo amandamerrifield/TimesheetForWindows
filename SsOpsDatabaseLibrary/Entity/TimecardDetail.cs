@@ -13,9 +13,9 @@ namespace SsOpsDatabaseLibrary.Entity
         // ====================================
         // Internal Variables
         // ====================================
-        public int Detail_Id { get; set; }
-        public int Task_Id { get; set; }
-        public int Timecard_Id { get; set; }
+        public int DetailId { get; set; }
+        public int TaskId { get; set; }
+        public int TimecardId { get; set; }
         public string Task_Name { get; set; }
 
         private decimal[] dailyHours;
@@ -29,9 +29,9 @@ namespace SsOpsDatabaseLibrary.Entity
             for (int i = 0; i < dailyHours.Length; i++) {
                 dailyHours[i] = 0;
             }
-            Detail_Id = 0;
-            Task_Id = 0;
-            Timecard_Id = 0;
+            DetailId = 0;
+            TaskId = 0;
+            TimecardId = 0;
             Task_Name = "..";
         }
         //=======================================
@@ -42,9 +42,9 @@ namespace SsOpsDatabaseLibrary.Entity
             for (int i = 0; i < dailyHours.Length; i++) {
                 dailyHours[i] = 0;
             }
-            Detail_Id = 0;
-            Task_Id = 0;
-            Timecard_Id = 0;
+            DetailId = 0;
+            TaskId = 0;
+            TimecardId = 0;
             Task_Name = taskName;
         }
         // ==============================

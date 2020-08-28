@@ -7,6 +7,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using SsOpsDatabaseLibrary.Entity;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace SsOpsDatabaseLibrary
 {
@@ -68,7 +70,7 @@ namespace SsOpsDatabaseLibrary
                         throw new InvalidOperationException("No record was found for " + firstName + " " + lastName);
                     }
                     emp = new Employee();
-                    emp.EmployeeId = reader["EmployeeId"].ToString();
+                    emp.EmployeeId = Convert.ToInt32(reader["EmployeeId"]);
                     emp.FirstName = (string)reader["FirstName"];
                     emp.LastName = (string)reader["LastName"];
                     emp.TaxIdNbr = (string)reader["TaxIdNbr"];
@@ -106,8 +108,8 @@ namespace SsOpsDatabaseLibrary
 					while (reader.Read())
 					{
 						Entity.Task et = new Entity.Task();
-						et.TaskId = Convert.ToString(reader["TaskId"]);
-						et.CategoryId = Convert.ToString(reader["TaskCategoryId"]);
+						et.TaskId = Convert.ToInt32(reader["TaskId"]);
+						et.CategoryId = Convert.ToInt32(reader["TaskCategoryId"]);
 						et.TaskName = (string) reader["TaskName"];
 						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
 						et.ActualHours = Convert.ToString(reader["ActualHours"]);
@@ -142,9 +144,9 @@ namespace SsOpsDatabaseLibrary
 					while (reader.Read())
 					{
 						Entity.Task et = new Entity.Task();
-						et.CategoryId = Convert.ToString(reader["CategoryId"]);
+						et.CategoryId = Convert.ToInt32(reader["CategoryId"]);
 						et.CategoryName = Convert.ToString(reader["CategoryName"]);
-						et.TaskId = Convert.ToString(reader["TaskId"]);
+						et.TaskId = Convert.ToInt32(reader["TaskId"]);
 						et.TaskName = (string)reader["TaskName"];
 						et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
 						et.ActualHours = Convert.ToString(reader["ActualHours"]);
@@ -168,7 +170,7 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
-		public List<Timecard> GetTimecardsForEmployee(string employeeId)
+		public List<Timecard> GetTimecardsForEmployee(int employeeId)
         {
             SqlParameter parm;
             List<Timecard> timecards = new List<Timecard>();
@@ -187,7 +189,7 @@ namespace SsOpsDatabaseLibrary
                         Timecard tc = new Timecard();
 						tc.DetailList = new List<TimecardDetail>();
                         tc.EmployeeId = employeeId;
-                        tc.TimecardId = Convert.ToString(reader["TimecardId"]);
+                        tc.TimecardId = Convert.ToInt32(reader["TimecardId"]);
                         tc.WeekNumber = Convert.ToString(reader["WeekNbr"]);
                         tc.Year = Convert.ToString(reader["YearNbr"]);
 
@@ -205,7 +207,7 @@ namespace SsOpsDatabaseLibrary
             }
         }
 
-        public List<TimecardDetail> GetTimecardDetailsByTimecardId(string tcId)
+        public List<TimecardDetail> GetTimecardDetailsByTimecardId(int tcId)
         {
             SqlParameter parm;
             List<TimecardDetail> listTcd = new List<TimecardDetail>();
@@ -222,9 +224,9 @@ namespace SsOpsDatabaseLibrary
                     while (reader.Read())
                     {
                         TimecardDetail tcd = new TimecardDetail();
-                        tcd.Detail_Id = Convert.ToInt32(reader["TcDetailId"]);
-                        tcd.Task_Id = Convert.ToInt32(reader["TaskId"]);
-                        tcd.Timecard_Id = Convert.ToInt32(reader["TimecardId"]);
+                        tcd.DetailId = Convert.ToInt32(reader["TcDetailId"]);
+                        tcd.TaskId = Convert.ToInt32(reader["TaskId"]);
+                        tcd.TimecardId = Convert.ToInt32(reader["TimecardId"]);
 
                         tcd.PutValueForDay(Timecard.DetailFields.Monday_Hrs, Convert.ToDecimal(reader["MondayHrs"]));
                         tcd.PutValueForDay(Timecard.DetailFields.Tuesday_Hrs, Convert.ToDecimal(reader["TuesdayHrs"]));
@@ -264,7 +266,7 @@ namespace SsOpsDatabaseLibrary
 					{
 						TaskCategory tc = new TaskCategory();
 						tc.CategoryDescription = (string) reader["CategoryDescription"];
-						tc.CategoryId = Convert.ToString(reader["CategoryId"]);
+						tc.CategoryId = Convert.ToInt32(reader["CategoryId"]);
 						tc.CategoryName = (string)reader["CategoryName"];
 						tc.IsOverheadYN = (string)reader["IsOverheadYn"];
 						cats.Add(tc);
@@ -372,15 +374,15 @@ namespace SsOpsDatabaseLibrary
 		// ================================================================
 		#region Public Functions that update the entity that you pass to it
 
-		public void CreateTimeCardDetail(ref Timecard tcard) {
+		public void CreateTimeCardDetail(Timecard tcard) {
 			SqlParameter parm;
 
 			try {
 				//Must have EmployeeID, TimecardId, and each row must have a TaskId
 				bool isMissingKey = false;
-				isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
+				isMissingKey = (tcard.EmployeeId == 0 || tcard.TimecardId == 0);
 				foreach (TimecardDetail detail in tcard.DetailList) {
-					if (detail.Task_Id == 0) {
+					if (detail.TaskId == 0) {
 						isMissingKey = true;
 						break;
 					}
@@ -391,7 +393,7 @@ namespace SsOpsDatabaseLibrary
 				//Must have something to insert
 				bool isNothingToInsert = true;
 				foreach (TimecardDetail tcd in tcard.DetailList) {
-					if (tcd.Detail_Id == 0) {
+					if (tcd.DetailId == 0) {
 						isNothingToInsert = false;
 						break;
 					}
@@ -399,23 +401,23 @@ namespace SsOpsDatabaseLibrary
 				if (isNothingToInsert) { return; }
 
 				// Okay to insert these new rows. Do it in a transaction (all rows or none)
-				using (SqlCommand cmd = new SqlCommand("sp_InsertTimeCardDetail", _dbConn)) {
+				using (SqlCommand cmd = new SqlCommand("Isp_InsertTimeCardDetail", _dbConn)) {
 					SqlTransaction xaction = _dbConn.BeginTransaction();
                     cmd.Transaction = xaction;
 					cmd.CommandType = CommandType.StoredProcedure;
 
 					foreach (TimecardDetail tcd in tcard.DetailList) {
 						//Do not attempt to insert detail rows that are already in the DB
-						if (tcd.Detail_Id == 0) {
+						if (tcd.DetailId == 0) {
                             cmd.Parameters.Clear();
                             
 							parm = new SqlParameter("@TaskId", SqlDbType.Int);
 							cmd.Parameters.Add(parm);
-							parm.Value = tcd.Task_Id;
+							parm.Value = tcd.TaskId;
 
 							parm = new SqlParameter("@TimecardId", SqlDbType.Int);
 							cmd.Parameters.Add(parm);
-							parm.Value = tcd.Timecard_Id;
+							parm.Value = tcard.TimecardId;
 
 							parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
 							cmd.Parameters.Add(parm);
@@ -445,8 +447,12 @@ namespace SsOpsDatabaseLibrary
 							cmd.Parameters.Add(parm);
                             parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Sunday_Hrs);
 
-							// Update caller's row with newly created ID
-							tcd.Detail_Id = Convert.ToInt32(cmd.ExecuteScalar());
+                            parm = new SqlParameter("@NewIdentity", SqlDbType.Int);
+                            cmd.Parameters.Add(parm);
+                            parm.Value = 0;
+
+                            // Update caller's row with newly created ID
+                            tcd.DetailId = Convert.ToInt32(cmd.ExecuteScalar());
 						}
 					}
 					// Commit the transaction to the database
@@ -459,15 +465,15 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
-        public void UpdateTimeCardDetail(ref Timecard tcard) {
+        public void UpdateTimeCardDetail(Timecard tcard) {
             SqlParameter parm;
 
             try {
                 //Must have EmployeeID, TimecardId, and each row must have a TaskId
                 bool isMissingKey = false;
-                isMissingKey = (String.IsNullOrEmpty(tcard.EmployeeId) || String.IsNullOrEmpty(tcard.TimecardId));
+                isMissingKey = (tcard.EmployeeId == 0 || tcard.TimecardId == 0);
                 foreach (TimecardDetail detail in tcard.DetailList) {
-                    if (detail.Task_Id == 0) {
+                    if (detail.TaskId == 0) {
                         isMissingKey = true;
                         break;
                     }
@@ -478,7 +484,7 @@ namespace SsOpsDatabaseLibrary
                 //Must have something to insert
                 bool isNothingToUpdate = true;
                 foreach (TimecardDetail tcd in tcard.DetailList) {
-                    if (tcd.Detail_Id != 0) {
+                    if (tcd.DetailId != 0) {
                         isNothingToUpdate = false;
                         break;
                     }
@@ -493,13 +499,13 @@ namespace SsOpsDatabaseLibrary
 
                     foreach (TimecardDetail tcd in tcard.DetailList) {
                         //Do not attempt to update detail rows that are NOT in the DB
-                        if (tcd.Detail_Id != 0) {
+                        if (tcd.DetailId != 0) {
 
                             cmd.Parameters.Clear();
 
                             parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                             cmd.Parameters.Add(parm);
-                            parm.Value = Convert.ToInt32(tcd.Detail_Id);
+                            parm.Value = Convert.ToInt32(tcd.DetailId);
 
 
                             parm = new SqlParameter("@MondayHrs", SqlDbType.SmallMoney);
@@ -554,7 +560,7 @@ namespace SsOpsDatabaseLibrary
             try {
                 bool isMissingKey = false;
                 foreach (TimecardDetail detail in detailsToDelete) {
-                    if (detail.Detail_Id == 0) {
+                    if (detail.DetailId == 0) {
                         isMissingKey = true;
                         break;
                     }
@@ -567,7 +573,7 @@ namespace SsOpsDatabaseLibrary
                         cmd.Parameters.Clear();
                         parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
-                        parm.Value = tcd.Detail_Id;
+                        parm.Value = tcd.DetailId;
                         _ = cmd.ExecuteScalar();
                     }
                 }
@@ -578,7 +584,6 @@ namespace SsOpsDatabaseLibrary
                 LogHardErrorMessage(errTitle, ex.Source, ex.Message);
                 throw;
             }
-            //throw new Exception("Unable to delete timecard detail.  Function not implemented.");
         }
 
         #endregion
