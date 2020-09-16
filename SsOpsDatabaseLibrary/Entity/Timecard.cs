@@ -19,10 +19,10 @@ namespace SsOpsDatabaseLibrary.Entity
 		}
 		public Timecard() { }
 
-		public string TimecardId { get; set; }
+		public int TimecardId { get; set; }
 		public string Year { get; set; }
 		public string WeekNumber { get; set; }
-		public string EmployeeId { get; set; }
+		public int EmployeeId { get; set; }
 		//public DataTable DetailTable { get; set; } Too heavy and more complex than necessary
 		public List<TimecardDetail> DetailList {get; set; }
 

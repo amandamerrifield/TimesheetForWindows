@@ -119,6 +119,11 @@ namespace TimesheetForWindows
 
 			dgvTimecardDetail.DataSource = _bindingSource1;
 			_bindingSource1.DataSource = _tcDetailsUnderGlass;
+			//Do not display these columns in the grid
+			dgvTimecardDetail.Columns["IsBlank"].Visible = false;
+			dgvTimecardDetail.Columns["TaskId"].Visible = false;
+			dgvTimecardDetail.Columns["TimecardId"].Visible = false;
+			dgvTimecardDetail.Columns["DetailId"].Visible = false;
 
 			_currentFormState = FormState.ViewingData;
 		}
@@ -165,7 +170,7 @@ namespace TimesheetForWindows
 				//Add the selected task to the timecard
 				TimecardDetail tcDetail = new TimecardDetail();
 				tcDetail.Task_Name= theSelectedTask.TaskName;
-				tcDetail.Task_Id = Convert.ToInt32(theSelectedTask.TaskId);
+				tcDetail.TaskId = Convert.ToInt32(theSelectedTask.TaskId);
 				//adding a row to the binding source will in-turn add the row to our _timecardDetailsUnderGlass list
 				_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
@@ -244,7 +249,6 @@ namespace TimesheetForWindows
 
 		#endregion
 
-
 		// ====================================================
 		#region FORM HELPER FUNCTIONS
 
@@ -316,7 +320,7 @@ namespace TimesheetForWindows
 					_timecardUnderGlass.WeekNumber = _thisWeekNumber;
 					_timecardUnderGlass.Year = DateTime.Today.ToString("yyyy");
 					int newlyMintedTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
-					_timecardUnderGlass.TimecardId = newlyMintedTimecardID.ToString();
+					_timecardUnderGlass.TimecardId = newlyMintedTimecardID;
 				}
 			}
 			catch (Exception ex)
@@ -437,31 +441,12 @@ namespace TimesheetForWindows
 					if(existingDetails.Count == 0) {
 						if (_timecardUnderGlass.DetailList.Count == 0) return;
 						//Insert all items in the _timecardUnderGlass.DetailList into the DB and return
-						dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+						dbLib.CreateTimeCardDetail(_timecardUnderGlass);
 						return;
 					}
 					// The database has existing records
 					//Look for deletes first, then Updates, and lastly inserts
 					List<TimecardDetail> pendingDeletes = new List<TimecardDetail>();
-
-					//List<TimecardDetail> pendingUpdates = new List<TimecardDetail>();
-					//List<TimecardDetail> pendingInserts = new List<TimecardDetail>();
-
-					//bool isNotExistingInDatabase;
-					//foreach (TimecardDetail tcd in _timecardUnderGlass.DetailList) {
-					//	isNotExistingInDatabase = true;
-					//	foreach (TimecardDetail existingTcd in existingDetails) {
-					//		if (tcd.TaskName == existingTcd.TaskName) {
-					//			isNotExistingInDatabase = false;
-					//			pendingUpdates.Add(tcd);
-					//			break;
-					//		}
-					//	}
-					//	if (isNotExistingInDatabase) {
-					//		pendingInserts.Add(tcd);
-					//	}
-					//}
-					//Here all the timecard detail records in the grid are also inside one of the 2 pending lists.
 
 					//Now find the records that are to be deleted (records that do not exist in the grid)
 					bool isNotFoundUnderGlass;
@@ -481,19 +466,11 @@ namespace TimesheetForWindows
                     if (pendingDeletes.Count > 0) {
                         dbLib.DeleteTimeCardDetail(pendingDeletes);
                     }
-                    //// If we have records to insert then insert them now
-                    //if (pendingInserts.Count > 0) {
-                    //	dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
-                    //}
-                    //// If we have records to update then update them now
-                    //if(pendingUpdates.Count > 0) {
-                    //	//TODO for [ARM]
-                    //}
 
                     // The UpdateTimecardDetails function will update all records that are already in the DB
-                    dbLib.UpdateTimeCardDetail(ref _timecardUnderGlass);
+                    dbLib.UpdateTimeCardDetail(_timecardUnderGlass);
                     // CreateTimecardDetail will insert any records NOT yet in the DB
-                    dbLib.CreateTimeCardDetail(ref _timecardUnderGlass);
+                    dbLib.CreateTimeCardDetail(_timecardUnderGlass);
                 }
             }
             catch (Exception ex) {
@@ -507,6 +484,7 @@ namespace TimesheetForWindows
 				Application.UseWaitCursor = false;
 			}
 		}
+
 
 	}
 }
