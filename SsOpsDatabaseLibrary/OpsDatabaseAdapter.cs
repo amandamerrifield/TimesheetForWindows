@@ -536,7 +536,7 @@ namespace SsOpsDatabaseLibrary
                             cmd.Parameters.Add(parm);
                             parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Sunday_Hrs);
 
-                            _ = cmd.ExecuteScalar();
+                            cmd.ExecuteScalar();
                         }
                     }
                     // Commit the transaction to the database
@@ -574,7 +574,7 @@ namespace SsOpsDatabaseLibrary
                         parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
                         parm.Value = tcd.DetailId;
-                        _ = cmd.ExecuteScalar();
+                        cmd.ExecuteScalar();
                     }
                 }
                 return;
