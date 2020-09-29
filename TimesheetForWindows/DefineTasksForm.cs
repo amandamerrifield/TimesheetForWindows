@@ -16,14 +16,14 @@ namespace TimesheetForWindows
 {
 	public partial class DefineTasksForm : Form
 	{
-		private List<SsOpsDatabaseLibrary.Entity.Task> _defineTasks;
+		private List<SsOpsDatabaseLibrary.Entity.Task> _tasks;
 		private List<SsOpsDatabaseLibrary.Entity.TaskCategory> _categories;
 
 		public DefineTasksForm()
 		{
 			InitializeComponent();
 			this.StartPosition = FormStartPosition.Manual;
-			_defineTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			_tasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
 		}
 
 		// ==============================================
@@ -39,7 +39,7 @@ namespace TimesheetForWindows
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
 					// Call OpsDataReader to get the details for the selected week
-					_defineTasks = dbLib.GetAllTasks();
+					_tasks = dbLib.GetAllTasks();
 				}
 				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 				{
@@ -98,6 +98,27 @@ namespace TimesheetForWindows
 			return true;
 		}
 
+		private void AppendTask(SsOpsDatabaseLibrary.Entity.Task newtask) {
+			try {
+				//Assert wait cursor
+				Application.UseWaitCursor = true;
+
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
+					// Call OpsDataReader to get the details for the selected week
+					int x = dbLib.CreateTask(newtask);
+				}
+			}
+			catch (Exception ex) {
+				Application.UseWaitCursor = false;
+				string errHead = GetType().Name + "  " + System.Reflection.MethodBase.GetCurrentMethod().Name + "() failed. \n\n";
+				MessageBox.Show(errHead + "Source: " + ex.Source + "\n\n" + ex.Message, ProductName + " " + ProductVersion, MessageBoxButtons.OK);
+				Application.Exit();
+			}
+			finally {
+				//Deny the wait cursor
+				Application.UseWaitCursor = false;
+			}
+		}
 
 		#endregion
 
@@ -108,7 +129,7 @@ namespace TimesheetForWindows
 		private void DefineTasksForm_Load(object sender, EventArgs e)
 		{
 			GetAllTasks();
-			this.dataGridView1.DataSource = _defineTasks;
+			this.dataGridView1.DataSource = _tasks;
 
 			foreach (var taskCat in _categories)
 			{
@@ -154,9 +175,43 @@ namespace TimesheetForWindows
 
 			textBox1.Text = textBox1.Text.Substring(0, 1).ToUpper() + textBox1.Text.Substring(1);
 
-			MessageBox.Show("TEST PASSED!!", ProductName, MessageBoxButtons.OK);
+			// 
+			//MessageBox.Show("TEST PASSED!!", ProductName, MessageBoxButtons.OK);
+			foreach (SsOpsDatabaseLibrary.Entity.Task task in _tasks) {
+				if (task.TaskName.ToUpper() == textBox1.Text.ToUpper()) {
+					MessageBox.Show("This task already exists in the grid.", "Attention", MessageBoxButtons.OK);
+					textBox1.Focus();
+					textBox1.SelectionStart = 0;
+					textBox1.SelectionLength = textBox1.Text.Length;
+					return;
+				}
+			}
+			//Uppercase the first character of each to ensure title case
+			textBox1.Text = textBox1.Text.Substring(0, 1).ToUpper() + textBox1.Text.Substring(1);
 
-			//ToDo: Save data to the database ##################################
+			//We have to connect each of the columns in the table to recognize the text from the textbox should be in there now
+			SsOpsDatabaseLibrary.Entity.Task tsk = new SsOpsDatabaseLibrary.Entity.Task();
+			tsk.BudgetHours = textBox2.Text;
+			tsk.TaskName = textBox1.Text;
+			tsk.StartDate = textBox4.Text;
+			tsk.EndDate = textBox5.Text;
+			tsk.ActualHours = "0";
+  
+			TaskCategory tc = (TaskCategory)cbxCategories.SelectedItem;
+			tsk.CategoryId = tc.CategoryId;
+			AppendTask(tsk);
+
+			//Once task is appended, clear the text boxes
+			textBox1.Clear();
+			textBox2.Clear();
+			textBox4.Clear();
+			textBox5.Clear();
+
+			//Get the list of all tasks
+			GetAllTasks();
+			dataGridView1.DataSource = _tasks;
+			//refresh the data so you can see the new task
+			dataGridView1.Refresh();
 
 		}
 

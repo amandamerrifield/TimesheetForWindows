@@ -369,12 +369,60 @@ namespace SsOpsDatabaseLibrary
 			return retVal;
 		}
 
-		#endregion
+        public int CreateTask(Entity.Task tsk) {
+            int retVal = 0;
+            SqlParameter parm;
 
-		// ================================================================
-		#region Public Functions that update the entity that you pass to it
+            try {
+                using (SqlCommand cmd = new SqlCommand("Isp_CreateTask", _dbConn)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    parm = new SqlParameter("@TaskCategoryId", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.CategoryId;
 
-		public void CreateTimeCardDetail(Timecard tcard) {
+                    parm = new SqlParameter("@TaskName", SqlDbType.VarChar);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.TaskName;
+
+
+                    parm = new SqlParameter("@BudgetHours", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.BudgetHours;
+
+                    parm = new SqlParameter("@ActualHours", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.ActualHours ;
+
+                    parm = new SqlParameter("@StartDate", SqlDbType.NChar);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.StartDate;
+
+                    parm = new SqlParameter("@EndDate", SqlDbType.NChar);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = tsk.EndDate;
+
+                    parm = new SqlParameter("@NewIdentity", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = 0;
+
+                    retVal = (Int32)cmd.ExecuteScalar();
+                }
+            }
+            catch (Exception ex) {
+                string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+            return retVal;
+        }
+
+
+        #endregion
+
+        // ================================================================
+        #region Public Functions that update the entity that you pass to it
+
+        public void CreateTimeCardDetail(Timecard tcard) {
 			SqlParameter parm;
 
 			try {
@@ -536,7 +584,7 @@ namespace SsOpsDatabaseLibrary
                             cmd.Parameters.Add(parm);
                             parm.Value = tcd.GetValueForDay(Timecard.DetailFields.Sunday_Hrs);
 
-                            _ = cmd.ExecuteScalar();
+                            cmd.ExecuteScalar();
                         }
                     }
                     // Commit the transaction to the database
@@ -574,7 +622,7 @@ namespace SsOpsDatabaseLibrary
                         parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
                         cmd.Parameters.Add(parm);
                         parm.Value = tcd.DetailId;
-                        _ = cmd.ExecuteScalar();
+                        cmd.ExecuteScalar();
                     }
                 }
                 return;

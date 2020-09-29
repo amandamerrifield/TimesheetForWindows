@@ -166,6 +166,7 @@ namespace TimesheetForWindows
 					textBox1.Focus();
 					textBox1.SelectionStart = 0;
 					textBox1.SelectionLength = textBox1.Text.Length;
+					return;
 				}
 			}
 			//Uppercase the first character of each to ensure title case
