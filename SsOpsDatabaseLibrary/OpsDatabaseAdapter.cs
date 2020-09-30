@@ -384,7 +384,6 @@ namespace SsOpsDatabaseLibrary
                     cmd.Parameters.Add(parm);
                     parm.Value = tsk.TaskName;
 
-
                     parm = new SqlParameter("@BudgetHours", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
                     parm.Value = tsk.BudgetHours;
@@ -399,7 +398,12 @@ namespace SsOpsDatabaseLibrary
 
                     parm = new SqlParameter("@EndDate", SqlDbType.NChar);
                     cmd.Parameters.Add(parm);
-                    parm.Value = tsk.EndDate;
+					if(String.IsNullOrEmpty(tsk.EndDate)) {
+						parm.Value = DBNull.Value;
+					}
+					else {
+						parm.Value = tsk.EndDate;
+					}
 
                     parm = new SqlParameter("@NewIdentity", SqlDbType.Int);
                     cmd.Parameters.Add(parm);
