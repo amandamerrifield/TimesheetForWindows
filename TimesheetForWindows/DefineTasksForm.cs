@@ -133,6 +133,14 @@ namespace TimesheetForWindows
 			}
 		}
 
+		private string DateFormat_UK(string dateFormat_US) {
+			// Convert mm/dd/yyyy to yyyy-mm-dd
+			StringBuilder sbldr = new StringBuilder(dateFormat_US.Substring(6));
+			sbldr.Append("-" + dateFormat_US.Substring(0, 2));
+			sbldr.Append("-" + dateFormat_US.Substring(3, 2));
+			return sbldr.ToString();
+		}
+
 		#endregion
 
 
@@ -206,8 +214,8 @@ namespace TimesheetForWindows
 			SsOpsDatabaseLibrary.Entity.Task tsk = new SsOpsDatabaseLibrary.Entity.Task();
 			tsk.BudgetHours = textBox2.Text;
 			tsk.TaskName = textBox1.Text;
-			tsk.StartDate = textBox4.Text;
-			tsk.EndDate = (String.IsNullOrEmpty(textBox5.Text) ? null : textBox5.Text);
+			tsk.StartDate = DateFormat_UK(textBox4.Text);
+			tsk.EndDate = (String.IsNullOrEmpty(textBox5.Text) ? null : DateFormat_UK(textBox5.Text));
 			tsk.ActualHours = "0";
   
 			TaskCategory tc = (TaskCategory)cbxCategories.SelectedItem;
