@@ -23,7 +23,7 @@ namespace TimesheetForWindows
         private Form _currentActiveForm;
 		private Employee _employee;
 		private Form _taskcategoriesform;
-		private Form _DefineTasksForm;
+		private DefineTasksForm _DefineTasksForm;
 		private Form _selectReportForm;
 
 		// MainForm Constructor
@@ -87,6 +87,11 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
+            if (_DefineTasksForm._isNewTask) {
+				_DefineTasksForm._isNewTask = false;
+				_timecardForm = new TimecardForm(_employee);
+            }
+
             // Make the current active form invisible, then show our timecard form
             if (_currentActiveForm != null) _currentActiveForm.Visible = false;
 
@@ -133,6 +138,7 @@ namespace TimesheetForWindows
 			targetPoint.Y = this.Location.Y + 25;
 			_currentActiveForm.Location = targetPoint;
 			_currentActiveForm.Visible = true;
+
 		}
 
 		private void btnDefineTasks_Click(object sender, EventArgs e)
@@ -148,6 +154,7 @@ namespace TimesheetForWindows
 			targetPoint.Y = this.Location.Y + 25;
 			_currentActiveForm.Location = targetPoint;
 			_currentActiveForm.Visible = true;
+
 		}
 	}
 }

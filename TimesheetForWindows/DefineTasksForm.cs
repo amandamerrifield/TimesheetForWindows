@@ -18,12 +18,14 @@ namespace TimesheetForWindows
 	{
 		private List<SsOpsDatabaseLibrary.Entity.Task> _tasks;
 		private List<SsOpsDatabaseLibrary.Entity.TaskCategory> _categories;
+		public bool _isNewTask;
 
 		public DefineTasksForm()
 		{
 			InitializeComponent();
 			this.StartPosition = FormStartPosition.Manual;
 			_tasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			_isNewTask = false;
 		}
 
 		// ==============================================
@@ -194,12 +196,13 @@ namespace TimesheetForWindows
 			tsk.BudgetHours = textBox2.Text;
 			tsk.TaskName = textBox1.Text;
 			tsk.StartDate = textBox4.Text;
-			tsk.EndDate = textBox5.Text;
+			tsk.EndDate = (String.IsNullOrEmpty(textBox5.Text) ? null : textBox5.Text);
 			tsk.ActualHours = "0";
   
 			TaskCategory tc = (TaskCategory)cbxCategories.SelectedItem;
 			tsk.CategoryId = tc.CategoryId;
 			AppendTask(tsk);
+			_isNewTask = true;
 
 			//Once task is appended, clear the text boxes
 			textBox1.Clear();

@@ -485,7 +485,17 @@ namespace TimesheetForWindows
 			}
 		}
 
+        private void buttonCancel_Click(object sender, EventArgs e) {
+			GetTimecardDetails();
+			_bindingSource1.DataSource = _tcDetailsUnderGlass;
+			bool isNewDataLayout = false;
+			_bindingSource1.ResetBindings(isNewDataLayout);
+        }
 
-	}
+        private void buttonQuit_Click(object sender, EventArgs e) {
+			buttonCancel_Click(sender, e);
+			this.Visible = false;
+		}
+    }
 }
         #endregion
