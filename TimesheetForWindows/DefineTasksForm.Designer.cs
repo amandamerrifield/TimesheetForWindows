@@ -28,10 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.Column8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -71,7 +71,9 @@
             this.Column4,
             this.Column5});
 			this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+			this.dataGridView1.MultiSelect = false;
 			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.Size = new System.Drawing.Size(761, 545);
 			this.dataGridView1.TabIndex = 0;
 			// 
@@ -98,6 +100,7 @@
 			this.Column1.DataPropertyName = "TaskName";
 			this.Column1.HeaderText = "Task";
 			this.Column1.Name = "Column1";
+			this.Column1.ReadOnly = true;
 			this.Column1.Width = 250;
 			// 
 			// Column9
@@ -111,37 +114,41 @@
 			// Column2
 			// 
 			this.Column2.DataPropertyName = "BudgetHours";
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.Column2.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.Column2.DefaultCellStyle = dataGridViewCellStyle1;
 			this.Column2.HeaderText = "Budget Hours";
 			this.Column2.Name = "Column2";
+			this.Column2.ReadOnly = true;
 			this.Column2.Width = 70;
 			// 
 			// Column3
 			// 
 			this.Column3.DataPropertyName = "ActualHours";
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.Column3.DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.Column3.DefaultCellStyle = dataGridViewCellStyle2;
 			this.Column3.HeaderText = "Actual Hours";
 			this.Column3.Name = "Column3";
+			this.Column3.ReadOnly = true;
 			this.Column3.Width = 70;
 			// 
 			// Column4
 			// 
 			this.Column4.DataPropertyName = "StartDate";
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.Column4.DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.Column4.DefaultCellStyle = dataGridViewCellStyle3;
 			this.Column4.HeaderText = "Start Date";
 			this.Column4.Name = "Column4";
+			this.Column4.ReadOnly = true;
 			this.Column4.Width = 80;
 			// 
 			// Column5
 			// 
 			this.Column5.DataPropertyName = "EndDate";
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.Column5.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.Column5.DefaultCellStyle = dataGridViewCellStyle4;
 			this.Column5.HeaderText = "End Date";
 			this.Column5.Name = "Column5";
+			this.Column5.ReadOnly = true;
 			this.Column5.Width = 80;
 			// 
 			// textBox1

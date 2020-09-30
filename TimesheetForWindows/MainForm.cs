@@ -87,8 +87,8 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
-            if (_DefineTasksForm._isNewTask) {
-				_DefineTasksForm._isNewTask = false;
+            if (_DefineTasksForm.IsNewTaskCreated) {
+				_DefineTasksForm.IsNewTaskCreated = false;
 				_timecardForm = new TimecardForm(_employee);
             }
 

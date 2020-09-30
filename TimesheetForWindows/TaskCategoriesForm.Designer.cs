@@ -100,8 +100,11 @@
             this.Column2,
             this.Column3,
             this.CategoryId});
+			this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
 			this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+			this.dataGridView1.MultiSelect = false;
 			this.dataGridView1.Name = "dataGridView1";
+			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.Size = new System.Drawing.Size(776, 377);
 			this.dataGridView1.TabIndex = 15;
 			// 
@@ -110,6 +113,7 @@
 			this.Column1.DataPropertyName = "CategoryName";
 			this.Column1.HeaderText = "Category Name";
 			this.Column1.Name = "Column1";
+			this.Column1.ReadOnly = true;
 			this.Column1.Width = 250;
 			// 
 			// Column2
@@ -117,6 +121,7 @@
 			this.Column2.DataPropertyName = "CategoryDescription";
 			this.Column2.HeaderText = "Category Description";
 			this.Column2.Name = "Column2";
+			this.Column2.ReadOnly = true;
 			this.Column2.Width = 400;
 			// 
 			// Column3
@@ -124,6 +129,7 @@
 			this.Column3.DataPropertyName = "IsOverheadYn";
 			this.Column3.HeaderText = "Is Overhead Y/N";
 			this.Column3.Name = "Column3";
+			this.Column3.ReadOnly = true;
 			this.Column3.Width = 60;
 			// 
 			// CategoryId
@@ -131,6 +137,7 @@
 			this.CategoryId.DataPropertyName = "CategoryId";
 			this.CategoryId.HeaderText = "CategoryId";
 			this.CategoryId.Name = "CategoryId";
+			this.CategoryId.ReadOnly = true;
 			this.CategoryId.Visible = false;
 			// 
 			// label2

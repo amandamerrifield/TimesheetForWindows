@@ -28,7 +28,7 @@ namespace TimesheetForWindows
 
 
 		// ====================================================
-		#region Formhelperfunctions
+		#region FORM HELPER FUNCTIONS
 
 		private bool ValidateForm()
 		{

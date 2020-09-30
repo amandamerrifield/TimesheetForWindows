@@ -18,8 +18,19 @@ namespace TimesheetForWindows
 	{
 		private List<SsOpsDatabaseLibrary.Entity.Task> _tasks;
 		private List<SsOpsDatabaseLibrary.Entity.TaskCategory> _categories;
-		public bool _isNewTask;
+		private bool _isNewTask;
 
+		// ==============================================
+		#region PUBLIC PROPERTIES WITH INTERNAL BACKING VARIABLES
+
+		public bool IsNewTaskCreated {
+			get { return _isNewTask; }
+			set { _isNewTask = value; }
+		}
+		#endregion
+
+		// ==============================================
+		// CONSTRUCTOR
 		public DefineTasksForm()
 		{
 			InitializeComponent();
