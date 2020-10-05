@@ -28,19 +28,23 @@ namespace TimesheetForWindows
 				throw new Exception("Error! We must have at least one task");
 			}
 
-			foreach(SsOpsDatabaseLibrary.Entity.Task tsk in tasks)
-			{
-				listBox1.Items.Add(tsk);
-			}
-		}
+
+            foreach (SsOpsDatabaseLibrary.Entity.Task tsk in tasks) {
+                listBox1.Items.Add(tsk);
+            }
+        }
 
 
 
-		public SsOpsDatabaseLibrary.Entity.Task GetSelectedTask()
+		public List<SsOpsDatabaseLibrary.Entity.Task> GetSelectedTasks()
 		{
-			SsOpsDatabaseLibrary.Entity.Task selectedTask = (SsOpsDatabaseLibrary.Entity.Task) listBox1.SelectedItem;
+			//SsOpsDatabaseLibrary.Entity.Task selectedTask = (SsOpsDatabaseLibrary.Entity.Task) listBox1.SelectedItem;
 			if (_canceled) return null;
-			return selectedTask;
+			List<SsOpsDatabaseLibrary.Entity.Task> selectedTasks = new List<SsOpsDatabaseLibrary.Entity.Task>();
+			foreach(SsOpsDatabaseLibrary.Entity.Task tsk in listBox1.SelectedItems) {
+				selectedTasks.Add(tsk);
+            }
+			return selectedTasks;
 		}
 
 
