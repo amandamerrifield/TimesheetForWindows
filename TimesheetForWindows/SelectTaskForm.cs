@@ -28,10 +28,7 @@ namespace TimesheetForWindows
 				throw new Exception("Error! We must have at least one task");
 			}
 
-			foreach(SsOpsDatabaseLibrary.Entity.Task tsk in tasks)
-			{
-				listBox1.Items.Add(tsk);
-			}
+			listBox1.Items.AddRange(tasks.ToArray<SsOpsDatabaseLibrary.Entity.Task>());
 		}
 
 
