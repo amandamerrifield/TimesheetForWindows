@@ -133,7 +133,8 @@ namespace TimesheetForWindows
 		{
 			// Putup a modal dialog where the user can pick a task
 			// Don't show tasks that are already on the time card
-			Task theSelectedTask = new Task();
+			
+			SsOpsDatabaseLibrary.Entity.Task[] theSelectedTasks;
 
 			// Filtered tasks are the ones that are not already on the timecard
 			if (_tcDetailsUnderGlass.Count != 0)
@@ -161,18 +162,25 @@ namespace TimesheetForWindows
 				stf.Location = targetPoint;
 
 				stf.ShowDialog(this);
-				theSelectedTask = stf.GetSelectedTask();
+				theSelectedTasks = stf.GetSelectedTasks();
 				stf.Dispose();
 			}
 
-			if (theSelectedTask != null)
+			if (theSelectedTasks != null)
 			{
 				//Add the selected task to the timecard
-				TimecardDetail tcDetail = new TimecardDetail();
-				tcDetail.Task_Name= theSelectedTask.TaskName;
-				tcDetail.TaskId = Convert.ToInt32(theSelectedTask.TaskId);
+				TimecardDetail tcDetail;
+				foreach(SsOpsDatabaseLibrary.Entity.Task tsk in theSelectedTasks) {
+					tcDetail = new TimecardDetail();
+					tcDetail.Task_Name = tsk.TaskName;
+					tcDetail.TaskId = Convert.ToInt32(tsk.TaskId);
+					_bindingSource1.Add(tcDetail);
+				}
+				//tcDetail.Task_Name= theSelectedTask.TaskName;
+				//tcDetail.TaskId = Convert.ToInt32(theSelectedTask.TaskId);
+
 				//adding a row to the binding source will in-turn add the row to our _timecardDetailsUnderGlass list
-				_bindingSource1.Add(tcDetail);
+				//_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
 				_currentFormState = FormState.ViewingPotentialChanges;
 			}

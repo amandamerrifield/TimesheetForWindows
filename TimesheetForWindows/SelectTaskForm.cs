@@ -33,11 +33,13 @@ namespace TimesheetForWindows
 
 
 
-		public SsOpsDatabaseLibrary.Entity.Task GetSelectedTask()
+		public SsOpsDatabaseLibrary.Entity.Task[] GetSelectedTasks()
 		{
-			SsOpsDatabaseLibrary.Entity.Task selectedTask = (SsOpsDatabaseLibrary.Entity.Task) listBox1.SelectedItem;
+			SsOpsDatabaseLibrary.Entity.Task[] outTsks = new SsOpsDatabaseLibrary.Entity.Task[listBox1.SelectedItems.Count];
+			listBox1.SelectedItems.CopyTo(outTsks,0);
+
 			if (_canceled) return null;
-			return selectedTask;
+			return outTsks;
 		}
 
 
