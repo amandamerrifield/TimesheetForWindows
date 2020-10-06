@@ -43,6 +43,7 @@
     <Compile Include="Entity\Department.cs" />
     <Compile Include="Entity\Employee.cs" />
     <Compile Include="Entity\JobTitle.cs" />
+    <Compile Include="Entity\ReportTimeCardRollup01.cs" />
     <Compile Include="Entity\Task.cs" />
     <Compile Include="Entity\TaskCategory.cs" />
     <Compile Include="Entity\Timecard.cs" />
