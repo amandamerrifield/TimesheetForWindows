@@ -78,6 +78,7 @@ namespace TimesheetForWindows
 		{
 			_currentFormState = FormState.Loading;
 
+
 			//Cache all active tasks from the database
 			GetActiveTasks();
 
@@ -86,9 +87,6 @@ namespace TimesheetForWindows
 			{
 				_filteredTasks.Add(task);
 			}
-
-			// Get the employee's data onto the form
-			this.Text = "TimeCard -- " + _employee.FirstName + " " + _employee.LastName;
 
 			// Get all timecards for this employee
 			GetEmployeeTimecards();
@@ -126,6 +124,9 @@ namespace TimesheetForWindows
 			dgvTimecardDetail.Columns["DetailId"].Visible = false;
 
 			_currentFormState = FormState.ViewingData;
+
+			// Get the employee's data onto the form
+			UpdateWeekHours();
 		}
 		// -----------------------------------------------------
 		// Add Task Button -- Click Event Handler
@@ -191,6 +192,8 @@ namespace TimesheetForWindows
 			if(_currentFormState != FormState.Loading) {
 				//Start with an empty detail list (clearing the binding source causes _tcDetailsUnderGlass to be cleared)
 				_bindingSource1.Clear();
+
+
 				// Get the target week number
 				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
 				// Find the target timecard using its week number
@@ -214,14 +217,17 @@ namespace TimesheetForWindows
 				// We can still select and add timecard details on screen, but keep in mind that the 
 				// Timecard record must be created and inserted into the database before we attempt
 				// to insert detail rows that are joined to it. [KFF]
+
+				//Update the week's hours
+				UpdateWeekHours();
 			}
 		}
 		// -----------------------------------------------------
 		// Save Changes Button -- Click Event Handler
 		private void buttonUpdate_Click(object sender, EventArgs e) {
 			//If there are no pending changes then skip all this
-			if(_currentFormState != FormState.ViewingPotentialChanges) return;
-
+			if (_currentFormState != FormState.ViewingPotentialChanges) return;
+			decimal accumulator = 0;
 			//If we do not have a timecard for this week then create and insert in the DB
 			bool isNewlyCreatedTimecard = false;
 			if(_timecardUnderGlass == null) {
@@ -244,10 +250,10 @@ namespace TimesheetForWindows
 
 			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
 			_timecardUnderGlass.DetailList = new List<TimecardDetail>();
-			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
-				_timecardUnderGlass.DetailList.Add(tcd);
 
-			}
+			//Get the banner info 
+			UpdateWeekHours();
+
 			// Update the timecard detail rows in the database that are joined to this timecard
 			// Any timecard details that are IN the DB but NOT in _timecardUnderGlass.DetailList will be deleted
 			// Any timecard details that are IN the DB AND IN _timecardUnderGlass.DetailList will be updated
@@ -259,6 +265,24 @@ namespace TimesheetForWindows
 
 		// ====================================================
 		#region FORM HELPER FUNCTIONS
+
+		// ----------------------------------------------------
+		private void UpdateWeekHours() {
+
+			//Start the accumulate hours counter for this timecard
+			decimal accumulator = 0;
+
+			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
+				accumulator += string.IsNullOrWhiteSpace(tcd.Monday_Hrs) ? 0 : Convert.ToDecimal(tcd.Monday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Tuesday_Hrs) ? 0 : Convert.ToDecimal(tcd.Tuesday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Wednesday_Hrs) ? 0 : Convert.ToDecimal(tcd.Wednesday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Thursday_Hrs) ? 0 : Convert.ToDecimal(tcd.Thursday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Friday_Hrs) ? 0 : Convert.ToDecimal(tcd.Friday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Saturday_Hrs) ? 0 : Convert.ToDecimal(tcd.Saturday_Hrs);
+				accumulator += string.IsNullOrWhiteSpace(tcd.Sunday_Hrs) ? 0 : Convert.ToDecimal(tcd.Sunday_Hrs);
+			}
+			this.Text = "TimeCard -- " + _employee.FirstName + " " + _employee.LastName + " -- Total Hours this week: " + accumulator.ToString();
+		}
 
 		// ----------------------------------------------------
 		// Initialize the Week Selection Drop Down

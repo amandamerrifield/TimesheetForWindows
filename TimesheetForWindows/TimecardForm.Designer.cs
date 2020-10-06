@@ -28,8 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.buttonUpdate = new System.Windows.Forms.Button();
             this.buttonAddTask = new System.Windows.Forms.Button();
@@ -105,7 +105,7 @@
             this.comboBoxWeek.FormattingEnabled = true;
             this.comboBoxWeek.Location = new System.Drawing.Point(22, 17);
             this.comboBoxWeek.Name = "comboBoxWeek";
-            this.comboBoxWeek.Size = new System.Drawing.Size(142, 21);
+            this.comboBoxWeek.Size = new System.Drawing.Size(119, 21);
             this.comboBoxWeek.TabIndex = 95;
             this.comboBoxWeek.TabStop = false;
             this.comboBoxWeek.SelectedIndexChanged += new System.EventHandler(this.comboBoxWeek_SelectedIndexChanged);
@@ -124,14 +124,14 @@
             this.Friday_Hrs,
             this.Saturday_Hrs,
             this.Sunday_Hrs});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvTimecardDetail.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvTimecardDetail.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvTimecardDetail.Location = new System.Drawing.Point(22, 58);
             this.dgvTimecardDetail.MultiSelect = false;
             this.dgvTimecardDetail.Name = "dgvTimecardDetail";
@@ -142,8 +142,8 @@
             // TaskName
             // 
             this.TaskName.DataPropertyName = "Task_Name";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            this.TaskName.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            this.TaskName.DefaultCellStyle = dataGridViewCellStyle1;
             this.TaskName.HeaderText = "Task";
             this.TaskName.Name = "TaskName";
             this.TaskName.Width = 220;
