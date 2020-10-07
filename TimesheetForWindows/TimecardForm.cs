@@ -227,7 +227,7 @@ namespace TimesheetForWindows
 		private void buttonUpdate_Click(object sender, EventArgs e) {
 			//If there are no pending changes then skip all this
 			if (_currentFormState != FormState.ViewingPotentialChanges) return;
-			decimal accumulator = 0;
+
 			//If we do not have a timecard for this week then create and insert in the DB
 			bool isNewlyCreatedTimecard = false;
 			if(_timecardUnderGlass == null) {
