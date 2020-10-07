@@ -252,20 +252,17 @@ namespace SsOpsDatabaseLibrary
             }
 
         }
-		public List<TaskCategory> GetTaskCategories()
-		{
+
+		public List<TaskCategory> GetTaskCategories() {
 
 			List<TaskCategory> cats = new List<TaskCategory>();
-			try
-			{
-				using (SqlCommand cmd = new SqlCommand("Gsp_GetTaskCategories", _dbConn))
-				{
+			try {
+				using (SqlCommand cmd = new SqlCommand("Gsp_GetTaskCategories", _dbConn)) {
 					cmd.CommandType = CommandType.StoredProcedure;
 					SqlDataReader reader = cmd.ExecuteReader();
-					while (reader.Read())
-					{
+					while (reader.Read()) {
 						TaskCategory tc = new TaskCategory();
-						tc.CategoryDescription = (string) reader["CategoryDescription"];
+						tc.CategoryDescription = (string)reader["CategoryDescription"];
 						tc.CategoryId = Convert.ToInt32(reader["CategoryId"]);
 						tc.CategoryName = (string)reader["CategoryName"];
 						tc.IsOverheadYN = (string)reader["IsOverheadYn"];
@@ -275,15 +272,60 @@ namespace SsOpsDatabaseLibrary
 				}
 				return cats;
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
 				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
 				throw;
 			}
 		}
 
-		
+		public List<ReportTimeCardRollup01> GetTimecardRollup(string yearNbr, Int16 begWeekNbr, Int16 endWeekNbr) {
+			SqlParameter parm;
+			List<ReportTimeCardRollup01> tcrList = new List<ReportTimeCardRollup01>();
+			try {
+				using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardRollup", _dbConn)) {
+					cmd.CommandType = CommandType.StoredProcedure;
+
+					parm = new SqlParameter("@YearNumber", SqlDbType.Char);
+					cmd.Parameters.Add(parm);
+					parm.Value = yearNbr.ToString();
+
+					parm = new SqlParameter("@BeginingWeekNbr", SqlDbType.Char);
+					cmd.Parameters.Add(parm);
+					parm.Value = begWeekNbr.ToString();
+
+					parm = new SqlParameter("@EndingWeekNbr", SqlDbType.Char);
+					cmd.Parameters.Add(parm);
+					parm.Value = endWeekNbr.ToString();
+
+					SqlDataReader reader = cmd.ExecuteReader();
+					while (reader.Read()) {
+						ReportTimeCardRollup01 tcr = new ReportTimeCardRollup01();
+						tcr.TaskCategory = (string)reader["CategoryName"];
+						tcr.Task_Name = (string) reader["TaskName"];
+						tcr.Monday_Hrs = (string) reader["Monday"];
+						tcr.Tuesday_Hrs = (string)reader["Tuesday"];
+						tcr.Wednesday_Hrs = (string)reader["Wednesday"];
+						tcr.Thursday_Hrs = (string)reader["Thursday"];
+						tcr.Friday_Hrs = (string)reader["Friday"];
+						tcr.Saturday_Hrs = (string)reader["Saturday"];
+						tcr.Sunday_Hrs = (string)reader["Sunday"];
+						tcr.Refresh();
+
+						tcrList.Add(tcr);
+					}
+					reader.Close();
+				}
+				return tcrList;
+			}
+			catch (Exception ex) {
+				string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+				LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+				throw;
+			}
+		}
+
+
 
 		#endregion
 

@@ -13,15 +13,8 @@ namespace TimesheetForWindows
 {
     public partial class SelectReportForm : Form
     {
-        private enum FormState
-        {
-            Loading,
-            ViewingData,
-            ViewingPotentialChanges,
-            SavingChanges
-        }
+
         private Employee _employee;
-        private FormState _currentFormState;
         public SelectReportForm(Employee targetEmployee) {
             InitializeComponent();
             // We will manually control the form location on screen
@@ -32,17 +25,12 @@ namespace TimesheetForWindows
         }
 
         private void SelectReportForm_Load(object sender, EventArgs e) {
-            _currentFormState = FormState.Loading;
-            lbxSelect.Items.Add("First Report");
-            lbxSelect.Items.Add("Second Report");
-            _currentFormState = FormState.ViewingData;
+            lbxSelect.Items.Add("Timecard Rollup Report");
+            lbxSelect.Items.Add("TBD Report");
         }
 
         private void lbxSelect_SelectedIndexChanged(object sender, EventArgs e) {
-            if (_currentFormState == FormState.Loading) {
-                return;
-            }
-            LaunchReport(lbxSelect.SelectedItem.ToString());
+            //LaunchReport(lbxSelect.SelectedItem.ToString());
         }
 
         private void btnViewReport_Click(object sender, EventArgs e) {
@@ -50,9 +38,12 @@ namespace TimesheetForWindows
         }
 
         private void LaunchReport(string reportname) {
-            //TODO: Launch report
-            //if (reportname == "report1")
-            MessageBox.Show(reportname);
+			//MessageBox.Show(reportname);
+			if(reportname == "Timecard Rollup Report") {
+				// Ask the user for a date range and the year
+
+			}
+
         }
     }
 }
