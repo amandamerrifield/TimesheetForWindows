@@ -100,12 +100,6 @@
     <Compile Include="TimecardForm.Designer.cs">
       <DependentUpon>TimecardForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TimecardRollupParamsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TimecardRollupParamsForm.Designer.cs">
-      <DependentUpon>TimecardRollupParamsForm.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="DefineTasksForm.resx">
       <DependentUpon>DefineTasksForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -133,9 +127,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TimecardForm.resx">
       <DependentUpon>TimecardForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TimecardRollupParamsForm.resx">
-      <DependentUpon>TimecardRollupParamsForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
