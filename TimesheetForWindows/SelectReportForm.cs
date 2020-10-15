@@ -19,10 +19,9 @@ namespace TimesheetForWindows
     {
 
 		private const string TIMECARD_ROLLUP_1 = "Timecard Rollup Report";
+		private const int DEFAULT_HEIGHT = 334;
 
 		private Employee _employee;
-
-		private const int DEFAULT_HEIGHT = 334;
 
         public SelectReportForm(Employee targetEmployee) {
             InitializeComponent();
@@ -34,7 +33,6 @@ namespace TimesheetForWindows
 
 			// Set the default form height
 			this.Height = DEFAULT_HEIGHT;
-			
 		}
 
 		private void SelectReportForm_Load(object sender, EventArgs e) {
@@ -89,20 +87,30 @@ namespace TimesheetForWindows
 				isGood = ValidateGroupBox(gbxTimecardRollup01);
 				// Create a ValidateControlBox and pass the control box
 				if (isGood) {
-					int yearNo = Convert.ToInt32(tbxYearNumber.Text);
+					short yearNo = Convert.ToInt16(tbxYearNumber.Text);
 					short startWeekNo = Convert.ToInt16(tbxStartingWeekNbr.Text);
 					short endWeekNo = Convert.ToInt16(tbxEndingWeekNbr.Text);
 					if (!(yearNo > 2019 && yearNo < 2030)) {
-						MessageBox.Show("Enter a year between 2019 and 2030.", "Attention");
+						MessageBox.Show("Please enter a year between 2019 and 2030.", "Attention");
 						return;
 					}
-					if(startWeekNo >= endWeekNo) {
-						MessageBox.Show("Ending week number should be bigger than starting week number.", "Attention");
+					if (startWeekNo < 1 || startWeekNo > 53) {
+						MessageBox.Show("Starting week number must be between 1 and 53.", "Attention");
+						return;
+					}
+					if (endWeekNo < 1 || endWeekNo > 53) {
+						MessageBox.Show("Ending week number must be between 1 and 53.", "Attention");
+						return;
+					}
+					if (startWeekNo >= endWeekNo) {
+						MessageBox.Show("Ending week number must be bigger than starting week number.", "Attention");
 						return;
 					}
 					using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
-						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollup(tbxYearNumber.Text, startWeekNo, endWeekNo);
-						//TODO: Bind the data
+						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollup(yearNo, startWeekNo, endWeekNo);
+						ReportTimeCardRollup01[] rollupArray = records.ToArray();
+						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray);
+						displayer.Show();
                     }
 				}
 			}

@@ -279,7 +279,7 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
-		public List<ReportTimeCardRollup01> GetTimecardRollup(string yearNbr, Int16 begWeekNbr, Int16 endWeekNbr) {
+		public List<ReportTimeCardRollup01> GetTimecardRollup(Int16 yearNbr, Int16 begWeekNbr, Int16 endWeekNbr) {
 			SqlParameter parm;
 			List<ReportTimeCardRollup01> tcrList = new List<ReportTimeCardRollup01>();
 			try {
@@ -303,14 +303,15 @@ namespace SsOpsDatabaseLibrary
 						ReportTimeCardRollup01 tcr = new ReportTimeCardRollup01();
 						tcr.TaskCategory = (string)reader["CategoryName"];
 						tcr.Task_Name = (string) reader["TaskName"];
-						tcr.Monday_Hrs = (string) reader["Monday"];
-						tcr.Tuesday_Hrs = (string)reader["Tuesday"];
-						tcr.Wednesday_Hrs = (string)reader["Wednesday"];
-						tcr.Thursday_Hrs = (string)reader["Thursday"];
-						tcr.Friday_Hrs = (string)reader["Friday"];
-						tcr.Saturday_Hrs = (string)reader["Saturday"];
-						tcr.Sunday_Hrs = (string)reader["Sunday"];
-						tcr.Refresh();
+						tcr.PutValueForDay(Timecard.DetailFields.Monday_Hrs, (decimal)reader["Monday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Tuesday_Hrs, (decimal)reader["Tuesday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Wednesday_Hrs, (decimal)reader["Wednesday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Thursday_Hrs, (decimal)reader["Thursday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Friday_Hrs, (decimal)reader["Friday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Saturday_Hrs, (decimal)reader["Saturday"]);
+						tcr.PutValueForDay(Timecard.DetailFields.Sunday_Hrs, (decimal)reader["Sunday"]);
+
+						tcr.RefreshWeeklyTotal();
 
 						tcrList.Add(tcr);
 					}

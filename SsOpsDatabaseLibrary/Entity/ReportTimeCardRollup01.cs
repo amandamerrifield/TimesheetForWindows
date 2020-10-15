@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -24,17 +25,27 @@ namespace SsOpsDatabaseLibrary.Entity
 		}
 
 		//=======================================
-		//Alternate Constructor
-		//======================================
+		// Alternate Constructor
+		//=======================================
 		public ReportTimeCardRollup01(string taskName) : base(taskName) {
 			TaskCategory = "..";
 			_totalHoursWeek = 0;
 		}
 
+		//=======================================
+		// Read Only Property 
+		//=======================================
+		public decimal TotalHoursForWeek {
+			get {
+				RefreshWeeklyTotal();
+				return _totalHoursWeek;
+			}
+		}
+
 		// =====================================
 		// Refresh the Total Hours
 		// =====================================
-		public void Refresh() {
+		public void RefreshWeeklyTotal() {
 			_totalHoursWeek = base.GetValueForDay(Timecard.DetailFields.Monday_Hrs);
 			_totalHoursWeek += base.GetValueForDay(Timecard.DetailFields.Tuesday_Hrs);
 			_totalHoursWeek += base.GetValueForDay(Timecard.DetailFields.Wednesday_Hrs);
