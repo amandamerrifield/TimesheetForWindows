@@ -24,7 +24,7 @@ namespace TimesheetForWindows
 		private Employee _employee;
 		private Form _taskcategoriesform;
 		private DefineTasksForm _DefineTasksForm;
-		private Form _selectReportForm;
+		private SelectReportForm _selectReportForm;
 
 		// MainForm Constructor
 		public MainForm() : base()
@@ -119,8 +119,8 @@ namespace TimesheetForWindows
 			_currentActiveForm = _selectReportForm;
 			// And now it is positioned relative to ourself and made visible
 			Point targetPoint = this.Location;
-			targetPoint.X = this.Location.X + 170;
-			targetPoint.Y = this.Location.Y + 25;
+			targetPoint.X = this.Location.X + 160;
+			targetPoint.Y = this.Location.Y + 35;
 			_currentActiveForm.Location = targetPoint;
 			_currentActiveForm.Visible = true;
 		}

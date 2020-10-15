@@ -19,6 +19,7 @@ namespace TimesheetForWindows
     {
 
 		private const string TIMECARD_ROLLUP_1 = "Timecard Rollup Report";
+		private const string EMPLOYEES_REPORT_1 = "Employees Report";
 		private const int DEFAULT_HEIGHT = 334;
 
 		private Employee _employee;
@@ -36,12 +37,11 @@ namespace TimesheetForWindows
 		}
 
 		private void SelectReportForm_Load(object sender, EventArgs e) {
-            lbxSelect.Items.Add(TIMECARD_ROLLUP_1);
-            lbxSelect.Items.Add("TBD Report");
+			lbxSelect.Items.Add(EMPLOYEES_REPORT_1);
+			lbxSelect.Items.Add(TIMECARD_ROLLUP_1);
 			lbxSelect.SelectedIndex = 0;
 
-
-			//Get textbox tags
+			//Put validators in all the textbox tags
 			bool required = true;
 
 			tbxYearNumber.Tag = new ControlTextValidator(tbxYearNumber, "Year Number", required, ValidationStyle.DigitsNotZero);
@@ -66,12 +66,9 @@ namespace TimesheetForWindows
 		}
 
         private void btnViewReport_Click(object sender, EventArgs e) {
-            // Some reports will require additional user parameters
-			if(lbxSelect.SelectedItem.ToString() == "TBD Report") {
-				MessageBox.Show("TBD Report is running");
-			}
-
-        }
+			// Some reports will require additional parameters
+			LaunchReport(lbxSelect.SelectedItem.ToString());
+		}
 
 		private void btnTimecardRollup01_Click(object sender, EventArgs e) {
 			LaunchReport(lbxSelect.SelectedItem.ToString());
@@ -83,9 +80,9 @@ namespace TimesheetForWindows
 		private void LaunchReport(string reportname) {
 			//MessageBox.Show(reportname);
 			bool isGood = true;
-			if (reportname == "Timecard Rollup Report") {
+			if (reportname == TIMECARD_ROLLUP_1) {
+				// Validate the contents of the textbox controls in the gbxTimecardRollup01 group box
 				isGood = ValidateGroupBox(gbxTimecardRollup01);
-				// Create a ValidateControlBox and pass the control box
 				if (isGood) {
 					short yearNo = Convert.ToInt16(tbxYearNumber.Text);
 					short startWeekNo = Convert.ToInt16(tbxStartingWeekNbr.Text);
@@ -106,13 +103,39 @@ namespace TimesheetForWindows
 						MessageBox.Show("Ending week number must be bigger than starting week number.", "Attention");
 						return;
 					}
+					// Validated okay.  Now get report data from our database adapter
 					using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
 						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollup(yearNo, startWeekNo, endWeekNo);
 						ReportTimeCardRollup01[] rollupArray = records.ToArray();
+						// Construct the ReportDisplayForm and show it on screen.
 						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray);
+						Size targetSize = new Size(1000, 1000);
+						displayer.Size = targetSize;
 						displayer.Show();
                     }
 				}
+			}
+			if (reportname == EMPLOYEES_REPORT_1) {
+				List<Employee> allEmployees = new List<Employee>();
+				Employee emplyee = new Employee();
+				emplyee.FirstName = "Amanda";
+				emplyee.LastName = "Merrifield";
+				emplyee.MainPhone = "562-746-7447";
+				emplyee.HireDate = "2020-08-01";
+				allEmployees.Add(emplyee);
+				emplyee = new Employee();
+				emplyee.FirstName = "Karl";
+				emplyee.LastName = "Fetterhoff";
+				emplyee.MainPhone = "760-699-3982";
+				emplyee.HireDate = "1999-02-22";
+				allEmployees.Add(emplyee);
+
+				Employee[] employeesArray = allEmployees.ToArray();
+				// Construct the ReportDisplayForm and show it on screen.
+				ReportDisplayForm displayer = new ReportDisplayForm(employeesArray);
+				Size targetSize = new Size(800, 500);
+				displayer.Size = targetSize;
+				displayer.Show();
 			}
 
 		}
