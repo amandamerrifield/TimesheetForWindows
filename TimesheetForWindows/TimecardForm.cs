@@ -111,6 +111,7 @@ namespace TimesheetForWindows
 						_timecardUnderGlass = tc;
 						// Fetch timecard detail from the DB into _thisTcDetail
 						GetTimecardDetails();
+						break;
 					}
 				}
 			}
@@ -126,7 +127,7 @@ namespace TimesheetForWindows
 			_currentFormState = FormState.ViewingData;
 
 			// Get the employee's data onto the form
-			UpdateWeekHours();
+			UpdateWeekHoursTotalOnTitleBar();
 		}
 		// -----------------------------------------------------
 		// Add Task Button -- Click Event Handler
@@ -219,7 +220,7 @@ namespace TimesheetForWindows
 				// to insert detail rows that are joined to it. [KFF]
 
 				//Update the week's hours
-				UpdateWeekHours();
+				UpdateWeekHoursTotalOnTitleBar();
 			}
 		}
 		// -----------------------------------------------------
@@ -250,9 +251,10 @@ namespace TimesheetForWindows
 
 			// Now make sure that all the timecard details in the dgv are also in the new _timecardUnderGlass instance
 			_timecardUnderGlass.DetailList = new List<TimecardDetail>();
-
-			//Get the banner info 
-			UpdateWeekHours();
+			foreach (TimecardDetail tcd in _tcDetailsUnderGlass) {
+				_timecardUnderGlass.DetailList.Add(tcd);
+			}
+			UpdateWeekHoursTotalOnTitleBar();
 
 			// Update the timecard detail rows in the database that are joined to this timecard
 			// Any timecard details that are IN the DB but NOT in _timecardUnderGlass.DetailList will be deleted
@@ -267,7 +269,7 @@ namespace TimesheetForWindows
 		#region FORM HELPER FUNCTIONS
 
 		// ----------------------------------------------------
-		private void UpdateWeekHours() {
+		private void UpdateWeekHoursTotalOnTitleBar() {
 
 			//Start the accumulate hours counter for this timecard
 			decimal accumulator = 0;
