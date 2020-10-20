@@ -124,10 +124,10 @@ namespace TimesheetForWindows
 			dgvTimecardDetail.Columns["TimecardId"].Visible = false;
 			dgvTimecardDetail.Columns["DetailId"].Visible = false;
 
-			_currentFormState = FormState.ViewingData;
-
 			// Get the employee's data onto the form
 			UpdateWeekHoursTotalOnTitleBar();
+
+			_currentFormState = FormState.ViewingData;
 		}
 		// -----------------------------------------------------
 		// Add Task Button -- Click Event Handler
@@ -270,7 +270,6 @@ namespace TimesheetForWindows
 
 		// ----------------------------------------------------
 		private void UpdateWeekHoursTotalOnTitleBar() {
-
 			//Start the accumulate hours counter for this timecard
 			decimal accumulator = 0;
 
@@ -530,6 +529,12 @@ namespace TimesheetForWindows
 			buttonCancel_Click(sender, e);
 			this.Visible = false;
 		}
-    }
+
+		private void dgvTimecardDetail_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+			if (_currentFormState == FormState.ViewingData) {
+				_currentFormState = FormState.ViewingPotentialChanges;
+			}
+		}
+	}
 }
         #endregion
