@@ -70,7 +70,7 @@ namespace TimesheetForWindows
 		private void TimecardForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			//_currentFormState = FormState.ViewingPotentialChanges;
-			//assertFormState();
+			//AssertFormState();
 		}
 		// -----------------------------------------------------
 		// Form -- Load Event Handler
@@ -128,6 +128,7 @@ namespace TimesheetForWindows
 			UpdateWeekHoursTotalOnTitleBar();
 
 			_currentFormState = FormState.ViewingData;
+			AssertFormState();
 		}
 		// -----------------------------------------------------
 		// Add Task Button -- Click Event Handler
@@ -185,6 +186,7 @@ namespace TimesheetForWindows
 				//_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
 				_currentFormState = FormState.ViewingPotentialChanges;
+				AssertFormState();
 			}
 		}
 		// -----------------------------------------------------
@@ -261,6 +263,8 @@ namespace TimesheetForWindows
 			// Any timecard details that are IN the DB AND IN _timecardUnderGlass.DetailList will be updated
 			// Finally, any time card detail that is missing in the DB will be inserted into the DB [KFF]
 			UpdateTimecardDetails(isNewlyCreatedTimecard);
+			_currentFormState = FormState.ViewingData;
+			AssertFormState();
 		}
 
 		#endregion
@@ -312,7 +316,7 @@ namespace TimesheetForWindows
 
 		// ------------------------------------------------
 		// Enforce the current State of the Form against the buttons
-		private void assertFormState()
+		private void AssertFormState()
 		{
 			switch (_currentFormState)
 			{
@@ -523,6 +527,8 @@ namespace TimesheetForWindows
 			_bindingSource1.DataSource = _tcDetailsUnderGlass;
 			bool isNewDataLayout = false;
 			_bindingSource1.ResetBindings(isNewDataLayout);
+			_currentFormState = FormState.ViewingData;
+			AssertFormState();
         }
 
         private void buttonQuit_Click(object sender, EventArgs e) {
@@ -533,6 +539,7 @@ namespace TimesheetForWindows
 		private void dgvTimecardDetail_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
 			if (_currentFormState == FormState.ViewingData) {
 				_currentFormState = FormState.ViewingPotentialChanges;
+				AssertFormState();
 			}
 		}
 	}
