@@ -108,7 +108,8 @@ namespace TimesheetForWindows
 						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollup(yearNo, startWeekNo, endWeekNo);
 						ReportTimeCardRollup01[] rollupArray = records.ToArray();
 						// Construct the ReportDisplayForm and show it on screen.
-						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray);
+						string[] parametersForReport = { tbxYearNumber.Text, tbxStartingWeekNbr.Text, tbxEndingWeekNbr.Text };
+						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray, parametersForReport);
 						Size targetSize = new Size(1000, 1000);
 						displayer.Size = targetSize;
 						displayer.Show();

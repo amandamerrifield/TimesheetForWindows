@@ -20,6 +20,7 @@ namespace TimesheetForWindows
 		private Employee[] _allEmployeesArray;
 		private BindingSource _bindingSource;
 		private string _requestedReport;
+		private string[] _reportParms;
 
 		public ReportDisplayForm(Employee[] allEmployees) {
 			InitializeComponent();
@@ -27,10 +28,11 @@ namespace TimesheetForWindows
 			_allEmployeesArray = allEmployees;
 			_bindingSource = new BindingSource();
 		}
-		public ReportDisplayForm(ReportTimeCardRollup01[] tcRollup) {
+		public ReportDisplayForm(ReportTimeCardRollup01[] tcRollup, string[] reportParameters) {
 			InitializeComponent();
 			_requestedReport = "TimecardRollup";
 			_rollupDataArray = tcRollup;
+			_reportParms = reportParameters;
 			_bindingSource = new BindingSource();
 		}
 
@@ -39,6 +41,12 @@ namespace TimesheetForWindows
 
 			if (_requestedReport == "TimecardRollup") {
 				reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report3.rdlc";
+
+				List<ReportParameter> rpList = new List<ReportParameter>();
+				rpList.Add(new ReportParameter("ParamReportYear", "Year " + _reportParms[0]));
+				rpList.Add(new ReportParameter("ParamReportWeekBegin", "Week " + _reportParms[1]));
+				rpList.Add(new ReportParameter("ParamReportWeekEnd", "Week " + _reportParms[2]));
+				reportViewer1.LocalReport.SetParameters(rpList.ToArray());
 
 				_bindingSource.Clear();
 				_bindingSource.DataSource = _rollupDataArray;
