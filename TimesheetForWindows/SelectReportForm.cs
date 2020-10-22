@@ -117,26 +117,13 @@ namespace TimesheetForWindows
 				}
 			}
 			if (reportname == EMPLOYEES_REPORT_1) {
-				List<Employee> allEmployees = new List<Employee>();
-				Employee emplyee = new Employee();
-				emplyee.FirstName = "Amanda";
-				emplyee.LastName = "Merrifield";
-				emplyee.MainPhone = "562-746-7447";
-				emplyee.HireDate = "2020-08-01";
-				allEmployees.Add(emplyee);
-				emplyee = new Employee();
-				emplyee.FirstName = "Karl";
-				emplyee.LastName = "Fetterhoff";
-				emplyee.MainPhone = "760-699-3982";
-				emplyee.HireDate = "1999-02-22";
-				allEmployees.Add(emplyee);
-
-				Employee[] employeesArray = allEmployees.ToArray();
-				// Construct the ReportDisplayForm and show it on screen.
-				ReportDisplayForm displayer = new ReportDisplayForm(employeesArray);
-				Size targetSize = new Size(800, 500);
-				displayer.Size = targetSize;
-				displayer.Show();
+				using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
+					List<Employee> records = dbLib.GetAllCurrentEmployees();
+					ReportDisplayForm displayer = new ReportDisplayForm(records.ToArray());
+					Size targetSize = new Size(800, 500);
+					displayer.Size = targetSize;
+					displayer.Show();
+				}
 			}
 
 		}
