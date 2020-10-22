@@ -138,6 +138,7 @@
             this.dgvTimecardDetail.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvTimecardDetail.Size = new System.Drawing.Size(708, 339);
             this.dgvTimecardDetail.TabIndex = 0;
+            this.dgvTimecardDetail.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvTimecardDetail_CellValueChanged);
             // 
             // TaskName
             // 

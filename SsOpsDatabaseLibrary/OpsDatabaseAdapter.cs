@@ -170,6 +170,42 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
+        public List<Entity.Employee> GetAllCurrentEmployees() {
+            SqlParameter parm;
+            List<Entity.Employee> emps = new List<Employee>();
+
+            try {
+                using (SqlCommand cmd = new SqlCommand("Gsp_GetAllCurrentEmployees", _dbConn)) {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    parm = new SqlParameter("@DateCursor", SqlDbType.Char);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = DateTime.Today.ToString("yyyy-MM-dd");
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while(reader.Read()){
+                        Employee emp = new Employee();
+                        emp.EmployeeId = Convert.ToInt32(reader["EmployeeId"]);
+                        emp.FirstName = Convert.ToString(reader["FirstName"]);
+                        emp.LastName = Convert.ToString(reader["LastName"]);
+                        emp.TaxIdNbr = Convert.ToString(reader["TaxIdNbr"]);
+                        emp.MainPhone = Convert.ToString(reader["MainPhone"]);
+                        emp.Gender = Convert.ToString(reader["Gender"]);
+                        emp.HireDate = Convert.ToString(reader["HireDt"]);
+                        emp.TermDate = String.Empty;
+
+                        emps.Add(emp);
+                    }
+                    reader.Close();
+                }
+                return emps;
+            }
+            catch(Exception ex) {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
+
 		public List<Timecard> GetTimecardsForEmployee(int employeeId)
         {
             SqlParameter parm;

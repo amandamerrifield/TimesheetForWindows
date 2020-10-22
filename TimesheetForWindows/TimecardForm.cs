@@ -530,6 +530,12 @@ namespace TimesheetForWindows
 			buttonCancel_Click(sender, e);
 			this.Visible = false;
 		}
+
+        private void dgvTimecardDetail_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
+			if (_currentFormState == FormState.ViewingData) {
+				_currentFormState = FormState.ViewingPotentialChanges;
+            }
+        }
     }
 }
         #endregion
