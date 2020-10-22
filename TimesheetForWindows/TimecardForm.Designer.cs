@@ -105,7 +105,7 @@
 			this.comboBoxWeek.FormattingEnabled = true;
 			this.comboBoxWeek.Location = new System.Drawing.Point(22, 17);
 			this.comboBoxWeek.Name = "comboBoxWeek";
-			this.comboBoxWeek.Size = new System.Drawing.Size(119, 21);
+			this.comboBoxWeek.Size = new System.Drawing.Size(138, 21);
 			this.comboBoxWeek.TabIndex = 95;
 			this.comboBoxWeek.TabStop = false;
 			this.comboBoxWeek.SelectedIndexChanged += new System.EventHandler(this.comboBoxWeek_SelectedIndexChanged);

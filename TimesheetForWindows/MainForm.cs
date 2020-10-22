@@ -17,8 +17,6 @@ namespace TimesheetForWindows
     
     public partial class MainForm : Form
     {
-		//private string _dataFilePath;
-                
         private Form _timecardForm;
         private Form _currentActiveForm;
 		private Employee _employee;
@@ -74,19 +72,12 @@ namespace TimesheetForWindows
             if(_currentActiveForm != null) _currentActiveForm.Visible = false;
         }
 
-		//private void MainForm_Activate(object sender, System.EventArgs e) {}
-		//private void MainForm_Deactivate(object sender, System.EventArgs e) {}
-		//private void MainForm_Enter(object sender, System.EventArgs e) {}
-		//private void MainForm_GotFocus(object sender, System.EventArgs e) { }
-		//private void MainForm_LostFocus(object sender, System.EventArgs e) {}
-		//private void MainForm_Move(object sender, System.EventArgs e) {}
-		//private void MainForm_Shown(object sender, System.EventArgs e) {}
-
         private void btnEnterHours_Click(object sender, EventArgs e)
         {
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
+			// Rebuild the timecard form if a new task was created
             if (_DefineTasksForm.IsNewTaskCreated) {
 				_DefineTasksForm.IsNewTaskCreated = false;
 				_timecardForm = new TimecardForm(_employee);
@@ -94,17 +85,9 @@ namespace TimesheetForWindows
 
             // Make the current active form invisible, then show our timecard form
             if (_currentActiveForm != null) _currentActiveForm.Visible = false;
-
-            // The new current active form is our employee form
             _currentActiveForm = _timecardForm;
-
-            // And now it is positioned relative to ourself and made visible
-            Point targetPoint = this.Location;
-            targetPoint.X = this.Location.X + 170;
-            targetPoint.Y = this.Location.Y + 25;
-            _currentActiveForm.Location = targetPoint;
-            _currentActiveForm.Visible = true;
-        }
+			AssertActiveForm();
+		}
 
         private void btnExit_Click(object sender, EventArgs e)
         {
@@ -117,12 +100,7 @@ namespace TimesheetForWindows
 				_currentActiveForm.Visible = false;
 			}
 			_currentActiveForm = _selectReportForm;
-			// And now it is positioned relative to ourself and made visible
-			Point targetPoint = this.Location;
-			targetPoint.X = this.Location.X + 160;
-			targetPoint.Y = this.Location.Y + 35;
-			_currentActiveForm.Location = targetPoint;
-			_currentActiveForm.Visible = true;
+			AssertActiveForm();
 		}
 
 		private void btnDefineTaskCategories_Click(object sender, EventArgs e)
@@ -132,13 +110,7 @@ namespace TimesheetForWindows
 				_currentActiveForm.Visible = false;
 			}
 			_currentActiveForm = _taskcategoriesform;
-			// And now it is positioned relative to ourself and made visible
-			Point targetPoint = this.Location;
-			targetPoint.X = this.Location.X + 170;
-			targetPoint.Y = this.Location.Y + 25;
-			_currentActiveForm.Location = targetPoint;
-			_currentActiveForm.Visible = true;
-
+			AssertActiveForm();
 		}
 
 		private void btnDefineTasks_Click(object sender, EventArgs e)
@@ -148,13 +120,16 @@ namespace TimesheetForWindows
 				_currentActiveForm.Visible = false;
 			}
 			_currentActiveForm = _DefineTasksForm;
-			// And now it is positioned relative to ourself and made visible
+			AssertActiveForm();
+		}
+
+		private void AssertActiveForm() {
+			// And now position the active form relative to ourself and make it visible
 			Point targetPoint = this.Location;
-			targetPoint.X = this.Location.X + 170;
-			targetPoint.Y = this.Location.Y + 25;
+			targetPoint.X = this.Location.X + 162;
+			targetPoint.Y = this.Location.Y + 40;
 			_currentActiveForm.Location = targetPoint;
 			_currentActiveForm.Visible = true;
-
 		}
 	}
 }
