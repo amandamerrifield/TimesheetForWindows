@@ -77,8 +77,7 @@ namespace TimesheetForWindows
 		private void TimecardForm_Load(object sender, EventArgs e)
 		{
 			_currentFormState = FormState.Loading;
-
-
+			
 			//Cache all active tasks from the database
 			GetActiveTasks();
 
@@ -125,6 +124,7 @@ namespace TimesheetForWindows
 			dgvTimecardDetail.Columns["DetailId"].Visible = false;
 
 			_currentFormState = FormState.ViewingData;
+			AssertFormState();
 
 			// Get the employee's data onto the form
 			UpdateWeekHoursTotalOnTitleBar();
@@ -185,6 +185,7 @@ namespace TimesheetForWindows
 				//_bindingSource1.Add(tcDetail);
 				//There are now changes made to this timecard that have not yet been committed to the DB
 				_currentFormState = FormState.ViewingPotentialChanges;
+				AssertFormState();
 			}
 		}
 		// -----------------------------------------------------
@@ -193,7 +194,6 @@ namespace TimesheetForWindows
 			if(_currentFormState != FormState.Loading) {
 				//Start with an empty detail list (clearing the binding source causes _tcDetailsUnderGlass to be cleared)
 				_bindingSource1.Clear();
-
 
 				// Get the target week number
 				_thisWeekNumber = comboBoxWeek.SelectedItem.ToString().Substring(19);
@@ -221,6 +221,10 @@ namespace TimesheetForWindows
 
 				//Update the week's hours
 				UpdateWeekHoursTotalOnTitleBar();
+
+				//We just selected a new timecard, so we are Viewing Data
+				_currentFormState = FormState.ViewingData;
+				AssertFormState();
 			}
 		}
 		// -----------------------------------------------------
@@ -261,6 +265,10 @@ namespace TimesheetForWindows
 			// Any timecard details that are IN the DB AND IN _timecardUnderGlass.DetailList will be updated
 			// Finally, any time card detail that is missing in the DB will be inserted into the DB [KFF]
 			UpdateTimecardDetails(isNewlyCreatedTimecard);
+
+			// Changes were saved, so now we are viewing data
+			_currentFormState = FormState.ViewingData;
+			AssertFormState();
 		}
 
 		#endregion
@@ -313,7 +321,7 @@ namespace TimesheetForWindows
 
 		// ------------------------------------------------
 		// Enforce the current State of the Form against the buttons
-		private void assertFormState()
+		private void AssertFormState()
 		{
 			switch (_currentFormState)
 			{
@@ -524,6 +532,9 @@ namespace TimesheetForWindows
 			_bindingSource1.DataSource = _tcDetailsUnderGlass;
 			bool isNewDataLayout = false;
 			_bindingSource1.ResetBindings(isNewDataLayout);
+			// Changes were cancelled, so now we are viewing data
+			_currentFormState = FormState.ViewingData;
+			AssertFormState();
         }
 
         private void buttonQuit_Click(object sender, EventArgs e) {
@@ -534,7 +545,8 @@ namespace TimesheetForWindows
         private void dgvTimecardDetail_CellValueChanged(object sender, DataGridViewCellEventArgs e) {
 			if (_currentFormState == FormState.ViewingData) {
 				_currentFormState = FormState.ViewingPotentialChanges;
-            }
+				AssertFormState();
+			}
         }
     }
 }
