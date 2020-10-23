@@ -314,8 +314,65 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
+        public List<ReportTimeCardRollup01> GetTimecardRollupForEmployee(Int16 yearNbr, Int16 begWeekNbr, Int16 endWeekNbr, Int32 employeeId)
+        {
+            SqlParameter parm;
+            List<ReportTimeCardRollup01> tcrList = new List<ReportTimeCardRollup01>();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("Gsp_GetTimecardRollupForEmployee", _dbConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-		public List<ReportTimeCardRollup01> GetTimecardRollup(Int16 yearNbr, Int16 begWeekNbr, Int16 endWeekNbr) {
+                    parm = new SqlParameter("@YearNumber", SqlDbType.Char);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = yearNbr.ToString();
+
+                    parm = new SqlParameter("@BeginingWeekNbr", SqlDbType.Char);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = begWeekNbr.ToString();
+
+                    parm = new SqlParameter("@EndingWeekNbr", SqlDbType.Char);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = endWeekNbr.ToString();
+
+                    parm = new SqlParameter("@EmployeeId", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = employeeId.ToString();
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        ReportTimeCardRollup01 tcr = new ReportTimeCardRollup01();
+                        tcr.TaskCategory = (string)reader["CategoryName"];
+                        tcr.Task_Name = (string)reader["TaskName"];
+                        tcr.PutValueForDay(Timecard.DetailFields.Monday_Hrs, (decimal)reader["Monday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Tuesday_Hrs, (decimal)reader["Tuesday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Wednesday_Hrs, (decimal)reader["Wednesday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Thursday_Hrs, (decimal)reader["Thursday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Friday_Hrs, (decimal)reader["Friday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Saturday_Hrs, (decimal)reader["Saturday"]);
+                        tcr.PutValueForDay(Timecard.DetailFields.Sunday_Hrs, (decimal)reader["Sunday"]);
+
+                        tcr.RefreshWeeklyTotal();
+
+                        tcrList.Add(tcr);
+                    }
+                    reader.Close();
+                }
+                return tcrList;
+            }
+            catch (Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
+
+
+
+        public List<ReportTimeCardRollup01> GetTimecardRollup(Int16 yearNbr, Int16 begWeekNbr, Int16 endWeekNbr) {
 			SqlParameter parm;
 			List<ReportTimeCardRollup01> tcrList = new List<ReportTimeCardRollup01>();
 			try {

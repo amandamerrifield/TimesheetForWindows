@@ -20,6 +20,7 @@ namespace TimesheetForWindows
 
 		private const string TIMECARD_ROLLUP_1 = "Timecard Rollup Report";
 		private const string EMPLOYEES_REPORT_1 = "Employees Report";
+        private const string TIMECARD_ROLLUP_02 = "Timecard Rollup Report For Employee";
 		private const int DEFAULT_HEIGHT = 334;
 
 		private Employee _employee;
@@ -39,7 +40,8 @@ namespace TimesheetForWindows
 		private void SelectReportForm_Load(object sender, EventArgs e) {
 			lbxSelect.Items.Add(EMPLOYEES_REPORT_1);
 			lbxSelect.Items.Add(TIMECARD_ROLLUP_1);
-			lbxSelect.SelectedIndex = 0;
+            lbxSelect.Items.Add(TIMECARD_ROLLUP_02);
+            lbxSelect.SelectedIndex = 0;
 
 			//Put validators in all the textbox tags
 			bool required = true;
@@ -50,20 +52,32 @@ namespace TimesheetForWindows
 		}
 
         private void lbxSelect_SelectedIndexChanged(object sender, EventArgs e) {
-			//LaunchReport(lbxSelect.SelectedItem.ToString());
-			if (lbxSelect.SelectedItem.ToString() == TIMECARD_ROLLUP_1) {
-				this.btnViewReport.Visible = false;
-				this.Height = DEFAULT_HEIGHT + 120;
-				gbxTimecardRollup01.Top = 194;
-				gbxTimecardRollup01.Visible = true;
-			}
-			else {
-				this.btnViewReport.Visible = true;
-				this.Height = 272;
-				gbxTimecardRollup01.Top = 240;
-				gbxTimecardRollup01.Visible = true;
-			}
-		}
+            switch (lbxSelect.SelectedItem.ToString())
+            {
+                case TIMECARD_ROLLUP_1:
+                    this.btnViewReport.Visible = false;
+                    gbxRollup02.Visible = false;
+
+                    this.Height = DEFAULT_HEIGHT + 120;
+                    gbxTimecardRollup01.Top = 194;
+                    gbxTimecardRollup01.Visible = true;
+                    break;
+                case EMPLOYEES_REPORT_1:
+                    gbxRollup02.Visible = false;
+                    gbxTimecardRollup01.Visible = false;
+                    this.btnViewReport.Visible = true;
+                    this.Height = DEFAULT_HEIGHT;
+                    break;
+                default:
+                    gbxTimecardRollup01.Visible = false;
+                    this.btnViewReport.Visible = false;
+                    gbxRollup02.Visible = true;
+                    gbxRollup02.Top = 194;
+                    this.Height = DEFAULT_HEIGHT + 150;
+                    break;
+
+            }
+        }
 
         private void btnViewReport_Click(object sender, EventArgs e) {
 			// Some reports will require additional parameters
