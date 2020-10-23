@@ -49,7 +49,13 @@ namespace TimesheetForWindows
 			tbxYearNumber.Tag = new ControlTextValidator(tbxYearNumber, "Year Number", required, ValidationStyle.DigitsNotZero);
 			tbxStartingWeekNbr.Tag = new ControlTextValidator(tbxStartingWeekNbr, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
 			tbxEndingWeekNbr.Tag = new ControlTextValidator(tbxEndingWeekNbr, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
-		}
+
+            //Second groupbox
+            tbxYearNumber02.Tag = new ControlTextValidator(tbxYearNumber02, "Year Number", required, ValidationStyle.DigitsNotZero);
+            tbxStartWeekNbr02.Tag = new ControlTextValidator(tbxStartWeekNbr02, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
+            tbxEndingWeekNbr02.Tag = new ControlTextValidator(tbxEndingWeekNbr02, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
+            tbxEmployeeIdNbr.Tag = new ControlTextValidator(tbxEmployeeIdNbr, "Employee Id Number", required, ValidationStyle.DigitsNotZero);
+        }
 
         private void lbxSelect_SelectedIndexChanged(object sender, EventArgs e) {
             switch (lbxSelect.SelectedItem.ToString())
@@ -87,20 +93,28 @@ namespace TimesheetForWindows
 		private void btnTimecardRollup01_Click(object sender, EventArgs e) {
 			LaunchReport(lbxSelect.SelectedItem.ToString());
 		}
+        private void btnLaunchTimecardRollup02_Click(object sender, EventArgs e)
+        {
+            LaunchReport(lbxSelect.SelectedItem.ToString());
+        }
+        //======================================
+        #region "Helper Functions"
 
-		//======================================
-		#region "Helper Functions"
-
-		private void LaunchReport(string reportname) {
+        private void LaunchReport(string reportname) {
 			//MessageBox.Show(reportname);
 			bool isGood = true;
-			if (reportname == TIMECARD_ROLLUP_1) {
+            short yearNo;
+            short startWeekNo;
+            short endWeekNo;
+            int employeeIdNo;
+
+            if (reportname == TIMECARD_ROLLUP_1) {
 				// Validate the contents of the textbox controls in the gbxTimecardRollup01 group box
 				isGood = ValidateGroupBox(gbxTimecardRollup01);
-				if (isGood) {
-					short yearNo = Convert.ToInt16(tbxYearNumber.Text);
-					short startWeekNo = Convert.ToInt16(tbxStartingWeekNbr.Text);
-					short endWeekNo = Convert.ToInt16(tbxEndingWeekNbr.Text);
+                yearNo = Convert.ToInt16(tbxYearNumber.Text);
+                startWeekNo = Convert.ToInt16(tbxStartingWeekNbr.Text);
+                endWeekNo = Convert.ToInt16(tbxEndingWeekNbr.Text);
+                if (isGood) {
 					if (!(yearNo > 2019 && yearNo < 2030)) {
 						MessageBox.Show("Please enter a year between 2019 and 2030.", "Attention");
 						return;
@@ -139,14 +153,63 @@ namespace TimesheetForWindows
 					displayer.Show();
 				}
 			}
+            if (reportname == TIMECARD_ROLLUP_02)
+            {
+                isGood = ValidateGroupBox(gbxRollup02);
+                yearNo = Convert.ToInt16(tbxYearNumber02.Text);
+                startWeekNo = Convert.ToInt16(tbxStartWeekNbr02.Text);
+                endWeekNo = Convert.ToInt16(tbxEndingWeekNbr02.Text);
+                employeeIdNo = Convert.ToInt32(tbxEmployeeIdNbr.Text);
+                if (isGood)
+                {
+                    if (!(yearNo > 2019 && yearNo < 2030))
+                    {
+                        MessageBox.Show("Please enter a year between 2019 and 2030.", "Attention");
+                        return;
+                    }
+                    if (startWeekNo < 1 || startWeekNo > 53)
+                    {
+                        MessageBox.Show("Starting week number must be between 1 and 53.", "Attention");
+                        return;
+                    }
+                    if (endWeekNo < 1 || endWeekNo > 53)
+                    {
+                        MessageBox.Show("Ending week number must be between 1 and 53.", "Attention");
+                        return;
+                    }
+                    if (startWeekNo >= endWeekNo)
+                    {
+                        MessageBox.Show("Ending week number must be bigger than starting week number.", "Attention");
+                        return;
+                    }
+                    if (employeeIdNo < 100 || employeeIdNo > 999)
+                    {
+                        MessageBox.Show("Employee ID number should be greater than 100 and less than 1000", "Attention");
+                        return;
+                    }
+                    MessageBox.Show("Validation Passed");
 
+                    //TODO: Create a way for the report to show the parameters passed in.
+                    //using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+                    //{
+                    //    List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollupForEmployee(yearNo, startWeekNo, endWeekNo, employeeIdNo);
+                    //    ReportTimeCardRollup01[] rollupArray = records.ToArray();
+                    //    // Construct the ReportDisplayForm and show it on screen.
+                    //    string[] parametersForReport = { tbxYearNumber02.Text, tbxStartWeekNbr02.Text, tbxEndingWeekNbr02.Text, tbxEmployeeIdNbr.Text };
+                    //    ReportDisplayForm displayer = new ReportDisplayForm(rollupArray, parametersForReport);
+                    //    Size targetSize = new Size(800, 500);
+                    //    displayer.Size = targetSize;
+                    //    displayer.Show();
+                    //}
+                }
+            }
 		}
 		private bool ValidateGroupBox(GroupBox gbx) {
 			List<string> problemMessages = new List<string>();
 
 			//Perform validation on every control in the groupbox
 			foreach (Control ctrl in gbx.Controls) {
-				if (ctrl.Tag != null) {
+				if (ctrl.Tag != null && ctrl.Visible == true) {
 					if (ctrl.Tag is ControlTextValidator) {
 						var validatr = (ControlTextValidator)ctrl.Tag;
 						string validationMsg = validatr.ValidationMsg();
@@ -166,8 +229,9 @@ namespace TimesheetForWindows
 			}
 			return true;
 		}
-		#endregion
+
+        #endregion
 
 
-	}
+    }
 }

@@ -196,6 +196,7 @@
             this.btnLaunchTimecardRollup02.TabIndex = 6;
             this.btnLaunchTimecardRollup02.Text = "Launch Report";
             this.btnLaunchTimecardRollup02.UseVisualStyleBackColor = true;
+            this.btnLaunchTimecardRollup02.Click += new System.EventHandler(this.btnLaunchTimecardRollup02_Click);
             // 
             // tbxStartWeekNbr02
             // 
