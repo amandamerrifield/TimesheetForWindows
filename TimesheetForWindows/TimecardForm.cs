@@ -328,17 +328,14 @@ namespace TimesheetForWindows
 				case FormState.SavingChanges:
 					buttonUpdate.Enabled = false;
 					buttonCancel.Enabled = false;
-					buttonQuit.Enabled = false;
 					break;
 				case FormState.ViewingData:
 					buttonUpdate.Enabled = false;
 					buttonCancel.Enabled = false;
-					buttonQuit.Enabled = true;
 					break;
 				case FormState.ViewingPotentialChanges:
 					buttonUpdate.Enabled = true;
 					buttonCancel.Enabled = true;
-					buttonQuit.Enabled = false;
 					break;
 			}
 		}

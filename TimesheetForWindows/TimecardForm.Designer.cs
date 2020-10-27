@@ -28,13 +28,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.buttonUpdate = new System.Windows.Forms.Button();
 			this.buttonAddTask = new System.Windows.Forms.Button();
 			this.buttonCancel = new System.Windows.Forms.Button();
-			this.buttonQuit = new System.Windows.Forms.Button();
 			this.comboBoxWeek = new System.Windows.Forms.ComboBox();
 			this.dgvTimecardDetail = new System.Windows.Forms.DataGridView();
 			this.TaskName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -58,7 +57,7 @@
 			// 
 			// buttonUpdate
 			// 
-			this.buttonUpdate.Location = new System.Drawing.Point(509, 14);
+			this.buttonUpdate.Location = new System.Drawing.Point(623, 14);
 			this.buttonUpdate.Name = "buttonUpdate";
 			this.buttonUpdate.Size = new System.Drawing.Size(107, 25);
 			this.buttonUpdate.TabIndex = 97;
@@ -80,7 +79,7 @@
 			// 
 			// buttonCancel
 			// 
-			this.buttonCancel.Location = new System.Drawing.Point(396, 14);
+			this.buttonCancel.Location = new System.Drawing.Point(457, 14);
 			this.buttonCancel.Name = "buttonCancel";
 			this.buttonCancel.Size = new System.Drawing.Size(107, 25);
 			this.buttonCancel.TabIndex = 98;
@@ -88,17 +87,6 @@
 			this.buttonCancel.Text = "Clear Changes";
 			this.buttonCancel.UseVisualStyleBackColor = true;
 			this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-			// 
-			// buttonQuit
-			// 
-			this.buttonQuit.Location = new System.Drawing.Point(622, 14);
-			this.buttonQuit.Name = "buttonQuit";
-			this.buttonQuit.Size = new System.Drawing.Size(108, 25);
-			this.buttonQuit.TabIndex = 96;
-			this.buttonQuit.TabStop = false;
-			this.buttonQuit.Text = "Cancel Changes";
-			this.buttonQuit.UseVisualStyleBackColor = true;
-			this.buttonQuit.Click += new System.EventHandler(this.buttonQuit_Click);
 			// 
 			// comboBoxWeek
 			// 
@@ -124,14 +112,14 @@
             this.Friday_Hrs,
             this.Saturday_Hrs,
             this.Sunday_Hrs});
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dgvTimecardDetail.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dgvTimecardDetail.DefaultCellStyle = dataGridViewCellStyle4;
 			this.dgvTimecardDetail.Location = new System.Drawing.Point(22, 58);
 			this.dgvTimecardDetail.MultiSelect = false;
 			this.dgvTimecardDetail.Name = "dgvTimecardDetail";
@@ -143,8 +131,8 @@
 			// TaskName
 			// 
 			this.TaskName.DataPropertyName = "Task_Name";
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			this.TaskName.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			this.TaskName.DefaultCellStyle = dataGridViewCellStyle3;
 			this.TaskName.HeaderText = "Task";
 			this.TaskName.Name = "TaskName";
 			this.TaskName.Width = 220;
@@ -206,7 +194,6 @@
 			this.ControlBox = false;
 			this.Controls.Add(this.dgvTimecardDetail);
 			this.Controls.Add(this.comboBoxWeek);
-			this.Controls.Add(this.buttonQuit);
 			this.Controls.Add(this.buttonCancel);
 			this.Controls.Add(this.buttonAddTask);
 			this.Controls.Add(this.buttonUpdate);
@@ -227,7 +214,6 @@
 		private System.Windows.Forms.Button buttonUpdate;
 		private System.Windows.Forms.Button buttonAddTask;
 		private System.Windows.Forms.Button buttonCancel;
-		private System.Windows.Forms.Button buttonQuit;
 		private System.Windows.Forms.ComboBox comboBoxWeek;
 		private System.Windows.Forms.DataGridView dgvTimecardDetail;
 		private System.Windows.Forms.DataGridViewTextBoxColumn TaskName;

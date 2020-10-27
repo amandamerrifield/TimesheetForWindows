@@ -135,6 +135,9 @@
     <EmbeddedResource Include="Report4.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report5.rdlc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="ReportDisplayForm.resx">
       <DependentUpon>ReportDisplayForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -161,6 +164,7 @@
     </Compile>
     <None Include="ReportDisplayForm.datasource" />
     <None Include="SsOpsDatabaseLibrary.Entity.Employee.datasource" />
+    <None Include="SsOpsDatabaseLibrary.Entity.ReportTimeCardRollup01.datasource" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

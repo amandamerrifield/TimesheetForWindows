@@ -40,12 +40,20 @@ namespace TimesheetForWindows
 			reportViewer1.ProcessingMode = ProcessingMode.Local;
 
 			if (_requestedReport == "TimecardRollup") {
-				reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report3.rdlc";
-
 				List<ReportParameter> rpList = new List<ReportParameter>();
 				rpList.Add(new ReportParameter("ParamReportYear", "Year " + _reportParms[0]));
 				rpList.Add(new ReportParameter("ParamReportWeekBegin", "Week " + _reportParms[1]));
 				rpList.Add(new ReportParameter("ParamReportWeekEnd", "Week " + _reportParms[2]));
+
+				// If we have 4 parameters then we are to display the Employee Rollup
+				if (_reportParms.Length > 3) {
+					rpList.Add(new ReportParameter("ParamReportEmployee", "Employee " + _reportParms[3]));
+					reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report5.rdlc";
+					
+				} else {
+					// We are to display the Timecard Rollup Report
+					reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report3.rdlc";
+				}
 				reportViewer1.LocalReport.SetParameters(rpList.ToArray());
 
 				_bindingSource.Clear();

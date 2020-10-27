@@ -187,21 +187,19 @@ namespace TimesheetForWindows
                         MessageBox.Show("Employee ID number should be greater than 100 and less than 1000", "Attention");
                         return;
                     }
-                    MessageBox.Show("Validation Passed");
+					//MessageBox.Show("Validation Passed");
 
-                    //TODO: Create a way for the report to show the parameters passed in.
-                    //using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
-                    //{
-                    //    List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollupForEmployee(yearNo, startWeekNo, endWeekNo, employeeIdNo);
-                    //    ReportTimeCardRollup01[] rollupArray = records.ToArray();
-                    //    // Construct the ReportDisplayForm and show it on screen.
-                    //    string[] parametersForReport = { tbxYearNumber02.Text, tbxStartWeekNbr02.Text, tbxEndingWeekNbr02.Text, tbxEmployeeIdNbr.Text };
-                    //    ReportDisplayForm displayer = new ReportDisplayForm(rollupArray, parametersForReport);
-                    //    Size targetSize = new Size(800, 500);
-                    //    displayer.Size = targetSize;
-                    //    displayer.Show();
-                    //}
-                }
+					using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
+						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollupForEmployee(yearNo, startWeekNo, endWeekNo, employeeIdNo);
+						ReportTimeCardRollup01[] rollupArray = records.ToArray();
+						// Construct the ReportDisplayForm and show it on screen.
+						string[] parametersForReport = { tbxYearNumber02.Text, tbxStartWeekNbr02.Text, tbxEndingWeekNbr02.Text, tbxEmployeeIdNbr.Text };
+						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray, parametersForReport);
+						Size targetSize = new Size(1000, 1000);
+						displayer.Size = targetSize;
+						displayer.Show();
+					}
+				}
             }
 		}
 		private bool ValidateGroupBox(GroupBox gbx) {
