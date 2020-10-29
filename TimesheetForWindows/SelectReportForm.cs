@@ -21,7 +21,7 @@ namespace TimesheetForWindows
 		private const string TIMECARD_ROLLUP_1 = "Timecard Rollup Report";
 		private const string EMPLOYEES_REPORT_1 = "List of All Current Employees";
         private const string TIMECARD_ROLLUP_02 = "Timecard Rollup Report For Employee by ID Number";
-      
+        private const string ACTIVETASK_BUDGET_SUMMARY = "All Active Tasks Budget Summary";
 
         private const int DEFAULT_HEIGHT = 334;
 
@@ -43,7 +43,10 @@ namespace TimesheetForWindows
 			lbxSelect.Items.Add(EMPLOYEES_REPORT_1);
 			lbxSelect.Items.Add(TIMECARD_ROLLUP_1);
             lbxSelect.Items.Add(TIMECARD_ROLLUP_02);
+            lbxSelect.Items.Add(ACTIVETASK_BUDGET_SUMMARY);
+
             lbxSelect.SelectedIndex = 0;
+
 
 			//Put validators in all the textbox tags
 			bool required = true;
@@ -71,6 +74,12 @@ namespace TimesheetForWindows
                     gbxTimecardRollup01.Visible = true;
                     break;
                 case EMPLOYEES_REPORT_1:
+                    gbxRollup02.Visible = false;
+                    gbxTimecardRollup01.Visible = false;
+                    this.btnViewReport.Visible = true;
+                    this.Height = DEFAULT_HEIGHT;
+                    break;
+                case ACTIVETASK_BUDGET_SUMMARY:
                     gbxRollup02.Visible = false;
                     gbxTimecardRollup01.Visible = false;
                     this.btnViewReport.Visible = true;
@@ -155,6 +164,17 @@ namespace TimesheetForWindows
 					displayer.Show();
 				}
 			}
+            if (reportname == ACTIVETASK_BUDGET_SUMMARY)
+            {
+                using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
+                {
+                    List<SsOpsDatabaseLibrary.Entity.Task> tasks = dbLib.GetAllActiveTasks();
+                    ReportDisplayForm displayer = new ReportDisplayForm(tasks.ToArray());
+                    Size targetSize = new Size(1000, 1000);
+                    displayer.Size = targetSize;
+                    displayer.Show();
+                }
+            }
             if (reportname == TIMECARD_ROLLUP_02)
             {
                 isGood = ValidateGroupBox(gbxRollup02);

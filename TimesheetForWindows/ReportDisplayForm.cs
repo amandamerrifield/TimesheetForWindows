@@ -21,6 +21,7 @@ namespace TimesheetForWindows
 		private BindingSource _bindingSource;
 		private string _requestedReport;
 		private string[] _reportParms;
+        private SsOpsDatabaseLibrary.Entity.Task[] _allTasksArray;
 
 		public ReportDisplayForm(Employee[] allEmployees) {
 			InitializeComponent();
@@ -35,7 +36,13 @@ namespace TimesheetForWindows
 			_reportParms = reportParameters;
 			_bindingSource = new BindingSource();
 		}
-
+        public ReportDisplayForm(SsOpsDatabaseLibrary.Entity.Task[] allActiveTasks)
+        {
+            InitializeComponent();
+            _allTasksArray = allActiveTasks;
+            _requestedReport = "GetAllActiveTasks";
+            _bindingSource = new BindingSource();
+        }
 		private void ReportDisplayForm_Load(object sender, EventArgs e) {
 			reportViewer1.ProcessingMode = ProcessingMode.Local;
 

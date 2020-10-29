@@ -206,6 +206,43 @@ namespace SsOpsDatabaseLibrary
 				throw;
 			}
 		}
+        public List<Entity.Task> GetAllActiveTasks()
+        {
+            List<Entity.Task> allActiveTasks = new List<Entity.Task>();
+            try
+            {
+                using (SqlCommand cmd =  new SqlCommand("Gsp_GetAllActiveTasks", _dbConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Entity.Task et = new Entity.Task();
+                        et.CategoryId = Convert.ToInt32(reader["CategoryId"]);
+                        et.CategoryName = Convert.ToString(reader["CategoryName"]);
+                        et.TaskId = Convert.ToInt32(reader["TaskId"]);
+                        et.TaskName = (string)reader["TaskName"];
+                        et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
+                        et.ActualHours = Convert.ToString(reader["ActualHours"]);
+                        et.StartDate = Convert.ToString(reader["StartDate"]);
+                        et.EndDate = Convert.ToString(reader["EndDate"]);
+
+                        if (!et.BudgetHours.Contains(".")) et.BudgetHours += ".0";
+                        if (!et.ActualHours.Contains(".")) et.ActualHours += ".0";
+
+                        allActiveTasks.Add(et);
+                    }
+                    reader.Close();
+                }
+                return allActiveTasks;
+            }
+            catch (Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
 
         public List<Entity.Employee> GetAllCurrentEmployees() {
             SqlParameter parm;
