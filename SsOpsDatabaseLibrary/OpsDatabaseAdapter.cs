@@ -88,6 +88,43 @@ namespace SsOpsDatabaseLibrary
                 throw;
             }
         }
+        public Employee GetEmployeeById(int employeeId)
+        {
+            SqlParameter parm;
+            Employee emp;
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("Gsp_GetEmployeeById", _dbConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    parm = new SqlParameter("@employeeId", SqlDbType.Int);
+                    cmd.Parameters.Add(parm);
+                    parm.Value = employeeId;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (!reader.Read())
+                    {
+                        throw new InvalidOperationException("No record was found for Employee ID number " + employeeId);
+                    }
+                    emp = new Employee();
+                    emp.EmployeeId = Convert.ToInt32(reader["EmployeeId"]);
+                    emp.FirstName = (string)reader["FirstName"];
+                    emp.LastName = (string)reader["LastName"];
+                    emp.TaxIdNbr = (string)reader["TaxIdNbr"];
+                    emp.MainPhone = (string)reader["MainPhone"];
+                    emp.Gender = (string)reader["Gender"];
+                    emp.HireDate = (string)reader["HireDt"];
+                    emp.TermDate = (string)reader["TermDt"];
+                }
+                return emp;
+            }
+            catch (Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
 
 		#endregion
 

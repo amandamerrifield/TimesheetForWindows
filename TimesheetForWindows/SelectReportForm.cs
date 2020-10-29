@@ -19,9 +19,11 @@ namespace TimesheetForWindows
     {
 
 		private const string TIMECARD_ROLLUP_1 = "Timecard Rollup Report";
-		private const string EMPLOYEES_REPORT_1 = "Employees Report";
-        private const string TIMECARD_ROLLUP_02 = "Timecard Rollup Report For Employee";
-		private const int DEFAULT_HEIGHT = 334;
+		private const string EMPLOYEES_REPORT_1 = "List of All Current Employees";
+        private const string TIMECARD_ROLLUP_02 = "Timecard Rollup Report For Employee by ID Number";
+      
+
+        private const int DEFAULT_HEIGHT = 334;
 
 		private Employee _employee;
 
@@ -192,8 +194,10 @@ namespace TimesheetForWindows
 					using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter()) {
 						List<ReportTimeCardRollup01> records = dbLib.GetTimecardRollupForEmployee(yearNo, startWeekNo, endWeekNo, employeeIdNo);
 						ReportTimeCardRollup01[] rollupArray = records.ToArray();
+                        Employee emp = dbLib.GetEmployeeById(employeeIdNo);
+                        string employeeFullName = emp.FirstName + " " + emp.LastName;  
 						// Construct the ReportDisplayForm and show it on screen.
-						string[] parametersForReport = { tbxYearNumber02.Text, tbxStartWeekNbr02.Text, tbxEndingWeekNbr02.Text, tbxEmployeeIdNbr.Text };
+						string[] parametersForReport = { tbxYearNumber02.Text, tbxStartWeekNbr02.Text, tbxEndingWeekNbr02.Text, tbxEmployeeIdNbr.Text, employeeFullName };
 						ReportDisplayForm displayer = new ReportDisplayForm(rollupArray, parametersForReport);
 						Size targetSize = new Size(1000, 1000);
 						displayer.Size = targetSize;

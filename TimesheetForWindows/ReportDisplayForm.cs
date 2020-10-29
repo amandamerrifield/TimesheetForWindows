@@ -47,7 +47,7 @@ namespace TimesheetForWindows
 
 				// If we have 4 parameters then we are to display the Employee Rollup
 				if (_reportParms.Length > 3) {
-					rpList.Add(new ReportParameter("ParamReportEmployee", "Employee " + _reportParms[3]));
+					rpList.Add(new ReportParameter("ParamReportEmployee", "Employee " + _reportParms[3] + " " + _reportParms[4]));
 					reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report5.rdlc";
 					
 				} else {
