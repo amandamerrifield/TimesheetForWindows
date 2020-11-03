@@ -129,6 +129,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Report1.rdlc" />
     <EmbeddedResource Include="Report3.rdlc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -165,6 +166,8 @@
     <None Include="ReportDisplayForm.datasource" />
     <None Include="SsOpsDatabaseLibrary.Entity.Employee.datasource" />
     <None Include="SsOpsDatabaseLibrary.Entity.ReportTimeCardRollup01.datasource" />
+    <None Include="SsOpsDatabaseLibrary.Entity.Task.datasource" />
+    <None Include="SsOpsDatabaseLibrary.Entity.UnCategorizedTask.datasource" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
