@@ -218,8 +218,6 @@ namespace SsOpsDatabaseLibrary
                     while (reader.Read())
                     {
                         Entity.Task et = new Entity.Task();
-                        et.CategoryId = Convert.ToInt32(reader["CategoryId"]);
-                        et.CategoryName = Convert.ToString(reader["CategoryName"]);
                         et.TaskId = Convert.ToInt32(reader["TaskId"]);
                         et.TaskName = (string)reader["TaskName"];
                         et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
