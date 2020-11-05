@@ -73,6 +73,13 @@ namespace TimesheetForWindows
 				_bindingSource.Clear();
 				_bindingSource.DataSource = _allEmployeesArray;
 			}
+			if (_requestedReport == "GetAllActiveTasks") {
+				reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report1.rdlc";
+				reportViewer1.LocalReport.DisplayName = "All Active Tasks Budget Summary";
+
+				_bindingSource.Clear();
+				_bindingSource.DataSource = _allTasksArray;
+			}
 
 			_bindingSource.ResetBindings(false);
 
