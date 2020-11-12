@@ -9,6 +9,7 @@ using System.IO;
 using SsOpsDatabaseLibrary.Entity;
 using System.Diagnostics;
 using System.Globalization;
+using Task = SsOpsDatabaseLibrary.Entity.Task;
 
 namespace SsOpsDatabaseLibrary
 {
@@ -491,14 +492,48 @@ namespace SsOpsDatabaseLibrary
 			}
 		}
 
+        public List<Task> GetActiveTasksBudgetSummary()
+        {
+            List<Task> tcrList = new List<Task>();
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand("Gsp_ActiveTasksBudgetSummary", _dbConn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
 
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Entity.Task et = new Entity.Task();
+                        et.TaskName = (string)reader["TaskName"];
+                        et.BudgetHours = Convert.ToString(reader["BudgetHours"]);
+                        et.StartDate = Convert.ToString(reader["StartDate"]);
+                        et.ActualHours = Convert.ToString(reader["TotalToDate"]);
 
-		#endregion
+                        if (!et.BudgetHours.Contains(".")) et.BudgetHours += ".0";
+                        if (!et.ActualHours.Contains(".")) et.ActualHours += ".0";
 
-		// ======================================================== 
-		#region Public Functions that return a newly generated primary key
+                        tcrList.Add(et);
 
-		public int CreateTimeCard(Timecard tcard)
+                    }
+                    reader.Close();
+                }
+                return tcrList;
+            }
+            catch (Exception ex)
+            {
+                string errTitle = this.GetType().Name + "." + System.Reflection.MethodBase.GetCurrentMethod().Name;
+                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+                throw;
+            }
+        }
+
+        #endregion
+
+        // ======================================================== 
+        #region Public Functions that return a newly generated primary key
+
+        public int CreateTimeCard(Timecard tcard)
         {
 			int retVal = 0;
             SqlParameter parm;

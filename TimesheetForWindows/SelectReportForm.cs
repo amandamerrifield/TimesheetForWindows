@@ -168,7 +168,7 @@ namespace TimesheetForWindows
             {
                 using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
                 {
-                    List<SsOpsDatabaseLibrary.Entity.Task> tasks = dbLib.GetAllActiveTasks();
+                    List<SsOpsDatabaseLibrary.Entity.Task> tasks = dbLib.GetActiveTasksBudgetSummary();
                     ReportDisplayForm displayer = new ReportDisplayForm(tasks.ToArray());
                     Size targetSize = new Size(1000, 1000);
                     displayer.Size = targetSize;

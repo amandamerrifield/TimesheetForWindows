@@ -21,7 +21,7 @@ namespace TimesheetForWindows
 		private BindingSource _bindingSource;
 		private string _requestedReport;
 		private string[] _reportParms;
-        private SsOpsDatabaseLibrary.Entity.Task[] _allTasksArray;
+        private SsOpsDatabaseLibrary.Entity.Task[] _taskArray;
 
 		public ReportDisplayForm(Employee[] allEmployees) {
 			InitializeComponent();
@@ -36,11 +36,11 @@ namespace TimesheetForWindows
 			_reportParms = reportParameters;
 			_bindingSource = new BindingSource();
 		}
-        public ReportDisplayForm(SsOpsDatabaseLibrary.Entity.Task[] allActiveTasks)
+        public ReportDisplayForm(SsOpsDatabaseLibrary.Entity.Task[] taskSummary)
         {
             InitializeComponent();
-            _allTasksArray = allActiveTasks;
-            _requestedReport = "GetAllActiveTasks";
+            _taskArray = taskSummary;
+            _requestedReport = "ActiveTasksBudgetSummary";
             _bindingSource = new BindingSource();
         }
 		private void ReportDisplayForm_Load(object sender, EventArgs e) {
@@ -73,12 +73,12 @@ namespace TimesheetForWindows
 				_bindingSource.Clear();
 				_bindingSource.DataSource = _allEmployeesArray;
 			}
-			if (_requestedReport == "GetAllActiveTasks") {
+			if (_requestedReport == "ActiveTasksBudgetSummary") {
 				reportViewer1.LocalReport.ReportPath = Directory.GetCurrentDirectory() + @"\Report1.rdlc";
 				reportViewer1.LocalReport.DisplayName = "All Active Tasks Budget Summary";
 
 				_bindingSource.Clear();
-				_bindingSource.DataSource = _allTasksArray;
+				_bindingSource.DataSource = _taskArray;
 			}
 
 			_bindingSource.ResetBindings(false);
