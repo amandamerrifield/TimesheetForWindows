@@ -35,12 +35,24 @@ namespace TimesheetForWindows
 			var thisMethod = MethodBase.GetCurrentMethod();
 			Console.Write("****" + thisMethod.Name + "\n");
 
+			string[] usr = { "Unknown", "Fetterhoff" };
+
+			UserPrincipal upCurrent = UserPrincipal.Current;
+			// Windows 10 is not returning DisplayName correctly
+			if(String.IsNullOrEmpty(upCurrent.DisplayName) || !(UserPrincipal.Current.DisplayName.Contains(" "))) {
+				usr[0] = upCurrent.Name;
+			}
+			else {
+				usr = UserPrincipal.Current.DisplayName.Split(' ');
+			}
+
+			this.Text = "Timesheet for Windows  --  " + usr[0] + " " + usr[1];
+
 			using (OpsDatabaseAdapter dbLib = new OpsDatabaseAdapter())
 			{
 				//The current employeeId is the current user's employee ID
 				try
 				{
-					string[] usr = UserPrincipal.Current.DisplayName.Split(' ');
 					_employee = dbLib.GetEmployeeByName(usr[0], usr[1]);
 				}
 				catch (Exception ex)
