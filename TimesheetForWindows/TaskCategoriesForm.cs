@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DecoratorsLibrary;
-using static DecoratorsLibrary.ControlTextValidator;
+using static DecoratorsLibrary.TextBoxValidator;
 
 namespace TimesheetForWindows
 {
@@ -40,9 +40,9 @@ namespace TimesheetForWindows
 				//if(whatsThere.GetType() == typeof(ControlTextValidator)) {} This is an altenate test of type
 				if (ctrl.Tag != null)
 				{
-					if (ctrl.Tag is ControlTextValidator)
+					if (ctrl.Tag is TextBoxValidator)
 					{
-						var validatr = (ControlTextValidator)ctrl.Tag;
+						var validatr = (TextBoxValidator)ctrl.Tag;
 						string validationMsg = validatr.ValidationMsg();
 						if (validationMsg.Length > 0)
 						{
@@ -131,8 +131,8 @@ namespace TimesheetForWindows
 
 			//Get some validators going here
 			bool required = true;
-			textBox1.Tag = new ControlTextValidator(textBox1,"Add New Category Name", required, ValidationStyle.NoValidation);
-			textBox2.Tag = new ControlTextValidator(textBox2, "Add New Category Description", required, ValidationStyle.NoValidation);
+			textBox1.Tag = new TextBoxValidator(textBox1,"Add New Category Name", required, ValidationStyle.NoValidation);
+			textBox2.Tag = new TextBoxValidator(textBox2, "Add New Category Description", required, ValidationStyle.NoValidation);
 
 		}
 

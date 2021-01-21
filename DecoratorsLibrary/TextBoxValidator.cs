@@ -11,7 +11,7 @@ using static DecoratorsLibrary.Validator.PureTextValidator;
 
 namespace DecoratorsLibrary
 {
-    public class ControlTextValidator
+    public class TextBoxValidator
     {
         public enum ValidationStyle
         {
@@ -30,7 +30,7 @@ namespace DecoratorsLibrary
         protected string _originalText;
 
         //Constructor
-        public ControlTextValidator(Control attachedTextCtrl, string nomenclature, bool required, ValidationStyle validationStyle)
+        public TextBoxValidator(Control attachedTextCtrl, string nomenclature, bool required, ValidationStyle validationStyle)
         {
             _attachedTextControl = attachedTextCtrl;
             _originalText = _attachedTextControl.Text;
