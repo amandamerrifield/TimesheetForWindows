@@ -316,15 +316,21 @@ namespace TimesheetForWindows
 
 			weeek += 1;
 			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
+				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			}
 
 			weeek += 1;
 			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
+				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			}
 
 			weeek += 1;
 			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
+				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			}
 		}
 
 		// ------------------------------------------------
