@@ -298,6 +298,7 @@ namespace TimesheetForWindows
 		// Initialize the Week Selection Drop Down
 		private void InitializeComboBox()
 		{
+			comboBoxWeek.BeginUpdate();
 			comboBoxWeek.Items.Clear();
 
 			int weeek = 1;
@@ -307,30 +308,24 @@ namespace TimesheetForWindows
 			{
 				firstMondayOfYear = firstMondayOfYear.AddDays(1);
 			}
+			List<String> mondays = new List<String>();
 			DateTime another_monday = firstMondayOfYear;
-			while(another_monday.DayOfYear <= DateTime.Today.DayOfYear - 30) {
+			while (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
+				mondays.Add(another_monday.ToString("yyyy/MM/dd") + " -- Week " + weeek.ToString());
 				weeek += 1;
-				another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			}
-			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
-
-			weeek += 1;
-			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
-				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+				another_monday = another_monday.AddDays(7);
 			}
 
-			weeek += 1;
-			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
-				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			if(mondays.Count > 4) {
+				string[] last4mondays = new string[4];
+				// Array version of Substring -- SubArray() Lol!
+				Array.Copy(mondays.ToArray(), mondays.Count -4, last4mondays, 0, 4);
+				comboBoxWeek.Items.AddRange(last4mondays);
 			}
-
-			weeek += 1;
-			another_monday = firstMondayOfYear.AddDays(7 * weeek);
-			if (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
-				comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+			else {
+				comboBoxWeek.Items.AddRange(mondays.ToArray());
 			}
+			comboBoxWeek.EndUpdate();
 		}
 
 		// ------------------------------------------------
