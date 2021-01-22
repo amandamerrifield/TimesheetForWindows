@@ -1,4 +1,4 @@
-﻿using DecoratorsLibrary;
+﻿using TextValidationLibrary;
 using SsOpsDatabaseLibrary;
 using SsOpsDatabaseLibrary.Entity;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static DecoratorsLibrary.TextBoxValidator;
+using static TextValidationLibrary.TextBoxValidator;
 
 namespace TimesheetForWindows
 {

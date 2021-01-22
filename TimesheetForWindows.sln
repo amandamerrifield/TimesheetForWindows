@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimesheetForWindows", "Time
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SsOpsDatabaseLibrary", "SsOpsDatabaseLibrary\SsOpsDatabaseLibrary.csproj", "{31D81958-5386-4203-9DE4-C3FA046EB4CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecoratorsLibrary", "DecoratorsLibrary\DecoratorsLibrary.csproj", "{CD4A392A-A818-4594-A06B-5E4F818523B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextValidationLibrary", "TextValidationLibrary\TextValidationLibrary.csproj", "{CD4A392A-A818-4594-A06B-5E4F818523B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

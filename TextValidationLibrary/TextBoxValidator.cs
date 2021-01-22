@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DecoratorsLibrary.Validator;
-using static DecoratorsLibrary.Validator.DateValidator;
-using static DecoratorsLibrary.Validator.DigitsValidator;
-using static DecoratorsLibrary.Validator.PureTextValidator;
+using TextValidationLibrary.Validator;
+using static TextValidationLibrary.Validator.DateValidator;
+using static TextValidationLibrary.Validator.DigitsValidator;
+using static TextValidationLibrary.Validator.PureTextValidator;
 
-namespace DecoratorsLibrary
+namespace TextValidationLibrary
 {
     public class TextBoxValidator
     {
