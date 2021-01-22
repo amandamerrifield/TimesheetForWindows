@@ -300,23 +300,31 @@ namespace TimesheetForWindows
 		{
 			comboBoxWeek.Items.Clear();
 
+			int weeek = 1;
 			string firstDoY = "01/01/" + DateTime.Today.Year.ToString();
 			DateTime firstMondayOfYear = DateTime.Parse(firstDoY);
 			while (firstMondayOfYear.DayOfWeek != DayOfWeek.Monday)
 			{
 				firstMondayOfYear = firstMondayOfYear.AddDays(1);
 			}
-			for (int weeek = 1; weeek < 52; weeek++)
-			{
-				DateTime another_monday = firstMondayOfYear.AddDays(7 * weeek);
-				if (another_monday.DayOfYear > DateTime.Today.DayOfYear - 30)
-				{
-					if (another_monday.DayOfYear <= DateTime.Today.DayOfYear)
-					{
-						comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
-					}
-				}
+			DateTime another_monday = firstMondayOfYear;
+			while(another_monday.DayOfYear <= DateTime.Today.DayOfYear - 30) {
+				weeek += 1;
+				another_monday = firstMondayOfYear.AddDays(7 * weeek);
 			}
+			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+
+			weeek += 1;
+			another_monday = firstMondayOfYear.AddDays(7 * weeek);
+			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+
+			weeek += 1;
+			another_monday = firstMondayOfYear.AddDays(7 * weeek);
+			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
+
+			weeek += 1;
+			another_monday = firstMondayOfYear.AddDays(7 * weeek);
+			comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
 		}
 
 		// ------------------------------------------------
