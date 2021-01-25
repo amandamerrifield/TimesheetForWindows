@@ -21,6 +21,7 @@ namespace TimesheetForWindows
 		// appended/comitted to the database. However, timecard detail rows will not be added to the DB
 		// unless the user saves her changes.  When saving changes, it will be up to the DataWriter to
 		// detect that new rows are being added along with existing rows having been changed.
+		// Thomas Fetterhoff 01/25/2021
 
 		// Enums and variables having form-wide scope
 		private enum FormState
