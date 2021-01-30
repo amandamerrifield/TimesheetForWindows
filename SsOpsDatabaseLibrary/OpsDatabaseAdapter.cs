@@ -850,35 +850,53 @@ namespace SsOpsDatabaseLibrary
         // ================================================================
         #region Public Functions that return Void
         public void DeleteTimeCardDetail(List<TimecardDetail> detailsToDelete) {
-            SqlParameter parm;
+            // If we are missing a key, then we are outta here
+            bool isMissingKey = false;
+            foreach (TimecardDetail detail in detailsToDelete) {
+                if (detail.DetailId == 0) {
+                    isMissingKey = true;
+                    break;
+                }
+            }
+            if (isMissingKey) {
+                throw new Exception("Unable to delete timecard detail.  A key value is missing.");
+            }
 
-            try {
-                bool isMissingKey = false;
-                foreach (TimecardDetail detail in detailsToDelete) {
-                    if (detail.DetailId == 0) {
-                        isMissingKey = true;
-                        break;
-                    }
-                }
-                if (isMissingKey) {
-                    throw new Exception("Unable to delete timecard detail.  A key value is missing.");
-                }
-                using (SqlCommand cmd = new SqlCommand("Dsp_DeleteTimeCardDetail", _dbConn)) {
-                    foreach(TimecardDetail tcd in detailsToDelete) {
-                        cmd.Parameters.Clear();
-                        parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
-                        cmd.Parameters.Add(parm);
+            // If we get here then We got a key for every record to be deleted
+            // Use a single transaction on this connection to speed execution
+            // A single explicit transaction is far more efficient than many implied transactions
+            using (SqlCommand cmd = new SqlCommand("Dsp_DeleteTimeCardDetail", _dbConn)) {
+
+                SqlTransaction xaction = _dbConn.BeginTransaction("TimeSheetWindowsXaction");
+                cmd.Transaction = xaction;
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlParameter parm = new SqlParameter("@TcDetailId", SqlDbType.Int);
+                cmd.Parameters.Add(parm);
+
+                try {
+                    foreach (TimecardDetail tcd in detailsToDelete) {
                         parm.Value = tcd.DetailId;
-                        cmd.ExecuteScalar();
+                        cmd.ExecuteNonQuery();
                     }
+                    xaction.Commit();
                 }
-                return;
+                catch(Exception ex) {
+                    string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
+ 
+                    LogHardErrorMessage(errTitle, ex.Source, ex.Message);
+
+                    //Attempt a rollback
+                    try {
+                        xaction.Rollback();
+                    }
+                    catch(Exception ex2) {
+                        LogHardErrorMessage(errTitle, ex2.Source, ex2.Message);
+                    }
+                    
+                    throw;
+                }
             }
-            catch (Exception ex) {
-                string errTitle = System.Reflection.MethodBase.GetCurrentMethod().Name;
-                LogHardErrorMessage(errTitle, ex.Source, ex.Message);
-                throw;
-            }
+            return;
         }
 
         #endregion
