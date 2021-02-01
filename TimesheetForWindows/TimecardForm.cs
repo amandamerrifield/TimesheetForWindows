@@ -371,6 +371,8 @@ namespace TimesheetForWindows
 					int newlyMintedTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
 					_timecardUnderGlass.TimecardId = newlyMintedTimecardID;
 				}
+				// Bug Fix
+				_timecards.Add(_timecardUnderGlass);
 			}
 			catch (Exception ex)
 			{
