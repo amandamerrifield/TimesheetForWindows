@@ -1,4 +1,4 @@
-﻿using DecoratorsLibrary;
+﻿using TextValidationLibrary;
 using SsOpsDatabaseLibrary;
 using SsOpsDatabaseLibrary.Entity;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static DecoratorsLibrary.ControlTextValidator;
+using static TextValidationLibrary.TextBoxValidator;
 
 namespace TimesheetForWindows
 {
@@ -87,9 +87,9 @@ namespace TimesheetForWindows
 			{
 				if (ctrl.Tag != null)
 				{
-					if (ctrl.Tag is ControlTextValidator)
+					if (ctrl.Tag is TextBoxValidator)
 					{
-						var validatr = (ControlTextValidator)ctrl.Tag;
+						var validatr = (TextBoxValidator)ctrl.Tag;
 						string validationMsg = validatr.ValidationMsg();
 						if (validationMsg.Length > 0)
 						{
@@ -160,10 +160,10 @@ namespace TimesheetForWindows
 			//Get some validators going here
 			bool required = true;
 			bool notRequired = false;
-			textBox1.Tag = new ControlTextValidator(textBox1, "Add New Task", required, ValidationStyle.NoPunctuation);
-			textBox2.Tag = new ControlTextValidator(textBox2, "Budget Hours", required, ValidationStyle.DigitsNotZero);
-			textBox4.Tag = new ControlTextValidator(textBox4, "Start Date", required, ValidationStyle.DateAny);
-			textBox5.Tag = new ControlTextValidator(textBox5, "End Date", notRequired, ValidationStyle.DateFuture);
+			textBox1.Tag = new TextBoxValidator(textBox1, "Add New Task", required, ValidationStyle.NoPunctuation);
+			textBox2.Tag = new TextBoxValidator(textBox2, "Budget Hours", required, ValidationStyle.DigitsNotZero);
+			textBox4.Tag = new TextBoxValidator(textBox4, "Start Date", required, ValidationStyle.DateAny);
+			textBox5.Tag = new TextBoxValidator(textBox5, "End Date", notRequired, ValidationStyle.DateFuture);
 
 		}
 

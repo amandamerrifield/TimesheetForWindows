@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DecoratorsLibrary;
-using static DecoratorsLibrary.ControlTextValidator;
+using TextValidationLibrary;
+using static TextValidationLibrary.TextBoxValidator;
 using System.CodeDom;
 using SsOpsDatabaseLibrary;
 
@@ -51,15 +51,15 @@ namespace TimesheetForWindows
 			//Put validators in all the textbox tags
 			bool required = true;
 
-			tbxYearNumber.Tag = new ControlTextValidator(tbxYearNumber, "Year Number", required, ValidationStyle.DigitsNotZero);
-			tbxStartingWeekNbr.Tag = new ControlTextValidator(tbxStartingWeekNbr, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
-			tbxEndingWeekNbr.Tag = new ControlTextValidator(tbxEndingWeekNbr, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
+			tbxYearNumber.Tag = new TextBoxValidator(tbxYearNumber, "Year Number", required, ValidationStyle.DigitsNotZero);
+			tbxStartingWeekNbr.Tag = new TextBoxValidator(tbxStartingWeekNbr, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
+			tbxEndingWeekNbr.Tag = new TextBoxValidator(tbxEndingWeekNbr, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
 
             //Second groupbox
-            tbxYearNumber02.Tag = new ControlTextValidator(tbxYearNumber02, "Year Number", required, ValidationStyle.DigitsNotZero);
-            tbxStartWeekNbr02.Tag = new ControlTextValidator(tbxStartWeekNbr02, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
-            tbxEndingWeekNbr02.Tag = new ControlTextValidator(tbxEndingWeekNbr02, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
-            tbxEmployeeIdNbr.Tag = new ControlTextValidator(tbxEmployeeIdNbr, "Employee Id Number", required, ValidationStyle.DigitsNotZero);
+            tbxYearNumber02.Tag = new TextBoxValidator(tbxYearNumber02, "Year Number", required, ValidationStyle.DigitsNotZero);
+            tbxStartWeekNbr02.Tag = new TextBoxValidator(tbxStartWeekNbr02, "Starting Week Number", required, ValidationStyle.DigitsNotZero);
+            tbxEndingWeekNbr02.Tag = new TextBoxValidator(tbxEndingWeekNbr02, "Ending Week Number", required, ValidationStyle.DigitsNotZero);
+            tbxEmployeeIdNbr.Tag = new TextBoxValidator(tbxEmployeeIdNbr, "Employee Id Number", required, ValidationStyle.DigitsNotZero);
         }
 
         private void lbxSelect_SelectedIndexChanged(object sender, EventArgs e) {
@@ -232,8 +232,8 @@ namespace TimesheetForWindows
 			//Perform validation on every control in the groupbox
 			foreach (Control ctrl in gbx.Controls) {
 				if (ctrl.Tag != null && ctrl.Visible == true) {
-					if (ctrl.Tag is ControlTextValidator) {
-						var validatr = (ControlTextValidator)ctrl.Tag;
+					if (ctrl.Tag is TextBoxValidator) {
+						var validatr = (TextBoxValidator)ctrl.Tag;
 						string validationMsg = validatr.ValidationMsg();
 						if (validationMsg.Length > 0) {
 							// failed validation...

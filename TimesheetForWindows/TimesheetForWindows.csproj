@@ -52,8 +52,8 @@
     </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ReportViewer.Common, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" />
-    <Reference Include="Microsoft.ReportViewer.WinForms, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
@@ -190,13 +190,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DecoratorsLibrary\DecoratorsLibrary.csproj">
-      <Project>{cd4a392a-a818-4594-a06b-5e4f818523b4}</Project>
-      <Name>DecoratorsLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SsOpsDatabaseLibrary\SsOpsDatabaseLibrary.csproj">
       <Project>{31d81958-5386-4203-9de4-c3fa046eb4cc}</Project>
       <Name>SsOpsDatabaseLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TextValidationLibrary\TextValidationLibrary.csproj">
+      <Project>{cd4a392a-a818-4594-a06b-5e4f818523b4}</Project>
+      <Name>TextValidationLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

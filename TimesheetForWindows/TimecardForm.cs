@@ -21,6 +21,7 @@ namespace TimesheetForWindows
 		// appended/comitted to the database. However, timecard detail rows will not be added to the DB
 		// unless the user saves her changes.  When saving changes, it will be up to the DataWriter to
 		// detect that new rows are being added along with existing rows having been changed.
+		// Thomas Fetterhoff 01/25/2021
 
 		// Enums and variables having form-wide scope
 		private enum FormState
@@ -298,25 +299,34 @@ namespace TimesheetForWindows
 		// Initialize the Week Selection Drop Down
 		private void InitializeComboBox()
 		{
+			comboBoxWeek.BeginUpdate();
 			comboBoxWeek.Items.Clear();
 
+			int weeek = 1;
 			string firstDoY = "01/01/" + DateTime.Today.Year.ToString();
 			DateTime firstMondayOfYear = DateTime.Parse(firstDoY);
 			while (firstMondayOfYear.DayOfWeek != DayOfWeek.Monday)
 			{
 				firstMondayOfYear = firstMondayOfYear.AddDays(1);
 			}
-			for (int weeek = 1; weeek < 52; weeek++)
-			{
-				DateTime another_monday = firstMondayOfYear.AddDays(7 * weeek);
-				if (another_monday.DayOfYear > DateTime.Today.DayOfYear - 30)
-				{
-					if (another_monday.DayOfYear <= DateTime.Today.DayOfYear)
-					{
-						comboBoxWeek.Items.Add(another_monday.ToString("yyyy-MM-dd") + " -- Week " + weeek.ToString());
-					}
-				}
+			List<String> mondays = new List<String>();
+			DateTime another_monday = firstMondayOfYear;
+			while (another_monday.DayOfYear <= DateTime.Today.DayOfYear) {
+				mondays.Add(another_monday.ToString("yyyy/MM/dd") + " -- Week " + weeek.ToString());
+				weeek += 1;
+				another_monday = another_monday.AddDays(7);
 			}
+
+			if(mondays.Count > 4) {
+				string[] last4mondays = new string[4];
+				// Array version of Substring -- SubArray() Lol!
+				Array.Copy(mondays.ToArray(), mondays.Count -4, last4mondays, 0, 4);
+				comboBoxWeek.Items.AddRange(last4mondays);
+			}
+			else {
+				comboBoxWeek.Items.AddRange(mondays.ToArray());
+			}
+			comboBoxWeek.EndUpdate();
 		}
 
 		// ------------------------------------------------
@@ -361,6 +371,8 @@ namespace TimesheetForWindows
 					int newlyMintedTimecardID = dbLib.CreateTimeCard(_timecardUnderGlass);
 					_timecardUnderGlass.TimecardId = newlyMintedTimecardID;
 				}
+				// Bug Fix
+				_timecards.Add(_timecardUnderGlass);
 			}
 			catch (Exception ex)
 			{
